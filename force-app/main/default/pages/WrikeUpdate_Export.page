@@ -1,0 +1,67 @@
+<apex:page standardStylesheets="true" cache="false"
+    controller="WrikeUpdate_ExportController" showheader="false" sidebar="false">
+    
+<h1>Exporting</h1>
+<div id="log"></div>
+<div id="link"></div>
+
+<c:WrikeUpdate_SequenceScript />
+<apex:includeScript value="{!$Resource.Wrike_FileSaver}"/>
+<script type="text/javascript">
+    
+    var parts = [];
+    var readyForExport;
+    
+    function createFileName() {
+          function z(n) { return ('0'+n).substr(-2); }
+          var d = new Date();
+          return '' + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate())
+                  + '-'
+                  + z(d.getHours()) + z(d.getMinutes()) + z(d.getSeconds())
+                  + '.json';
+    }
+              
+    sequence({
+        
+        remoteInit : WrikeUpdate_ExportController.init.bind(this),
+        remoteStep : WrikeUpdate_ExportController.step.bind(this),
+        
+        start : function() {
+            return true
+        },
+        
+        //beforestep : function(name) {},
+        afterstep : function(name, data) {
+            parts.push('"'+ name + '":' + JSON.stringify(data));
+            if(!readyForExport && name && ~name.indexOf('profiles')) {
+                readyForExport = true;
+            }
+        },
+        
+        finish : function() {
+        
+            if(readyForExport) {
+        
+            var linkElement = document.createElement('a');
+            
+            var blob = new Blob(['{' + parts.join(',') + '}'], {type: 'text/plain'});
+            linkElement.href = 'javaScript:void(0);';
+            linkElement.appendChild(
+                document.createTextNode('Save exported data'));
+            
+            document.getElementById('link').appendChild(linkElement);
+            
+            linkElement.addEventListener('click', function(evt) {
+            
+            saveAs(blob, createFileName());
+                var lastSaved = (new Date()).toLocaleString();
+                document.cookie =
+                    "WrikeUpdate_lastSaved=" + encodeURIComponent(lastSaved) +
+                    "; expires=Tue, 19 Jan 2038 03:14:07 GMT";
+            }); 
+        }
+        }
+    });
+    
+</script>
+</apex:page>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Instructions__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Enter step by step instructions that the user can follow, using numbered lists for steps and bullet points for lists. Add screenshots whenever required.</inlineHelpText>
+    <label>Instructions</label>
+    <length>32768</length>
+    <type>Html</type>
+    <visibleLines>25</visibleLines>
+</CustomField>

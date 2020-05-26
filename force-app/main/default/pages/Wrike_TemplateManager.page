@@ -1,0 +1,241 @@
+<apex:page controller="Wrike_TemplateManagerController" action="{!verifyWrike}" standardStylesheets="true">
+
+<style type="text/css">
+
+#templateView {padding: 10px;}
+
+a.actionLink { color: #015ba7; cursor:pointer; text-decoration: none;}
+a.actionLink span {margin-left: -3px;}
+
+#templateView .bPageBlock { border-top-color: #42975B !important; }
+body table.list tr.highlight td { background-color: #eff8df !important; }
+body table.list tr td { border-color: #ececec; }
+/*
+.mainTableHeader span { float: left;}
+.mainTableHeader span img {vertical-align: middle;}
+*/
+
+/*img.relatedListIcon {  background: url({!$Resource.Wrike_Logo24}) no-repeat 0 0 !important; }*/
+img.wrikeLogo {display:inline; margin-left: -1px;   vertical-align: middle; margin-right: -3px;   margin-top: -9px; top: 3px;}
+
+h1 { font-size:26px !important; font-weight: normal !important; }
+h2 { font-size:22px !important;}
+h3 { font-size:18px !important; margin:3px !important;}
+
+.paginator a.disabled { color: #a8a8a8;}
+
+#templateTable { table-layout: fixed; width: 100%; min-width: 1000px;}
+#templateTable td { height: 16px; line-height: 16px; overflow: hidden;}
+
+
+#templateTable div {white-space:nowrap; text-overflow: ellipsis; overflow: hidden;}
+
+th.descriptionHeader {width: 45%;}
+th.linkedFolderHeader {width: 25%;}
+th.actionHeader {width: 15%; min-width: 300px}
+th.nameHeader {width: 15%;}
+/*td.actionCell {text-align:center;}*/
+
+ @media screen and (max-width: 1400px) {
+  th.descriptionHeader, th.linkedFolderHeader, th.actionHeader, th.nameHeader  {width: 25%;}
+}
+
+input.btn {padding-left:5px; padding-right:5px; min-width: 48px;}
+
+div#templateView h1, div#templateView p {line-height:30px;}
+div.mainTableHeader {line-height:22px;}
+
+.wrikePanel #message { height:135px;padding-top:90px;text-align:center; }
+.wrikePanel #message h1 { display:block;font-size:28px;font-weight:normal; }
+.wrikePanel #message p { font-size:16px; margin:10px 0 16px; }
+
+</style>
+
+
+<apex:form id="errors">
+    <apex:outputPanel id="errorMessagesPanel">
+    <apex:pageMessages id="errorMessages"/>
+    </apex:outputPanel>
+    <apex:actionFunction name="rerenderErrorMessages" action="{!addErrorsToPage}" rerender="errorMessagesPanel" /> 
+    <apex:actionFunction action="{!refreshAndReset}" name="reloadPageJS"/>     
+</apex:form>
+
+<apex:outputPanel layout="block" rendered="{!NOT(isAuthorized)}"
+        styleClass="wrikePanel bRelatedList">
+        
+        <apex:pageBlock mode="edit">
+            <apex:facet name="header">
+                <table cellpadding="0" cellspacing="0" border="0">
+                      <tbody>
+                         <tr>
+                            <td>
+                                <div class="pbTitle">
+                                    <img class="relatedListIcon" src="/s.gif" />
+                                    <h3 class="mainTitle">Template Manager</h3>              
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </apex:facet>
+            
+            <div id="message">
+                <h1>To get started, please authorize Salesforce to access data from Wrike.</h1>
+                <p>To authorize Salesforce you will need to login to Wrike with your Wrike username and password.
+                If you don't have a Wrike account please contact your Salesforce Administrator.</p>
+                <apex:form target="_top">
+                    <apex:commandButton action="{!authorize}" value="Authorize" id="authorizeButton"/>
+                </apex:form>
+            </div>
+        </apex:pageBlock>
+        
+      </apex:outputPanel>
+
+<apex:outputPanel rendered="{!isAuthorized}">
+<div id="templateView">
+
+<h1>Manage Templates</h1>
+<p>Link to project templates in Wrike so your users can select from standardized project types.</p>
+    <apex:pageBlock >
+   
+    <apex:form >
+      <div class="mainTableHeader">
+        <span>
+        <img class="wrikeLogo" src="{!$Resource.Wrike_Logo24}" />
+        <h3>Wrike Folder Templates</h3> 
+        </span>
+        <input value="New Template" class="btn" onclick="launchTemplateEdit('NEW');" type="button" style="margin-left:30%;"/>
+        <apex:outputPanel rendered="{!showSortButton}">
+            <input value="Sort" class="btn" onclick="launchTemplateSort();" type="button"/>
+        </apex:outputPanel>
+     </div>   
+   <!--   <div class="pbTitle">
+     <table class="mainTableHeader">
+        <tr>
+        <td><img class="wrikeLogo" src="{!$Resource.Wrike_Logo24}" /></td>
+        <td><h3 class="mainTitle">Wrike Folder Templates</h3></td>
+        
+        <td>
+        <input value="New Template" class="btn" onclick="launchTemplateEdit('NEW');" type="button"/>
+        <input value="Sort" class="btn" onclick="launchTemplateSort();" type="button"/>
+        </td>
+        </tr>
+     </table>  
+</div>-->
+    <br></br>
+    <apex:actionFunction action="{!deleteTemplate}" name="deleteTemplateJS" rerender="templateView">
+        <apex:param name="templateId" value=""/>
+    </apex:actionFunction>
+
+    <apex:outputPanel id="templatePanel">
+     <table class="list" border="0" cellspacing="0" cellpadding="0" id="templateTable">
+     
+     <tr class="headerRow" id="taskTableHeader">
+         <th scope="col" class="actionHeader">Action</th>
+         <th scope="col" class="nameHeader">Name</th>
+         <th scope="col" class="descriptionHeader">Description</th>
+         <th scope="col" class="linkedFolderHeader">Linked Folder</th>
+     </tr>
+     
+     <apex:repeat value="{!templatePage}" var="t" rows="10">
+        
+        <tr class="dataRow" id="taskTableRow" onmouseout="if(window.hiOff){hiOff(this);}" onmouseover="if(window.hiOn){hiOn(this);}">
+         <td class="actionCell">
+         <span>
+            <apex:outputPanel rendered="{!NOT(ISBLANK(t.Id))}">
+              <a href="{!t.Wrike_Folder_Permalink__c}" class="actionLink" title="" target="wrike">Open in Wrike</a>&nbsp;|&nbsp;
+              <a class="actionLink" href="" onclick="launchTemplateEdit('{!t.Id}');" title=""><span>Edit</span></a>&nbsp;|&nbsp;
+              <a class="actionLink" href="" onclick="if(!confirm('Are you sure?')) { return false; } ; deleteTemplateJS('{!t.Id}');" title=""><span>Delete</span></a>
+            </apex:outputPanel>
+            <apex:outputText value=" " rendered="{!ISBLANK(t.Id)}"/>
+         </span>
+         </td>
+         <td class="dataCell">
+           <div>
+            <apex:outputText value="{!t.Name}"/>
+           </div>
+         </td>
+         <td class="dataCell">
+          <div>
+            <apex:outputText value="{!t.Description__c}"/>
+           </div>
+         </td>
+         <td class="dataCell">
+           <div>
+            <apex:outputText value="{!t.Wrike_Folder_Name__c}"/>
+           </div>
+         </td>
+        </tr>
+            
+     </apex:repeat>
+    </table>
+
+    <div class="paginator">
+    <span class="prevNextLinks">
+        <a class="actionLink" href="" onclick="firstPageJS();" title=""><img src="/s.gif" title="First" alt="First" class="first{!IF(currentPage==1, 'off', '')}"/></a>
+        <a class="actionLink {!IF(currentPage==1, 'disabled', '')}" href="" onclick="previousPageJS();" title=""><img src="/s.gif" title="Previous" alt="Previous" class="prev{!IF(currentPage==1, 'off', '')}"/> Previous</a>
+        <a class="actionLink {!IF(currentPage==numberOfPages, 'disabled', '')}" href="" onclick="nextPageJS();" title="">Next <img src="/s.gif" title="Next" alt="Next" class="next{!IF(currentPage==numberOfPages, 'off', '')}"/></a>
+        <a class="actionLink" href="" onclick="lastPageJS();" title=""><img src="/s.gif" title="Last" alt="Last" class="last{!IF(currentPage==numberOfPages, 'off', '')}"/></a>
+    </span>
+    </div>
+    
+    <apex:actionFunction action="{!nextPage}" name="nextPageJS" rerender="templatePanel"/>
+    <apex:actionFunction action="{!previousPage}" name="previousPageJS" rerender="templatePanel"/>
+    <apex:actionFunction action="{!firstPage}" name="firstPageJS" rerender="templatePanel"/>
+    <apex:actionFunction action="{!lastPage}" name="lastPageJS" rerender="templatePanel"/>
+
+    </apex:outputPanel>
+    </apex:form>
+    </apex:pageBlock>
+</div> 
+
+<script type="text/javascript">
+
+
+</script>
+
+   
+    <script type="text/javascript">
+    
+
+  function launchTemplateEdit(tid) {
+
+  var url = '/apex/Wrike_TemplateEdit?templateId='+tid;
+  openEditPopup(url, 550, 450);  
+}
+
+function launchTemplateSort() {
+
+  var url = '/apex/Wrike_TemplateEdit?showSort=true';
+  openEditPopup(url, 450, 400); 
+    
+}
+
+function openEditPopup(url, _width, _height) {
+
+  var xPosition = Math.round(3*screen.width / 5);
+  var yPosition = Math.round(screen.height / 5);
+  
+  var templateEditWindow = window.open(url, "_blank", "width="+_width+",height="+_height+",left="+xPosition+",top="+yPosition+",toolbar=0,status=0,menubar=0,resizable=0,scrollbars=0, directories=0");
+  templateEditWindow.focus();
+  
+  
+  function keepFocus() {
+        if(templateEditWindow != null && ! templateEditWindow.closed)
+            templateEditWindow.focus();
+        updateState();
+    }
+    
+    window.addEventListener('focus', keepFocus);
+    
+    function updateState() {
+       reloadPageJS();
+    }
+}
+
+
+    </script>
+    
+</apex:outputPanel>   
+
+</apex:page>

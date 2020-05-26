@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Continent__c</fullName>
+    <description>UN M.49</description>
+    <externalId>false</externalId>
+    <inlineHelpText>UN M.49</inlineHelpText>
+    <label>Continent</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>019 - Americas</fullName>
+                <default>false</default>
+                <label>019 - Americas</label>
+            </value>
+            <value>
+                <fullName>002 - Africa</fullName>
+                <default>false</default>
+                <label>002 - Africa</label>
+            </value>
+            <value>
+                <fullName>142 - Asia</fullName>
+                <default>false</default>
+                <label>142 - Asia</label>
+            </value>
+            <value>
+                <fullName>150 - Europe</fullName>
+                <default>false</default>
+                <label>150 - Europe</label>
+            </value>
+            <value>
+                <fullName>009 - Oceania</fullName>
+                <default>false</default>
+                <label>009 - Oceania</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

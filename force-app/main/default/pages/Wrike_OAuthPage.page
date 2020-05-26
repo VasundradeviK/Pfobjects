@@ -1,0 +1,96 @@
+<apex:page standardStylesheets="true" cache="false" controller="Wrike_SetupController">
+<style type="text/css">
+		body .bPageTitle .pageTitleIcon.wrikeIcon {
+			background-image: url({!$Resource.Wrike_Logo64});
+			background-position:0 0;
+			background-repeat:no-repeat;
+			width: 64px; height: 64px;
+			margin-top: -10px;
+			}
+		.pbBottomButtons .pbButtonb { padding-left:0; padding-right:0; }
+		.pbBottomButtons .pbButtonb input { margin-left:28.5%; }
+		
+		.content .pageType, .content .pageDescription { margin-left:0 !important; }
+		.bPageBlock .pbHeader .pbButton { text-align:right; }
+		#connectBlock .pbHeader .pbButton { text-align:left; }
+		.bPageBlock .pbBody table { width:100%; margin-left:-12px; }
+		.bPageBlock .pbBody th { text-align:right; }
+		.bPageBlock .pbBody td { padding: 5px 12px; }
+				
+	</style>
+<div class="bPageTitle" id="pageTitleDiv">
+	    <div class="ptBody">
+	        <div class="content">    
+	            <img src="/s.gif" alt="Wrike" class="pageTitleIcon wrikeIcon" title="Wrike"/>
+	            <h1 class="pageType clean-ml">Package settings<span class="titleSeparatingColon">:</span></h1>
+	            <h2 class="pageDescription clean-ml">Wrike Integraton Settings</h2>
+	            <div class="blank">&nbsp;</div>
+	        </div>
+	    </div>
+    </div>
+    
+    <apex:form id="errors">
+	<apex:outputPanel id="errorMessagesPanel">
+	<apex:pageMessages id="errorMessages"/>
+	</apex:outputPanel>
+	<apex:actionFunction name="rerenderErrorMessages" action="{!addErrorsToPage}" rerender="errorMessagesPanel" />		
+	</apex:form>
+<div id="apikeyBlock">
+<apex:form target="_top" rendered="{!NOT(isError)}">
+    <apex:actionFunction name="getOAuthKeysJS" action="{!getOAuthKeys}"  rendered="{!NOT(showManualOAuthKeysBlock)}" />
+    <apex:pageBlock title="Enter your personal settings" mode="detail" rendered="{!showManualOAuthKeysBlock}">
+        <apex:outputPanel layout="block">
+          <p style="margin-left:30%;padding-left:10px" class="description">
+	          Wrike Integrations need to be authenticated with personal keys. We tried to authenticate your key automatically but failed. Please relaunch the package post-install instructions, and the application will try to add the keys automatically once again. If the error persists, our support team will be informed and they will send the keys to the e-mail address of your current Salesforce user, ({!$User.Email}).
+				<br/><br/>
+			  After you've received your access keys, please enter them below. To expedite the process, please contact us at <a href="mailto:support@team.wrike.com">support@team.wrike.com</a>.
+		  </p> 
+        </apex:outputPanel>
+        <table border="0" cellpadding="0" cellspacing="0"><tbody>
+            <tr><th class="pbTitle">Client ID</th>
+            <td class="pbValue">
+                <input type="text" name="clientId" style="margin-left:10px"
+                	size="10"/>
+            </td></tr>
+            <tr><th class="pbTitle">Client Secret</th>
+            <td class="pbValue">
+            	<input type="text" name="clientSecret" style="margin-left:10px"
+            		size="64"/>
+            </td></tr>
+            </tbody>
+        </table>
+        <apex:pageBlockButtons location="bottom">
+              <apex:commandButton action="{!saveApiKeys}" value="Proceed" id="authorizeButton"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+</apex:form>
+</div>
+<script type="text/javascript">
+
+	function showBusyStatus() {
+		var parentForm = document.getElementById('pageTitleDiv');
+		var loadingDiv = document.createElement('div');
+		loadingDiv.setAttribute('id', 'loadingDiv');
+		var loadingImg = document.createElement('img');
+	    loadingImg.src = '{!$Resource.Wrike_LoadingIcon}';
+	    loadingDiv.appendChild(loadingImg);               
+	    loadingDiv.appendChild(document.createTextNode(" Working..."));
+	    parentForm.appendChild(loadingDiv);  
+  	 }
+    
+    function hideBusyStatus()
+    {
+    	var element = document.getElementById("loadingDiv");
+		element.parentNode.removeChild(element);
+    }
+
+	if({!NOT(showManualOAuthKeysBlock)}) {
+		showBusyStatus();
+		getOAuthKeysJS();
+	}
+	else {
+		hideBusyStatus();
+		rerenderErrorMessages();
+		}
+</script>
+</apex:page>

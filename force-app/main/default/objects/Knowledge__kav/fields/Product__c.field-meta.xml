@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product__c</fullName>
+    <description>Mandatory field for identifying the Product concerned.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Available values are Drive, Field Service Management, Advanced Analytics, Drive Cloud, Drive Edge (SCADA)</inlineHelpText>
+    <label>Product</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Drive</fullName>
+                <default>false</default>
+                <label>Drive</label>
+            </value>
+            <value>
+                <fullName>Field Service Management (FSM)</fullName>
+                <default>false</default>
+                <label>Field Service Management (FSM)</label>
+            </value>
+            <value>
+                <fullName>Advanced Analytics (AA)</fullName>
+                <default>false</default>
+                <label>Advanced Analytics (AA)</label>
+            </value>
+            <value>
+                <fullName>Drive Cloud</fullName>
+                <default>false</default>
+                <label>Drive Cloud</label>
+            </value>
+            <value>
+                <fullName>Drive Edge</fullName>
+                <default>false</default>
+                <label>Drive Edge</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

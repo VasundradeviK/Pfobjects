@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Plant_Asset__c</fullName>
+    <externalId>false</externalId>
+    <label>Plant Asset</label>
+    <lookupFilter>
+        <active>true</active>
+        <errorMessage>Cannot create an RFI while plant asset is in this Project Lifecycle Status. Change status to appropriate PLS to create RFI</errorMessage>
+        <filterItems>
+            <field>Plant_Asset__c.RecordType.Name</field>
+            <operation>equals</operation>
+            <value>Customer Asset</value>
+        </filterItems>
+        <filterItems>
+            <field>Plant_Asset__c.Project_Lifecycle_Status__c</field>
+            <operation>notEqual</operation>
+            <value>Pending, Customer Validation, Operations, Decommissioned</value>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Plant_Asset__c</referenceTo>
+    <relationshipLabel>RFIs</relationshipLabel>
+    <relationshipName>RFIs</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Not_Allow_to_enter_the_values_manually</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(ISNEW(),( OR(NOT( ISBLANK( Account__c ) ),NOT( ISBLANK(  IE_Team__c )),NOT( ISBLANK(  IE_Owner__c ) ),NOT( ISBLANK(  Assigned_Customer_Contact__c ) ) )))</errorConditionFormula>
+    <errorMessage>Please do not enter Account, IE owner, IE team or Assigned Customer Contact while creating. This will be auto filled from Customer Plant Asset on Creation</errorMessage>
+</ValidationRule>

@@ -1,0 +1,125 @@
+<apex:page standardStylesheets="true" cache="false" showHeader="false" sidebar="false"
+    controller="Wrike_SetupController">
+    
+<style type="text/css"> 
+
+table#setupOptions {margin-top:10px; width: 100%; font-size: 14px; line-height:20px;}
+table#setupOptions td {width:50%; padding-right: 15%; vertical-align: top;}
+
+div#mainDiv {margin: 15px;}
+div#mainDiv div.headerDiv {border-bottom: 1px solid #aba9a9; padding-bottom: 15px; margin-bottom:15px;}
+
+a.actionLink { color: #015ba7; cursor:pointer; text-decoration: none;}
+a.headerLink { font-weight: bold; display: block;}
+
+div.headerDiv img {display:inline; float:left; margin-top:5px;}
+
+table#setupHeader {width:70%;}
+table#setupHeader td {padding-left: 25px; font-size: 12px; line-height:16px;}
+
+div.do-not-show { display: none;}
+
+div#mainDiv input.btn {padding-left:5px; padding-right:5px; min-width: 48px;}
+</style>
+    
+<apex:form id="startForm">
+
+<apex:outputPanel id="mainPanel">
+
+<div id="mainDiv" class="do-not-show">
+
+<div class="headerDiv">
+<img src="{!$Resource.Wrike_Logo_Word}" alt="Wrike" title="Wrike"/>
+<table id="setupHeader">
+<tr>
+<td>
+<a class="actionLink headerLink" href="https://cdn.wrike.com/resources/Wrike_Salesforce_Integration_Manual.pdf" target="_blank">Setup manual</a>
+Configuration instructions for Wrike Tasks Widget
+</td>
+<td>
+<a class="actionLink headerLink" href="mailto:support@team.wrike.com" target="_top">support@team.wrike.com</a>
+Our Support team is here to help if you need assistance.
+</td></tr>
+</table>
+</div>
+
+        <table id="setupOptions">
+           <tr><td>
+               <h3>First time installation</h3> 
+               <p>1. Connect your Salesforce organization to your Wrike account. You will need a Wrike User or Admin account to complete the setup.</p>
+               <p>2. Download <a class="actionLink" href="https://cdn.wrike.com/resources/Wrike_Salesforce_Integration_Manual.pdf" target="_blank">our guide</a> and set up the package to fit your goals.</p>
+               <p><input type="button" value="Setup package" class="btn" onclick="toSetup()" /></p>
+           </td>
+           
+           <td>
+               <h3>Package Update</h3>
+               <p>Import the file with your previous settings. If you do not have a file with your previous settings, use the first time installation.</p>
+               <p><input type="button" value="Import settings" class="btn" onclick="toImport()" /></p>
+           </td></tr>
+           </table>
+
+    
+       <script type="text/javascript">
+       
+       if (window.addEventListener) {
+              window.addEventListener('load', initialize, false);
+          }
+          else if (window.attachEvent) {
+              window.attachEvent('onload', inititialize);
+          }
+
+          function initialize() {
+          
+              if (!inIframe()) { 
+                toFullScreen();
+              } else { 
+                  document.getElementById('mainDiv').className = '';
+              }      
+          }       
+       
+       
+        function toSetup() {
+        
+            redirectTo('{!URLFOR($Page.Wrike_SetupPage)}');
+        }
+        
+        function toImport() {
+            
+            redirectTo('{!URLFOR($Page.WrikeUpdate_Main)}');
+        }
+        
+        function toFullScreen() {
+        
+            redirectTo('{!URLFOR($Page.Wrike_SetupLauncher_fullscreen)}');
+        }
+
+        function redirectTo(target) {
+            if (inIframe()) {
+                window.top.location.href = target;
+                return false;
+            } else {
+              window.location.href = target;             
+            }
+        }
+        
+        function inIframe() {
+            try {
+                return window.self !== window.top;
+            } catch (e) {
+                return true;
+            }
+        }
+        
+      </script>
+      
+ </div>
+       </apex:outputPanel>  
+       <apex:outputPanel id="redirectToSetup" rendered="{!setupExists}">
+            <script type="text/javascript">
+                toSetup();
+            </script>
+       </apex:outputPanel>
+      
+    </apex:form>
+
+</apex:page>

@@ -1,0 +1,43 @@
+<apex:page standardController="Account" extensions="ParentAccountController">   
+   <apex:form >
+       <apex:pagemessages id="msgPanel"/>
+       <apex:outputPanel id="accountPanel"> 
+           <apex:pageBlock rendered="{!accountFlag}">
+               <apex:pageBlockSection title="Account Detail">                
+                   <apex:inputField value="{!account.Name}"/>
+                   <apex:inputField value="{!account.Account_Email__c}"/>
+               </apex:pageBlockSection>
+               <apex:pageBlockButtons location="bottom">
+                   <apex:commandButton action="{!accountNext}" value="Next" rerender="msgPanel, accountPanel, contactPanel"/>
+                   <apex:CommandButton action="{!cancel}" value="Cancel" immediate="true"/>
+               </apex:pageBlockButtons>
+           </apex:pageBlock>    
+       </apex:outputPanel>
+       <apex:outputPanel id="contactPanel"> 
+           <apex:pageBlock rendered="{!contactFlag}">    
+               <apex:pageBlockSection title="Contact Detail">
+                   <apex:inputField value="{!contact.FirstName}"/>
+                   <apex:inputField value="{!contact.LastName}"/>         
+                   <apex:inputField value="{!contact.Email}"/>
+                   <apex:inputField value="{!contact.Phone}" /> 
+               </apex:pageBlockSection>  
+               <apex:pageBlockButtons location="bottom">
+                   <apex:commandButton action="{!contactPrevious}" value="Back" rerender="msgPanel, accountPanel, contactPanel" immediate="true"/>
+                   <apex:commandButton action="{!save}" value="Save" rerender="msgPanel, contactPanel, populateAccountIdPanel" oncomplete="navigateToAccount();"/>
+                   <apex:CommandButton action="{!cancel}" value="Cancel" immediate="true"/>
+               </apex:pageBlockButtons>
+           </apex:pageBlock>                 
+       </apex:outputPanel>
+       <apex:outputPanel id="populateAccountIdPanel">
+           <script>
+               var accountId = '{!accountId}';
+           </script>
+       </apex:outputPanel>
+       <script>
+           function navigateToAccount(){
+               window.opener.location.href = '/'+accountId;
+               window.close();
+           }
+       </script>
+   </apex:form>
+</apex:page>

@@ -1,0 +1,533 @@
+<apex:page standardStylesheets="true" cache="false"
+    controller="Wrike_SetupController" action="{!ensureWrike}">
+
+<style type="text/css">
+
+.homeTab .pageTitleIcon.wrikeIcon {
+background-image: url({!$Resource.Wrike_Logo64});
+background-position:0 0;
+background-repeat:no-repeat;
+width: 64px; height: 64px;
+margin-top: -10px;
+}
+.bindingButtons  {
+    text-align: right;
+    margin-bottom: -24px;
+ }
+.bindingSection2, #newBindingBlock2 {
+    padding-top: 8px;
+    margin-top: 8px;
+    border-top: solid 1px rgb(219,219,219);
+}
+.bindingSection:first-child {
+    border-top:none;
+}
+.content .pageType, .content .pageDescription { margin-left:0 !important; }
+.bPageBlock .pbHeader .pbButton { text-align:right; }
+#connectBlock .pbHeader .pbButton { text-align:left; }
+.bPageBlock .pbBody table { width:100%; margin-left:-12px; }
+.bPageBlock .pbBody th { text-align:right; }
+.bPageBlock .pbBody td { padding: 5px 12px; }
+
+
+#bodyCell p.description { margin-bottom:1em; }
+
+.linkTitle { font-weight:600; width:28.6%; display:inline-block; margin:2px 0; vertical-align:middle; }
+.linkButtons { margin:2px 0 2px 6px; display:inline-block; vertical-align:middle; }
+
+/*#connectBlock .pbHeader .pbButton { padding-left:0; padding-right:0; }
+#connectBlock .pbHeader .pbButton input { margin-left:28.5%; }*/
+
+#accountBlock .pbBottomButtons .pbButtonb { padding-left:0; padding-right:0; }
+#accountBlock .pbBottomButtons .pbButtonb input { margin-left:28.5%; }
+
+table#wrikeTopMenu input.btn, table#authorizeMenu input.btn  {padding-left:5px; padding-right:5px; min-width: 48px;}
+
+table#wrikeTopMenu {width: 100%; table-layout: fixed; }
+td.insideCol {border-right: 5px solid transparent; border-left: 5px solid transparent;}
+td.rightCol {border-left: 5px solid transparent;}
+td.leftCol {border-right: 5px solid transparent;}
+
+div.wrikeTopMenuBlock td.pbTitle {width:70% !important;}
+div.wrikeTopMenuBlock  {height: 100%;}
+div.wrikeTopMenuBlock  div.pbBody {height: 45px; max-height: 45px; padding-bottom: 15px; padding-right: 100px;}
+
+table#authorizeMenu {table-layout: fixed;}
+table#authorizeMenu td {width: 50%;}
+table#authorizeMenu input.btn {float: right;}
+
+a.actionLink { color: #015ba7; cursor:pointer; text-decoration: none;}
+
+table#authorizeMenu td.pbTitle, table#wrikeTopMenu td.pbTitle {padding-left: 10px;}
+
+div.pbHeader table {min-height: 49px;}
+</style>
+<script type="application/json" id="accountsJSON">
+{!accountsJSON}
+</script>
+<apex:outputPanel layout="block" id="bindingRefresh">
+<script type="application/json" id="bindingsJSON">
+{!bindingsJSON}
+</script>
+</apex:outputPanel>
+<script type="application/json" id="objectsJSON">
+{!objectsJSON}
+</script>
+
+<script type="text/javascript">//<![CDATA[
+   // TODO drop legacy browsers
+  
+   //Polyfils
+   if (!Object.keys) Object.keys = function(o) {
+      if (o !== Object(o))
+        throw new TypeError('Object.keys called on a non-object');
+      var k=[],p;
+      for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) k.push(p);
+      return k;
+    }
+
+   if (window.addEventListener) {
+       window.addEventListener('load', initialize, false);
+   }
+   else if (window.attachEvent) {
+       window.attachEvent('onload', inititialize);
+   }
+
+   function initialize() {
+   
+        var selectElement = document.getElementById('settingsAccount');
+        if (selectElement) {
+            var num = 0; accounts = parseJSON('accountsJSON');
+            for (var id in accounts) {
+                var optionElement = document.createElement('option');
+                optionElement.appendChild(
+                    document.createTextNode(accounts[id])
+            );
+                optionElement.setAttribute('value', id);
+                selectElement.appendChild(optionElement);
+                num++;
+            }
+            //if (num == 1) selectElement.disabled=true;
+        }
+        
+        window.objs = parseJSON('objectsJSON');
+        window.objs.sort(function (a, b) {
+            if (a.label > b.label)
+              return 1;
+            if (a.label < b.label)
+              return -1;
+            return 0;
+        });
+        
+         fillBindings();
+         
+         rerenderErrorMessages();
+    }
+    
+    function parseJSON(elementId) {
+      
+      var jsonElement = document.getElementById(elementId);
+      if (jsonElement) {
+          var jsonText = jsonElement.textContent?
+              jsonElement.textContent : jsonElement.innerText;
+          if (jsonText) {
+            try {
+              jsonText = jsonText.replace(/^\s*<!\[CDATA\[/,'').replace(/\]\]>\s*$/,"");
+              return JSON.parse(jsonText)
+            } catch(e) {}
+          }
+      }
+      return [];
+    }
+    
+    function fillBindings() {
+    
+        window.bindings = parseJSON('bindingsJSON');
+        var oLinks = document.getElementById('objectLinks');
+        
+        while (oLinks && oLinks.firstChild) {
+            oLinks.removeChild(oLinks.firstChild);
+        }
+       
+        for(var j = 0; j < window.objs.length; j++) {
+       		
+       		var obj = window.objs[j];
+	        var oLink = document.createElement("div");
+	       
+	        var oLinkTitle = document.createElement("div");
+	        oLinkTitle.className='linkTitle';
+	       
+	        oLinkTitle.appendChild(document.createTextNode(obj.labelPlural));
+	       
+	        oLink.appendChild(oLinkTitle);
+	        
+	        var oLinkButtons = document.createElement("div");
+	        oLinkButtons.className='linkButtons';
+	        
+	        var linkEnabled = obj.bindingName in window.bindings;
+	        
+	        var enableButton = document.createElement("input");
+	        enableButton.type = 'button'; 
+	        enableButton.value = 'Enable'
+	        if (linkEnabled) enableButton.disabled = true; 
+	        enableButton.addEventListener('click', 
+	        		addLink.bind(this,obj.name), false);
+	        
+	        var disableButton = document.createElement("input");
+	        disableButton.type = 'button'; 
+	        disableButton.value = 'Disable' 
+	        if (!linkEnabled) disableButton.disabled = true;
+	        disableButton.addEventListener('click', 
+	        		removeLink.bind(this,obj.name), false);
+	        
+	        oLinkButtons.appendChild(enableButton);
+	        oLinkButtons.appendChild(disableButton);
+	        
+	        oLink.appendChild(oLinkButtons);
+	        
+	        oLinks.appendChild(oLink);
+		}        
+        
+        function addLink(name, e) {
+        	if (e && e.target && e.target.parentNode) {
+        		var linkButtons = e.target.parentNode;
+        		while (linkButtons.firstChild) {
+		            linkButtons.removeChild(linkButtons.firstChild);
+		        }
+		        var loadingImg = document.createElement('img');
+		        loadingImg.src = '{!$Resource.Wrike_LoadingIcon}';
+		        linkButtons.appendChild(loadingImg);
+		        
+		        linkButtons.appendChild(
+		        		document.createTextNode(" Enabling..."));
+		       	
+        	}
+        	disableButtons();
+        	addBinding(name);
+        }
+        function removeLink(name, e){
+        	if (e && e.target && e.target.parentNode) {
+        		var linkButtons = e.target.parentNode;
+        		while (linkButtons.firstChild) {
+		            linkButtons.removeChild(linkButtons.firstChild);
+		        }
+		        var loadingImg = document.createElement('img');
+		        loadingImg.src = '{!$Resource.Wrike_LoadingIcon}';
+		        linkButtons.appendChild(loadingImg);
+		        
+		        linkButtons.appendChild(
+		        		document.createTextNode(" Disabling..."));
+		        
+        	}
+        	disableButtons();
+        	deleteBinding(name);
+        }        
+    }
+    
+    function promptToDeleteBinding(name) {
+        if (window.confirm("Linking data will be erased. Are you sure?")) {
+            deleteBinding(name);
+        }
+    }
+    
+    function afterAction() {
+        enableButtons();
+        
+        var oldcount = Object.keys(window.bindings).length;
+        fillBindings();
+        
+        if (oldcount == Object.keys(window.bindings).length) {
+            window.alert("Binding was not deleted. Please remove all references "+
+                "to VisualForce page from layouts and other objects.");
+        }
+        
+        if (Object.keys(window.bindings).length == 0)
+            openNewBindingSection();
+    }
+    
+    function disableButtons() {
+    	var ee = document.querySelectorAll("#objectLinks input[type]");
+    	for(var i = 0; i<ee.length; i++) {
+    		ee.item(i).disabled=true;
+    	}
+    	
+    }
+    
+    function enableButtons() {
+    	var ee = document.querySelectorAll("#objectLinks input[type]");
+    	for(var i = 0; i<ee.length; i++) {
+    		ee.item(i).disabled=false;
+    	}
+    }
+    
+    function checkLinks() {
+        if (Object.keys(window.bindings).length > 0) {
+            alert("Please, remove your links first");
+            return false;
+        }
+        return true;     
+    } 
+    
+    function applyTemplateParameter(value, fields) {
+        
+        var matched = false,
+            
+            result = value.replace(
+            /\{\{(\w+)\}\}/g,
+            function(match, fieldName) {
+                matched = true;
+                return fields[fieldName] ? fields[fieldName] : '';
+            });
+
+        return matched? result : null;
+    }
+    
+    function applyTemplate(templateElement, fields) {
+
+        var element = templateElement.cloneNode(true);
+        
+        walkFragment(element, function(node) {
+            if (node.nodeType == Node.TEXT_NODE) {
+
+                var newNodeValue =
+                    applyTemplateParameter(node.nodeValue, fields);
+                
+                if (newNodeValue != null) {
+                     node.nodeValue = newNodeValue;
+                }
+            }
+            else if (node.nodeType == Node.ELEMENT_NODE) {
+                var attrs = node.attributes;
+
+                for(var i=0; i < attrs.length; i++) {
+                    var newValue =
+                        applyTemplateParameter(attrs[i].value, fields);
+                    
+                    if (newValue != null) {
+                         attrs[i].value = newValue;
+                    }
+                }
+            }
+        });
+
+        return element;
+    }
+
+    function walkFragment(fragment, nodeHandler) {
+
+        for (var node = fragment; node; ) {
+            
+            nodeHandler(node);
+            
+            if (node.firstChild)
+                node = node.firstChild
+            else {
+                while(node && !node.nextSibling) {
+                    node = node.parentNode;
+                }
+                node = node? node.nextSibling : node;
+            }
+        }
+    }
+    
+    function confirmDisconnect() {
+    
+	    var warningMessage = 'This Wrike account is currently linked to your Salesforce account. ' +
+	                     'Disconnecting it will permanently erase all existing connections between your Salesforce records and Wrike folders. ' +
+	                     'If you decide to reconnect this Wrike account later, you\'ll need to link all your Salesforce records to your Wrike folders once again. ' +
+	                     'Are you sure you want to disconnect {!JSINHTMLENCODE(accountName)}?';
+	    
+	    return confirm(warningMessage);
+    }
+    
+</script>
+<div class="bPageTitle">
+    <div class="ptBody">
+        <div class="content">    
+            <img src="/s.gif" alt="Wrike" class="pageTitleIcon wrikeIcon" title="Wrike"/>
+            <h1 class="pageType clean-ml">Package settings<span class="titleSeparatingColon">:</span></h1>
+            <h2 class="pageDescription clean-ml">Wrike Integraton Beta</h2>
+            <div class="blank">&nbsp;</div>
+                        
+        </div>
+        <div class="links">
+            <!-- <a href="#" class="configLinks zen-deemphasize" title="Tell me more! (New Window)">Tell me more!</a>
+             | <a href="#" title="Help for this Page (New Window)"><span class="helpLink">Help for this Page</span>
+             <img src="/s.gif" alt="" class="helpIcon"/></a> -->
+             
+        </div>
+    </div>
+</div>
+	
+	<apex:form id="errors">
+       <apex:outputPanel id="errorMessagesPanel">
+           <apex:pageMessages id="errorMessages"/>
+       </apex:outputPanel>
+       <apex:actionFunction name="rerenderErrorMessages" action="{!addErrorsToPage}" rerender="errorMessagesPanel" />       
+    </apex:form>
+
+<apex:outputPanel rendered="{!NOT(isError)}">
+	
+<div id="connectBlock">
+<apex:form target="_top"  rendered="{!NOT(isAuthorized)}">
+  <!--  <apex:pageBlock title="Connect to Wrike" mode="detail">
+        <apex:outputPanel layout="block">
+          <p style="margin-left:30%;padding-left:10px" class="description">
+            In order to setup the integration between your Salesforce Organization and your company's Wrike account you need to first connect your personal Wrike profile and give consent for Salesforce to access to your data.
+            <br/><br/>
+            You can learn more about the integration on <a href="https://www.wrike.com/help/salesforce/" target="_blank">Wrike Help pages</a>. You can also <a href="https://cdn.wrike.com/resources/Wrike_Salesforce_Integration_Manual.pdf" target="_blank">download the manual</a> which will guide you through setup.
+          </p>
+        </apex:outputPanel>
+        <apex:pageBlockButtons location="top">
+              <apex:commandButton action="{!authorize}" value="Connect" id="authorizeButton"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>-->
+    
+    <table id="authorizeMenu"><tr>
+    <td class="leftCol">
+    <div class="wrikeTopMenuBlock">                                
+    <apex:pageBlock title="Connect to Wrike" mode="detail">
+            <apex:outputPanel layout="block">
+          <p>
+            To connect your Salesforce Organization and your company's Wrike account, log into your personal Wrike profile and allow Salesforce to access your data.
+          </p>
+        </apex:outputPanel>
+        <apex:pageBlockButtons location="top">
+              <apex:commandButton action="{!authorize}" value="Connect" id="authorizeButton"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>   
+    </div>
+    </td>
+    
+    <td class="rightCol">
+    <div class="wrikeTopMenuBlock">                                
+    <apex:pageBlock title="Learn more" mode="detail">
+         <apex:outputPanel layout="block">
+          <p>
+          Learn more about this integration on <a class="actionLink" href="https://www.wrike.com/help/salesforce/" target="_blank">Wrike's Help Center</a> 
+          or <a class="actionLink" href="https://cdn.wrike.com/resources/Wrike_Salesforce_Integration_Manual.pdf" target="_blank">download the setup manual</a>.
+          </p>
+        </apex:outputPanel>
+    </apex:pageBlock>   
+    </div>
+    </td>
+</tr></table>    
+    
+    
+</apex:form>
+</div>
+
+<apex:outputPanel rendered="{!isAuthorized}">	
+
+
+<apex:form target="_top">    
+
+<table id="wrikeTopMenu"><tr>
+    <td class="leftCol">
+    <div class="wrikeTopMenuBlock">                                
+    <apex:pageBlock title="Connected user {!IF(NOT(isWrikeAccountLinked), '', 'and account')}" mode="detail">
+            <p>User <i>{!userName}</i>
+            <apex:outputPanel layout="inline" rendered="{!isWrikeAccountLinked}"><br></br>
+                from Wrike account <i>{!accountName}</i></apex:outputPanel>
+            </p>
+
+        <apex:pageBlockButtons location="top">
+            <apex:commandButton action="{!disconnectUser}" value="Disconnect" id="disconnectUser" onclick="if(!confirmDisconnect()) { return false; }"/>
+           <!--  <apex:commandButton action="{!disconnectAccount}" value="Disconnect Account" id="disconnectAccount"
+                rendered="{!isWrikeAccountLinked && hasMultipleAccounts}" onclick="if(!confirmDisconnect()) { return false; }"/> -->
+        </apex:pageBlockButtons>
+    </apex:pageBlock>   
+    </div>
+    </td>
+    
+    <td class="insideCol">
+    <div class="wrikeTopMenuBlock">  
+    <apex:pageBlock title="Manage Templates" mode="detail">
+
+            <p>Link to project templates in Wrike so your users can select from standardized project types.</p>
+
+        <apex:pageBlockButtons location="top">
+            <apex:commandButton action="{!redirectToTemplateManager}" value="Setup Templates" disabled="{!NOT(isWrikeAccountLinked)}"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    </div>
+    </td> 
+    
+    <td class="rightCol">
+    <div class="wrikeTopMenuBlock">
+    <apex:pageBlock title="Export settings and update package" mode="detail">
+
+            <p>Backup your current settings and install updated package.</p>
+
+        <apex:pageBlockButtons location="top">
+            <apex:commandButton action="{!redirectToImport}" value="Start"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    </div>
+    </td>
+    
+</tr></table>    
+</apex:form>
+
+
+<div id="accountBlock">
+
+<apex:form target="_top" rendered="{!NOT(isWrikeAccountLinked)}">
+    <apex:pageBlock title="Connect Wrike Account" mode="detail">
+        <table border="0" cellpadding="0" cellspacing="0"><tbody>
+            <tr><th class="pbTitle">Select Account</th>
+            <td class="pbValue">
+                <select id="settingsAccount" name="accountId"></select>
+            </td></tr>
+            <tr><th class="pbTitle">Tasks and Folders Sharing</th>
+            <td class="pbValue">
+                <p>Connecting your Wrike account will create a new Salesforce folder in Wrike. This folder will be shared with all regular users in your account (your "My Team" group). It won't be shared with Collaborators. You can manually change this folder's sharing settings in Wrike at any time. For more details on folder sharing, check out <a href="https://www.wrike.com/help/share-a-folder/" target="_blank">our Help center</a>.</p>
+            </td></tr>
+            </tbody>
+        </table>
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton action="{!saveAccount}"
+                value="Select" id="saveSettingsButton" immediate="true"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+</apex:form>
+</div>
+
+<apex:form target="_top" rendered="{!isWrikeAccountLinked}">
+    <apex:pageBlock title="Choose Objects to Link with Wrike" mode="detail">
+        <div id="bindingsContainer">
+        </div>
+        <apex:actionFunction name="addBinding" action="{!addBinding}"
+           oncomplete="afterAction" reRender="bindingRefresh, errorMessagesPanel">
+           <apex:param name="name" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="deleteBinding" action="{!deleteBinding}"
+           oncomplete="afterAction()" reRender="bindingRefresh, errorMessagesPanel">
+           <apex:param name="name" value=""/>
+        </apex:actionFunction>
+        <!--apex:pageBlockButtons location="top" rendered="{!state != 'no_account'}">
+            <apex:commandButton action="{!refresh}" value="Backup Bindings" id="backupButton"/>
+        </apex:pageBlockButtons-->
+        <div id="newBindingBlock">
+            <table border="0" cellpadding="0" cellspacing="0"><tbody>
+                <tr><th></th>
+                    <td>Please select which Salesforce Objects you'd like to link with Wrike tasks.</td>
+                </tr>
+                <tr><th class="pbTitle">SalesForce Objects</th>
+                <td class="pbValue">
+                    <div id="objectLinks"></div>
+                </td></tr>
+                <tr><th class="pbTitle">Notice</th>
+                <td class="pbValue">
+                    For each selected Object type a folder with the name of the Object type will be created inside your Salesforce folder Wrike. Each Salesforce record that has tasks associated with it will have a sub-folder in Wrike inside the Object folder (e.g. Salesforce/Opportunities/ABC Company). Initially all the folders will have the same sharing settings as your Salesforce folder. <a href="https://www.wrike.com/help/share-a-folder/" target="_blank">Click here</a> for more information on Folder permissions in Wrike.
+                    <br/><br/>
+                    Once these folders have been created, you can move them anywhere you'd like in your Wrike account and they will stay linked. If you delete them all of the existing tasks will no longer be available in Salesforce
+                </td></tr>
+                </tbody>
+            </table>
+        </div>
+    </apex:pageBlock>
+</apex:form>
+</apex:outputPanel>	
+</apex:outputPanel>
+</apex:page>

@@ -1,0 +1,259 @@
+<aura:component implements= "force:lightningQuickAction,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,lightning:isUrlAddressable" 
+                controller="AddRfiDetail">
+    <aura:handler name="init" value="{!this}" action="{!c.loadData}"/>
+    <aura:attribute name="RFIDetailListlst" type="RFI_Detail__c[]" description="store RFIDetail records list"/>
+    <aura:attribute name = "objectNeeded" type = "RFI_Detail__c" default = "{sobjectType : 'RFI_Detail__c'}"/>
+    <aura:attribute name = "fieldNeeded" type = "String" default = "RFI_Item_Status__c" />
+    <aura:attribute name="status" type="String" default="open"/>
+    <aura:attribute name = "result" type = "String"/>
+    <aura:attribute name = "showRfiDetails" type = "Boolean" default = "false"/>
+    <aura:attribute name = "showCatMissing" type = "Boolean" default = "false"/>
+    <aura:attribute name = "showIncorrectData" type = "Boolean" default = "false"/>
+    
+    
+    <!-- dialog box display -->
+    <ltng:require styles="{!$Resource.Dialogbox}"/>
+    
+    <lightning:navigation aura:id="navService"/>
+    
+    <!-- RFI OBJECT DETAIL TABLE -->
+    
+    <aura:if isTrue="{!or(v.showRfiDetails, and( v.showCatMissing, v.showIncorrectData))}" >     
+        <div class="slds-p-around--large">
+            <!--https://www.lightningdesignsystem.com/components/data-tables/-->
+            <lightning:layout horizontalAlign="center" class="x-large btm-brdr">
+                <lightning:button label="Save" onclick="{!c.saveRTFDetails}"/>
+            </lightning:layout>
+            <br></br>
+            <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                <thead>
+                    <tr class="slds-text-title">
+                        <th style="width:3.25rem;" class="slds-text-align--right">
+                            <div class="slds-form-element">
+                                <div class="slds-form-element__control">
+                                    <label class="slds-checkbox">
+                                        <!--header checkbox for select all-->
+                                        <ui:inputCheckbox aura:id="box3" change="{!c.selectAllRFI}"/>
+                                        <span class="slds-checkbox--faux"></span>
+                                        <span class="slds-form-element__label text"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="First Name">Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Category Classification">RFI Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="RFI Description">RFI Detail Description</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="RFI Item Status">Customer Comments</div>
+                        </th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    <aura:iteration items="{!v.RFIDetailListlst}" var="con">
+                        <tr>
+                            <th scope = "row">
+                                <div class="slds-form-element">
+                                    <div class="slds-form-element__control">
+                                        <label class="slds-checkbox">
+                                            <ui:inputCheckbox text="{!con.Id}"
+                                                              aura:id="boxPackrfi"/>
+                                            <span class="slds-checkbox--faux"></span>
+                                            <span class="slds-form-element__label text"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </th>
+                            <th scope="row">
+                                <div class="slds-truncate" title="Name">{!con.Name}</div>
+                            </th>
+                            
+                            <th scope="row">
+                                <div class="slds-truncate" title="RFI Name">{!con.RFI_Number__r.Name}</div>
+                            </th>
+                            <th scope="row">
+                                <div class="slds-truncate" title="RFI Detail Description">{!con.RFI_Detail_Description__c}</div>
+                            </th>
+                            <th>
+                                <div class="slds-truncate" title="Customer Comments">
+                                    <lightning:input text="{!con.Id}"
+                                                     onfocus="{! c.handleFocus }" onblur="{! c.handleBlur }" 
+                                                     value="{!con.Customer_Comments__c}"/>
+                                </div>
+                            </th>
+                            
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>
+        
+        <lightning:layout horizontalAlign="center" class="x-large btm-brdr">
+            <lightning:button label="Save" onclick="{!c.saveRTFDetails}"/>
+        </lightning:layout>
+    </aura:if>
+    
+    <!-- END OF RFI OBJECT DETAIL TABLE -->
+    
+    <!--Declare Attributes-->  
+    <aura:attribute name = "wrapperList" type = "object"/>
+    <aura:attribute name = "wrapperMissingCat" type = "object"/>
+    <aura:attribute name = "wrapperIncorrectCat" type = "object"/>
+    <!-- two value -->
+    <aura:attribute name = "selectedCategory" type = "Map" default = "{}"/>
+    <!--button show -->
+    <aura:attribute name = "parentOn" type = "Boolean" default = "false"/>
+    <aura:attribute name = "parentOff" type = "Boolean" default = "false"/>
+    <!-- dialog box display -->
+    <ltng:require styles="{!$Resource.Dialogbox}"/>
+    
+    <!--child component attribute -->
+    <aura:attribute name = "selectedPlant" type = "String[]" default = "[]"/>
+    
+    <lightning:layout class="slds-page-header slds-page-header--object-home" multipleRows="true" VerticalAlign="center" horizontalAlign="center">
+        
+     <aura:if isTrue="{!or(v.showCatMissing,and( v.showRfiDetails, v.showIncorrectData))}" >
+            <h1  class="slds-text-heading--medium">  <p> Select Missing/Incomplete Information </p></h1>
+            <div class="slds-p-around--large">
+                <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title">
+                            <th style="width:3.25rem;" class="slds-text-align--right">
+                                <div class="slds-form-element">
+                                    <div class="slds-form-element__control">
+                                        <label class="slds-checkbox">
+                                            <!--header checkbox for select all-->
+                                            <ui:inputCheckbox aura:id="box3" change="{!c.selectAllMissing}"/>
+                                            <span class="slds-checkbox--faux"></span>
+                                            <span class="slds-form-element__label text"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="First Name">Name</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Category Classification">Category Classification</div>
+                            </th>
+                            
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <aura:iteration items="{!v.wrapperMissingCat}" var="con">
+                            <tr>
+                                <th scope = "row">
+                                    <div class="slds-form-element">
+                                        <div class="slds-form-element__control">
+                                            <label class="slds-checkbox">
+                                                <ui:inputCheckbox text="{!con.lstRfiCat.Id}"
+                                                                  aura:id="boxPackMissing"/>
+                                                <span class="slds-checkbox--faux"></span>
+                                                <span class="slds-form-element__label text"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!con.lstRfiCat.Name}">{!con.lstRfiCat.Name}</div>
+                                </th>
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!con.lstRfiCat.Category_Classification__c}">{!con.lstRfiCat.Category_Classification__c}</div>
+                                </th>     
+                                
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </div>
+            <div class="slds-float--right">
+            <lightning:button label="Next" onclick="{!c.next}" />
+            <lightning:button label="Cancel" onclick="{!c.doCancel}"/>
+         </div>
+        </aura:if>
+        
+        
+       <aura:if isTrue="{!or(v.showIncorrectData, and(v.showCatMissing, v.showRfiDetails))}" >
+            
+            <h1  class="slds-text-heading--medium">  <p> Select Incorrect Information </p></h1>
+            <div class="slds-p-around--large">
+                
+                <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th style="width:3.25rem;" class="slds-text-align--right">
+                                <div class="slds-form-element">
+                                    <div class="slds-form-element__control">
+                                        <label class="slds-checkbox">
+                                            <!--header checkbox for select all-->
+                                            <ui:inputCheckbox aura:id="box3" change="{!c.selectAll}"/>
+                                            <span class="slds-checkbox--faux"></span>
+                                            <span class="slds-form-element__label text"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="First Name">Name</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Category Classification">Category Classification</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <aura:iteration items="{!v.wrapperIncorrectCat}" var="con">
+                            <tr>
+                                <th scope = "row">
+                                    <div class="slds-form-element">
+                                        <div class="slds-form-element__control">
+                                            <label class="slds-checkbox">
+                                                <ui:inputCheckbox text="{!con.lstRfiCat.Id}"
+                                                                  aura:id="boxPack" />
+                                                <span class="slds-checkbox--faux"></span>
+                                                <span class="slds-form-element__label text"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!con.lstRfiCat.Name}">{!con.lstRfiCat.Name}</div>
+                                </th>
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!con.lstRfiCat.Category_Classification__c}">{!con.lstRfiCat.Category_Classification__c}</div>
+                                </th>      
+                                
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </div>
+            
+            <aura:if isTrue="{!v.parentOn == false}">
+                <!--aura:if isTrue="{!v.parentOff == true}"-->
+                <div class="slds-float--right">
+                    <lightning:button label="Previous" onclick="{!c.previous}" />
+                    <lightning:button label="RFI Details" onclick="{!c.getRFiData}" />
+                    <lightning:button label="Cancel" onclick="{!c.doCancel}"/>
+                </div>
+                </aura:if>
+            <!--/aura:if-->
+            <aura:if isTrue="{!v.parentOn == true}">
+                <!--aura:if isTrue="{!v.parentOff == false}">
+                    <lightning:button label="Previous" onclick="{!c.previous}" />
+                    <lightning:button label="RFI Details" onclick="{!c.getRFiData}" />
+                    <lightning:button label="Cancel" onclick="{!c.doCancel}"/>
+                </aura:if-->
+            </aura:if>
+        </aura:if>
+        
+    </lightning:layout>
+</aura:component>

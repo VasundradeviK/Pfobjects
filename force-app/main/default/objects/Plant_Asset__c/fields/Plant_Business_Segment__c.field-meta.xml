@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Plant_Business_Segment__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Select Business Unit for the Plant from the picklist</inlineHelpText>
+    <label>Business Unit</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>BESS</fullName>
+                <default>false</default>
+                <label>BESS</label>
+            </value>
+            <value>
+                <fullName>DG</fullName>
+                <default>false</default>
+                <label>DG</label>
+            </value>
+            <value>
+                <fullName>EV</fullName>
+                <default>false</default>
+                <label>EV</label>
+            </value>
+            <value>
+                <fullName>Resi</fullName>
+                <default>false</default>
+                <label>Resi</label>
+            </value>
+            <value>
+                <fullName>ROC-Not Monitored</fullName>
+                <default>false</default>
+                <label>ROC-Not Monitored</label>
+            </value>
+            <value>
+                <fullName>Utility</fullName>
+                <default>false</default>
+                <label>Utility</label>
+            </value>
+            <value>
+                <fullName>WWS Construction</fullName>
+                <default>false</default>
+                <label>WWS Construction</label>
+            </value>
+            <value>
+                <fullName>WWS Solar</fullName>
+                <default>false</default>
+                <label>WWS Solar</label>
+            </value>
+            <value>
+                <fullName>WWS Wind</fullName>
+                <default>false</default>
+                <label>WWS Wind</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

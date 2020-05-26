@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Type__c</fullName>
+    <description>Release Note Type</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Designate your Release Note as an Enhancement, Fix or Known Issue.</inlineHelpText>
+    <label>Type</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Enhancement</fullName>
+                <default>false</default>
+                <label>Enhancement</label>
+            </value>
+            <value>
+                <fullName>Fix</fullName>
+                <default>false</default>
+                <label>Fix</label>
+            </value>
+            <value>
+                <fullName>Known Issue</fullName>
+                <default>false</default>
+                <label>Known Issue</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

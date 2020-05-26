@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Asset_SubClass__c</fullName>
+    <externalId>false</externalId>
+    <label>Asset SubClass</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Asset_Class__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Automatic Transfer Switch</fullName>
+                <default>false</default>
+                <label>Automatic Transfer Switch</label>
+            </value>
+            <value>
+                <fullName>Auxiliary system</fullName>
+                <default>false</default>
+                <label>Auxiliary system</label>
+            </value>
+            <value>
+                <fullName>Battery Bank</fullName>
+                <default>false</default>
+                <label>Battery Bank</label>
+            </value>
+            <value>
+                <fullName>Capacitor Bank</fullName>
+                <default>false</default>
+                <label>Capacitor Bank</label>
+            </value>
+            <value>
+                <fullName>Car</fullName>
+                <default>false</default>
+                <label>Car</label>
+            </value>
+            <value>
+                <fullName>Circuit</fullName>
+                <default>false</default>
+                <label>Circuit</label>
+            </value>
+            <value>
+                <fullName>Circuit Breaker</fullName>
+                <default>false</default>
+                <label>Circuit Breaker</label>
+            </value>
+            <value>
+                <fullName>Combiner Box</fullName>
+                <default>false</default>
+                <label>Combiner Box</label>
+            </value>
+            <value>
+                <fullName>Computer</fullName>
+                <default>false</default>
+                <label>Computer</label>
+            </value>
+            <value>
+                <fullName>Data Acquisition System</fullName>
+                <default>false</default>
+                <label>Data Acquisition System</label>
+            </value>
+            <value>
+                <fullName>Data logger</fullName>
+                <default>false</default>
+                <label>Data logger</label>
+            </value>
+            <value>
+                <fullName>Disconnect Switch</fullName>
+                <default>false</default>
+                <label>Disconnect Switch</label>
+            </value>
+            <value>
+                <fullName>EV</fullName>
+                <default>false</default>
+                <label>EV</label>
+            </value>
+            <value>
+                <fullName>Firewall</fullName>
+                <default>false</default>
+                <label>Firewall</label>
+            </value>
+            <value>
+                <fullName>Fossil</fullName>
+                <default>false</default>
+                <label>Fossil</label>
+            </value>
+            <value>
+                <fullName>Freon</fullName>
+                <default>false</default>
+                <label>Freon</label>
+            </value>
+            <value>
+                <fullName>Fuse</fullName>
+                <default>false</default>
+                <label>Fuse</label>
+            </value>
+            <value>
+                <fullName>Generator</fullName>
+                <default>false</default>
+                <label>Generator</label>
+            </value>
+            <value>
+                <fullName>Heating Ventilation and Air Conditioning</fullName>
+                <default>false</default>
+                <label>Heating Ventilation and Air Conditioning</label>
+            </value>
+            <value>
+                <fullName>Inverter</fullName>
+                <default>false</default>
+                <label>Inverter</label>
+            </value>
+            <value>
+                <fullName>Inverter Block</fullName>
+                <default>false</default>
+                <label>Inverter Block</label>
+            </value>
+            <value>
+                <fullName>Inverter Module</fullName>
+                <default>false</default>
+                <label>Inverter Module</label>
+            </value>
+            <value>
+                <fullName>Inverter Pad</fullName>
+                <default>false</default>
+                <label>Inverter Pad</label>
+            </value>
+            <value>
+                <fullName>IV Curve Tracer</fullName>
+                <default>false</default>
+                <label>IV Curve Tracer</label>
+            </value>
+            <value>
+                <fullName>Junction box</fullName>
+                <default>false</default>
+                <label>Junction box</label>
+            </value>
+            <value>
+                <fullName>Lift Station</fullName>
+                <default>false</default>
+                <label>Lift Station</label>
+            </value>
+            <value>
+                <fullName>Load Tap Changer</fullName>
+                <default>false</default>
+                <label>Load Tap Changer</label>
+            </value>
+            <value>
+                <fullName>Main Plant Transformer</fullName>
+                <default>false</default>
+                <label>Main Plant Transformer</label>
+            </value>
+            <value>
+                <fullName>Manhole</fullName>
+                <default>false</default>
+                <label>Manhole</label>
+            </value>
+            <value>
+                <fullName>Meter</fullName>
+                <default>false</default>
+                <label>Meter</label>
+            </value>
+            <value>
+                <fullName>Metering</fullName>
+                <default>false</default>
+                <label>Metering</label>
+            </value>
+            <value>
+                <fullName>Met Station</fullName>
+                <default>false</default>
+                <label>Met Station</label>
+            </value>
+            <value>
+                <fullName>Module</fullName>
+                <default>false</default>
+                <label>Module</label>
+            </value>
+            <value>
+                <fullName>MonitoringandControl</fullName>
+                <default>false</default>
+                <label>MonitoringandControl</label>
+            </value>
+            <value>
+                <fullName>Motorcycle</fullName>
+                <default>false</default>
+                <label>Motorcycle</label>
+            </value>
+            <value>
+                <fullName>Network Area Storage</fullName>
+                <default>false</default>
+                <label>Network Area Storage</label>
+            </value>
+            <value>
+                <fullName>Network Switch</fullName>
+                <default>false</default>
+                <label>Network Switch</label>
+            </value>
+            <value>
+                <fullName>Operations and Maintenance Building</fullName>
+                <default>false</default>
+                <label>Operations and Maintenance Building</label>
+            </value>
+            <value>
+                <fullName>Power Point Controller</fullName>
+                <default>false</default>
+                <label>Power Point Controller</label>
+            </value>
+            <value>
+                <fullName>Power Supply</fullName>
+                <default>false</default>
+                <label>Power Supply</label>
+            </value>
+            <value>
+                <fullName>Programmable Logic Controller</fullName>
+                <default>false</default>
+                <label>Programmable Logic Controller</label>
+            </value>
+            <value>
+                <fullName>Racking system</fullName>
+                <default>false</default>
+                <label>Racking system</label>
+            </value>
+            <value>
+                <fullName>Recombiner Box</fullName>
+                <default>false</default>
+                <label>Recombiner Box</label>
+            </value>
+            <value>
+                <fullName>Relay</fullName>
+                <default>false</default>
+                <label>Relay</label>
+            </value>
+            <value>
+                <fullName>Remote Input/Output</fullName>
+                <default>false</default>
+                <label>Remote Input/Output</label>
+            </value>
+            <value>
+                <fullName>SCADA/DAS</fullName>
+                <default>false</default>
+                <label>SCADA/DAS</label>
+            </value>
+            <value>
+                <fullName>Server Computer</fullName>
+                <default>false</default>
+                <label>Server Computer</label>
+            </value>
+            <value>
+                <fullName>Server Rack</fullName>
+                <default>false</default>
+                <label>Server Rack</label>
+            </value>
+            <value>
+                <fullName>Solar PV</fullName>
+                <default>false</default>
+                <label>Solar PV</label>
+            </value>
+            <value>
+                <fullName>Solar Thermal</fullName>
+                <default>false</default>
+                <label>Solar Thermal</label>
+            </value>
+            <value>
+                <fullName>Storage</fullName>
+                <default>false</default>
+                <label>Storage</label>
+            </value>
+            <value>
+                <fullName>Storm Water Drain</fullName>
+                <default>false</default>
+                <label>Storm Water Drain</label>
+            </value>
+            <value>
+                <fullName>String</fullName>
+                <default>false</default>
+                <label>String</label>
+            </value>
+            <value>
+                <fullName>Sub-array</fullName>
+                <default>false</default>
+                <label>Sub-array</label>
+            </value>
+            <value>
+                <fullName>Sub Class 1</fullName>
+                <default>false</default>
+                <label>Sub Class 1</label>
+            </value>
+            <value>
+                <fullName>Substation</fullName>
+                <default>false</default>
+                <label>Substation</label>
+            </value>
+            <value>
+                <fullName>Switch</fullName>
+                <default>false</default>
+                <label>Switch</label>
+            </value>
+            <value>
+                <fullName>Switchgear</fullName>
+                <default>false</default>
+                <label>Switchgear</label>
+            </value>
+            <value>
+                <fullName>Tracker</fullName>
+                <default>false</default>
+                <label>Tracker</label>
+            </value>
+            <value>
+                <fullName>Tracker Controller</fullName>
+                <default>false</default>
+                <label>Tracker Controller</label>
+            </value>
+            <value>
+                <fullName>Tracker Motor</fullName>
+                <default>false</default>
+                <label>Tracker Motor</label>
+            </value>
+            <value>
+                <fullName>Trailer</fullName>
+                <default>false</default>
+                <label>Trailer</label>
+            </value>
+            <value>
+                <fullName>Transformer</fullName>
+                <default>false</default>
+                <label>Transformer</label>
+            </value>
+            <value>
+                <fullName>Truck</fullName>
+                <default>false</default>
+                <label>Truck</label>
+            </value>
+            <value>
+                <fullName>Uninterruptible Power Supply</fullName>
+                <default>false</default>
+                <label>Uninterruptible Power Supply</label>
+            </value>
+            <value>
+                <fullName>Weather Station</fullName>
+                <default>false</default>
+                <label>Weather Station</label>
+            </value>
+            <value>
+                <fullName>Wind</fullName>
+                <default>false</default>
+                <label>Wind</label>
+            </value>
+            <value>
+                <fullName>Wind Turbine</fullName>
+                <default>false</default>
+                <label>Wind Turbine</label>
+            </value>
+            <value>
+                <fullName>Recloser</fullName>
+                <default>false</default>
+                <label>Recloser</label>
+            </value>
+            <value>
+                <fullName>Block</fullName>
+                <default>false</default>
+                <label>Block</label>
+            </value>
+            <value>
+                <fullName>UAV</fullName>
+                <default>false</default>
+                <label>UAV</label>
+            </value>
+            <value>
+                <fullName>Imaging</fullName>
+                <default>false</default>
+                <label>Imaging</label>
+            </value>
+            <value>
+                <fullName>Electrical Testing</fullName>
+                <default>false</default>
+                <label>Electrical Testing</label>
+            </value>
+            <value>
+                <fullName>Fiber Optic</fullName>
+                <default>false</default>
+                <label>Fiber Optic</label>
+            </value>
+            <value>
+                <fullName>DGA</fullName>
+                <default>false</default>
+                <label>DGA</label>
+            </value>
+            <value>
+                <fullName>General</fullName>
+                <default>false</default>
+                <label>General</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <controllingFieldValue>Auxiliary system</controllingFieldValue>
+            <valueName>Auxiliary system</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Capacitor Bank</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Circuit</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Circuit Breaker</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Disconnect Switch</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Fuse</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Generator</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Heating Ventilation and Air Conditioning</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Inverter</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Inverter Block</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Inverter Module</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Inverter Pad</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Junction box</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Load Tap Changer</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Main Plant Transformer</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Meter</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Power Supply</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Relay</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Switch</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Tracker Controller</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Tracker Motor</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Transformer</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Wind Turbine</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Recloser</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC system</controllingFieldValue>
+            <valueName>Block</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Battery Bank</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Combiner Box</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>IV Curve Tracer</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Module</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Racking system</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Recombiner Box</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>String</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Sub-array</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Tracker</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DC system</controllingFieldValue>
+            <valueName>Uninterruptible Power Supply</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Automatic Transfer Switch</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Computer</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Data Acquisition System</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Data logger</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Firewall</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Metering</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Met Station</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Network Area Storage</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Network Switch</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Power Point Controller</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Programmable Logic Controller</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Remote Input/Output</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Server Computer</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Server Rack</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DAS/SCADA</controllingFieldValue>
+            <valueName>Weather Station</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Building</controllingFieldValue>
+            <valueName>Operations and Maintenance Building</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Building</controllingFieldValue>
+            <valueName>Substation</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Building</controllingFieldValue>
+            <valueName>Switchgear</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Plant</controllingFieldValue>
+            <valueName>EV</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Plant</controllingFieldValue>
+            <valueName>Fossil</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Plant</controllingFieldValue>
+            <valueName>Solar PV</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Plant</controllingFieldValue>
+            <valueName>Solar Thermal</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Plant</controllingFieldValue>
+            <valueName>Storage</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Plant</controllingFieldValue>
+            <valueName>Wind</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Testing Equipment/Tools</controllingFieldValue>
+            <valueName>UAV</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Testing Equipment/Tools</controllingFieldValue>
+            <valueName>Imaging</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Testing Equipment/Tools</controllingFieldValue>
+            <valueName>Electrical Testing</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Testing Equipment/Tools</controllingFieldValue>
+            <valueName>Fiber Optic</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Testing Equipment/Tools</controllingFieldValue>
+            <valueName>DGA</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Testing Equipment/Tools</controllingFieldValue>
+            <valueName>General</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FSM_Release_2_13</fullName>
+    <columns>TITLE</columns>
+    <columns>Type__c</columns>
+    <columns>PUBLISH_STATUS</columns>
+    <columns>Original_Publication_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Release__c</field>
+        <operation>equals</operation>
+        <value>2.13</value>
+    </filters>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Knowledge__kav.Release_Note_Short</value>
+    </filters>
+    <filters>
+        <field>Product__c</field>
+        <operation>equals</operation>
+        <value>Field Service Management (FSM)</value>
+    </filters>
+    <label>FSM Release 2.13</label>
+</ListView>

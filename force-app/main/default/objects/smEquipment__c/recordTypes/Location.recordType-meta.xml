@@ -1,0 +1,1558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Location</fullName>
+    <active>true</active>
+    <label>Location</label>
+    <picklistValues>
+        <picklist>AC_UOM__c</picklist>
+        <values>
+            <fullName>Amps</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>KVA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MW</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Volts</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Watts</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>kW</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Asset_Class__c</picklist>
+        <values>
+            <fullName>AC system</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Alarm System</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Auxiliary system</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Building</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DAS%2FSCADA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DC system</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>FAA Light System</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fleet</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gearbox</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Generator</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hydraulic System</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ice System</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Meteorological Mast</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Nacelle</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pitch System</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plant</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rotor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>String</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Testing Equipment%2FTools</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yaw System</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Asset_SubClass__c</picklist>
+        <values>
+            <fullName>Automatic Transfer Switch</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Auxiliary system</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Battery Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Block</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Capacitor Bank</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Car</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Circuit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Circuit Breaker</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Combiner Box</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Computer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DGA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Data Acquisition System</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Data logger</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Disconnect Switch</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Electrical Testing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fiber Optic</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Firewall</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fossil</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Freon</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fuse</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>General</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Generator</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Heating Ventilation and Air Conditioning</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>IV Curve Tracer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Imaging</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inverter</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inverter Block</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inverter Module</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inverter Pad</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Junction box</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lift Station</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Load Tap Changer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Main Plant Transformer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manhole</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Met Station</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Meter</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Metering</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Module</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MonitoringandControl</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Motorcycle</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Network Area Storage</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Network Switch</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Operations and Maintenance Building</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Power Point Controller</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Power Supply</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Programmable Logic Controller</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Racking system</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Recloser</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Recombiner Box</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Relay</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Remote Input%2FOutput</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SCADA%2FDAS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Server Computer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Server Rack</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Solar PV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Solar Thermal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Storage</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Storm Water Drain</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>String</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sub Class 1</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sub-array</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Substation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Switch</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Switchgear</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tracker</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tracker Controller</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tracker Motor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Trailer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Transformer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Truck</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>UAV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Uninterruptible Power Supply</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Weather Station</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wind</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wind Turbine</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Continent__c</picklist>
+        <values>
+            <fullName>002 - Africa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>009 - Oceania</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>019 - Americas</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>142 - Asia</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>150 - Europe</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>DC_UOM__c</picklist>
+        <values>
+            <fullName>Amps</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>KVA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MW</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Volts</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Watts</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>kW</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Operator__c</picklist>
+        <values>
+            <fullName>AMEC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bay4</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Biosar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Blattner Energy</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Borrego Solar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Buenavista Renewables</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CCR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CED OpCo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CalCom</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Carolina Solar Services%2C LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Coldwell Solar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Coles Electric</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cupertino Electric</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Depcom</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DynaSolar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>E%2EON</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EDF</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ESA Renewables%2C LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-Assurance Power Systems</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-Besco</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-Electrical Power and Controls</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-FSGI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-Gervais Electric</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-JNS Power and Control Systems</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-K%26R Construction Specialties%2C Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-Kenmor Electric</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-Maximum Solar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-Mona Electrical Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-Penco Electrical Contractors</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-Puget Sound Solar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-Smart Charge America</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV-Union Electric</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ecoplexus%2C Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Elecnor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Enerparc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>First Solar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GES</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GPS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Global Resource Options dba groSolar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Goldwind</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Green Alternatives%2C Inc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Green Energy Maintenance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Greenbacker Capital</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GroSolar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>HDEC Engineering Ltd</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hawa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Heelstone Services%2C LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Helix</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Immodo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Juwi</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Kana Engineering Group</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lightwave</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MBL Energy</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MaxGen</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Miller Brothers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mortensen</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Namaste</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>O2 Energies</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Oswald</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PV Pros</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PVCA %28Photovoltaics California%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Power Factor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Power Factors LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Q-Cells</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RCR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>REC Solar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RES Americas</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RESCO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ray Angelini LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rosendin</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SOLV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Saunders Electricals</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sempra</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sharp</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Soltage%2C LLC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Stronghold</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SunEdison</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SunPower</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Swinerton</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Systems Electric</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TVAEnergy</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tangent Energy</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Undefined</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>United</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WWS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>X-Elio</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>i1energy</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Plant_Business_Segment__c</picklist>
+        <values>
+            <fullName>BESS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ROC-Not Monitored</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Resi</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WWS Construction</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WWS Solar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WWS Wind</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Service_Region__c</picklist>
+        <values>
+            <fullName>2085-NSW</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2085-QLD</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2085-SA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2085-VIC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2085-WA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AZ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CA - Central</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CA - North</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CA - South</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Central</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - AZ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - CA - Central</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - CA - North</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - CA - South</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - CO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - CT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - DC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - DE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - FL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - GA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - HI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - IL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - MA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - MD</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - MN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - MO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - MT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - NC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - NE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - NH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - NJ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - NM</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - NV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - NY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - OH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - ON</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - OR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - PA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - PR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - RI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - SC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - TX</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - UT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - VA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - VT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - WA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DG - WI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - AL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - AR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - AZ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - CA - Central</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - CA - North</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - CA - South</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - CO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - CT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - DC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - DE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - FL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - GA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - HI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - IA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - ID</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - IL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - IN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - KS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - KY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - LA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - MA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - MD</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - ME</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - MI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - MN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - MO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - MS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - MT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - NC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - NE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - NH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - NJ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - NM</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - NV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - NY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - OH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - OK</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - ON - Central</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - ON - Eastern</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - ON - Western</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - OR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - PA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - RI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - SC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - TBD</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - TN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - TX</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - UT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - VA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - VT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - WA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>EV - WI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>East</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>FL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>HI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>IN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MBS-Central</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MBS-Mid-Atlantic</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MBS-Northeast</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MBS-Southeast</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MBS-Texas</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MBS-West</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MD</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Midwest</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mountain West</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NC - BES</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NC - Northeast</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NC - Southeast</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NC - West</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NJ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NM</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>North Atlantic</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PF-Demo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pacific Northwest</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Residential</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>South Atlantic</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Southwest</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TBD</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TX</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Texas</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>UT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility -</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - AZ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - CA - Central</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - CA - North</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - CA - South</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - CO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - CT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - FL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - GA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - IN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - MN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - NC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - NJ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - NV</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - NY</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - OH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - OR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - TBD</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - TN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - TX</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Utility - UT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>VA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>VT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WWS %E2%80%93 Iowa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WWS %E2%80%93 Kansas</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WWS %E2%80%93 North East</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WWS %E2%80%93 Northern California</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WWS %E2%80%93 South East</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WWS %E2%80%93 Texas</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WWS - Construction</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WWS - Main</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>West</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

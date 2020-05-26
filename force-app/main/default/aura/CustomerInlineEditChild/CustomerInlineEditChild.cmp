@@ -1,0 +1,88 @@
+<aura:component controller="InlineEditHandler">
+	 <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>    
+    <aura:attribute name="objInfoForPicklistValues" type="RFI_Detail__c" default="{sobjectType : 'RFI_Detail__c'}" description="object information to fetch picklist values"/>
+    <aura:attribute name="RFIItemStatusPicklistOpts" type="string[]" description="store picklist options values"/>
+    <aura:attribute name="showSaveCancelBtn" type="boolean"/>
+    <aura:attribute name="showErrorClass" type="boolean" default="false"/>
+    <aura:attribute name="makerequired" type="boolean" default="false"/>
+    <aura:attribute name="sNo" type="string" />
+    <aura:attribute name="CustomerCommentsEditMode" type="boolean" default="false" />
+    <aura:attribute name="CancelcannnotcompletedescriptionEditMode" type="boolean" default="false" />
+    <aura:attribute name="RFIItemStatusEditMode" type="boolean" default="false" />
+    <aura:attribute name="singleRec" type="sobject" default="{'sobjectType' : 'RFI_Detail__c',
+                                                             'Name' : '','RFI_Detail_Description__c' : '','RFI_Item_Status__c': '','Cancel_Cannot_Complete_Description__c':'',
+                                                             'Implementation_Blocked__c': '','Onsite_Remediation_Required__c':'','Onsite_Remediation_Description__c':'',
+                                                             'Due_Date__c':'','Customer_Comments__c':''}"/>
+    <tr>
+        
+        <td><div class="slds-cell-wrap" title="Name">{!v.singleRec.Name}</div></td>
+        <td><div class="slds-cell-wrap" title="Name">{!v.singleRec.RFI_Detail_Description__c}</div></td>
+        
+        <td ondblclick="{!c.inlineEditCustomerComments}">
+            <span class="slds-grid slds-grid_align-spread">
+                <!-- show input and output section based on boolean flag -->
+                <aura:if isTrue="{!v.CustomerCommentsEditMode == false}" >
+                    <span class="slds-cell-wrap" title="Customer Comments">{!v.singleRec.Customer_Comments__c}</span>
+                    <button onclick="{!c.inlineEditCustomerComments}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Customer Comments">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case-->
+                    <aura:set attribute="else">
+                        <section  tabindex="0" class="slds-popover slds-popover_edit" role="dialog" style="position: absolute; top: 0px">
+                            <div class="slds-popover__body">
+                                <div class="slds-form-element slds-grid slds-wrap">
+                                    <div class="slds-form-element__control slds-grow">
+                                        <ui:inputText class="slds-input inputWidth"
+                                                      labelClass="slds-form-element__label slds-form-element__label_edit slds-no-flex"
+                                                      aura:id="inputCustomerComments"
+                                                      blur="{!c.closeCustomerCommentsBox}"
+                                                      change="{!c.onCustomerCommentsChange}"                                                      
+                                                      label="Comments"
+                                                      value="{!v.singleRec.Customer_Comments__c}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <span id="form-end" tabindex="0"></span>
+                        </section>
+                    </aura:set>
+                </aura:if>
+            </span>
+        </td>
+        <td ondblclick="{!c.inlineEditRFIItemStatus}">
+            <span class="slds-grid slds-grid_align-spread">
+                <!-- show input and output section based on boolean flag -->
+                <aura:if isTrue="{!v.RFIItemStatusEditMode == false}">
+                    <span class="slds-cell-wrap" title="RFI Item Status">{!v.singleRec.RFI_Item_Status__c}</span>
+                    <button onclick="{!c.inlineEditRFIItemStatus}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Rating">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case-->
+                    <aura:set attribute="else">
+                        <section  tabindex="0" class="slds-popover slds-popover_edit" role="dialog" style="position: absolute; top: 0px;width:80%">
+                            <div class="slds-popover__body">
+                                <div class="slds-form-element slds-grid slds-wrap">
+                                    <div class="slds-form-element__control slds-grow">
+                                        <label class="slds-form-element__label">Status</label>
+                                        <ui:inputSelect aura:id="RFIItemStatus"
+                                                        class="slds-select inputRatingWidth"
+                                                        blur="{!c.closeRFIItemStatusBox}"
+                                                        change="{!c.onRFIItemStatusChange}"
+                                                        value="{!v.singleRec.RFI_Item_Status__c}"
+                                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <span id="form-end" tabindex="0"></span>
+                        </section>
+                    </aura:set>
+                </aura:if>
+            </span>
+        </td>
+        
+        <td><div class="slds-cell-wrap" title="Name">{!v.singleRec.Cancel_Cannot_Complete_Description__c}</div></td>
+        <td><div class="slds-cell-wrap" title="Name">{!v.singleRec.Implementation_Blocked__c}</div></td>
+        <td><div class="slds-cell-wrap" title="Name">{!v.singleRec.Onsite_Remediation_Required__c}</div></td>
+        <td><div class="slds-cell-wrap" title="Name">{!v.singleRec.Onsite_Remediation_Description__c}</div></td>
+        <td><div class="slds-cell-wrap" title="Name">{!v.singleRec.Due_Date__c}</div></td>
+    </tr>    
+</aura:component>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Project_Lifecycle_status_to_none</fullName>
+    <active>true</active>
+    <description>User should not be able to change the project lifecycle status to None once a status has been populated</description>
+    <errorConditionFormula>AND(NOT( ISPICKVAL( PRIORVALUE( Project_Lifecycle_Status__c ) , &quot;&quot;) ), ISCHANGED(Project_Lifecycle_Status__c ),
+ ISPICKVAL( Project_Lifecycle_Status__c , &quot;&quot;))</errorConditionFormula>
+    <errorDisplayField>Project_Lifecycle_Status__c</errorDisplayField>
+    <errorMessage>User should not be able to change the project lifecycle status to None once a status has been populated</errorMessage>
+</ValidationRule>

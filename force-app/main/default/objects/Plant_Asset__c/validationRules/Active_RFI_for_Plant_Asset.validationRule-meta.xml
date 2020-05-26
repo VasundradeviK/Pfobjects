@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Active_RFI_for_Plant_Asset</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( Active_RFI__c  &lt;&gt; 0,  
+OR(ISPICKVAL( Project_Lifecycle_Status__c , &quot;Pending&quot;),
+ISPICKVAL( Project_Lifecycle_Status__c , &quot;Customer Validation&quot;),
+ISPICKVAL( Project_Lifecycle_Status__c , &quot;Operations&quot;),
+ISPICKVAL( Project_Lifecycle_Status__c , &quot;Decommissioned&quot;)) )</errorConditionFormula>
+    <errorMessage>This plant asset has an open RFI. Hence project life cycle status cannot be changed to Pending, Customer Validation, Operations &amp; Decommisioned</errorMessage>
+</ValidationRule>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Original_Publication_Date__c</fullName>
+    <description>Date when the original content was published</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Use this field when copying over content from other sources to show when the content was originally published.</inlineHelpText>
+    <label>Original Publication Date</label>
+    <required>false</required>
+    <type>DateTime</type>
+</CustomField>

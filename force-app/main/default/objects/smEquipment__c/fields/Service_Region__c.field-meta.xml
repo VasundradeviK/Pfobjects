@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Service_Region__c</fullName>
+    <description>The Service Region provides an ability to organize Asset Tags in a distributed workforce environment. Service Region is copied to the Work Order.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>The Service Region provides an ability to organize Asset Tags in a distributed workforce environment. Service Region is copied to the Work Order.</inlineHelpText>
+    <label>Service Region</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>2085-NSW</fullName>
+                <default>false</default>
+                <label>2085-NSW</label>
+            </value>
+            <value>
+                <fullName>2085-QLD</fullName>
+                <default>false</default>
+                <label>2085-QLD</label>
+            </value>
+            <value>
+                <fullName>2085-SA</fullName>
+                <default>false</default>
+                <label>2085-SA</label>
+            </value>
+            <value>
+                <fullName>2085-VIC</fullName>
+                <default>false</default>
+                <label>2085-VIC</label>
+            </value>
+            <value>
+                <fullName>2085-WA</fullName>
+                <default>false</default>
+                <label>2085-WA</label>
+            </value>
+            <value>
+                <fullName>AZ</fullName>
+                <default>false</default>
+                <label>AZ</label>
+            </value>
+            <value>
+                <fullName>CA - Central</fullName>
+                <default>false</default>
+                <label>CA - Central</label>
+            </value>
+            <value>
+                <fullName>CA - North</fullName>
+                <default>false</default>
+                <label>CA - North</label>
+            </value>
+            <value>
+                <fullName>CA - South</fullName>
+                <default>false</default>
+                <label>CA - South</label>
+            </value>
+            <value>
+                <fullName>Central</fullName>
+                <default>false</default>
+                <label>Central</label>
+            </value>
+            <value>
+                <fullName>CO</fullName>
+                <default>false</default>
+                <label>CO</label>
+            </value>
+            <value>
+                <fullName>CT</fullName>
+                <default>false</default>
+                <label>CT</label>
+            </value>
+            <value>
+                <fullName>DG - AZ</fullName>
+                <default>false</default>
+                <label>DG - AZ</label>
+            </value>
+            <value>
+                <fullName>DG - CA - Central</fullName>
+                <default>false</default>
+                <label>DG - CA - Central</label>
+            </value>
+            <value>
+                <fullName>DG - CA - North</fullName>
+                <default>false</default>
+                <label>DG - CA - North</label>
+            </value>
+            <value>
+                <fullName>DG - CA - South</fullName>
+                <default>false</default>
+                <label>DG - CA - South</label>
+            </value>
+            <value>
+                <fullName>DG - CO</fullName>
+                <default>false</default>
+                <label>DG - CO</label>
+            </value>
+            <value>
+                <fullName>DG - CT</fullName>
+                <default>false</default>
+                <label>DG - CT</label>
+            </value>
+            <value>
+                <fullName>DG - DC</fullName>
+                <default>false</default>
+                <label>DG - DC</label>
+            </value>
+            <value>
+                <fullName>DG - DE</fullName>
+                <default>false</default>
+                <label>DG - DE</label>
+            </value>
+            <value>
+                <fullName>DG - FL</fullName>
+                <default>false</default>
+                <label>DG - FL</label>
+            </value>
+            <value>
+                <fullName>DG - GA</fullName>
+                <default>false</default>
+                <label>DG - GA</label>
+            </value>
+            <value>
+                <fullName>DG - HI</fullName>
+                <default>false</default>
+                <label>DG - HI</label>
+            </value>
+            <value>
+                <fullName>DG - IL</fullName>
+                <default>false</default>
+                <label>DG - IL</label>
+            </value>
+            <value>
+                <fullName>DG - MA</fullName>
+                <default>false</default>
+                <label>DG - MA</label>
+            </value>
+            <value>
+                <fullName>DG - MD</fullName>
+                <default>false</default>
+                <label>DG - MD</label>
+            </value>
+            <value>
+                <fullName>DG - MN</fullName>
+                <default>false</default>
+                <label>DG - MN</label>
+            </value>
+            <value>
+                <fullName>DG - MO</fullName>
+                <default>false</default>
+                <label>DG - MO</label>
+            </value>
+            <value>
+                <fullName>DG - MT</fullName>
+                <default>false</default>
+                <label>DG - MT</label>
+            </value>
+            <value>
+                <fullName>DG - NC</fullName>
+                <default>false</default>
+                <label>DG - NC</label>
+            </value>
+            <value>
+                <fullName>DG - NE</fullName>
+                <default>false</default>
+                <label>DG - NE</label>
+            </value>
+            <value>
+                <fullName>DG - NH</fullName>
+                <default>false</default>
+                <label>DG - NH</label>
+            </value>
+            <value>
+                <fullName>DG - NJ</fullName>
+                <default>false</default>
+                <label>DG - NJ</label>
+            </value>
+            <value>
+                <fullName>DG - NM</fullName>
+                <default>false</default>
+                <label>DG - NM</label>
+            </value>
+            <value>
+                <fullName>DG - NV</fullName>
+                <default>false</default>
+                <label>DG - NV</label>
+            </value>
+            <value>
+                <fullName>DG - NY</fullName>
+                <default>false</default>
+                <label>DG - NY</label>
+            </value>
+            <value>
+                <fullName>DG - OH</fullName>
+                <default>false</default>
+                <label>DG - OH</label>
+            </value>
+            <value>
+                <fullName>DG - ON</fullName>
+                <default>false</default>
+                <label>DG - ON</label>
+            </value>
+            <value>
+                <fullName>DG - OR</fullName>
+                <default>false</default>
+                <label>DG - OR</label>
+            </value>
+            <value>
+                <fullName>DG - PA</fullName>
+                <default>false</default>
+                <label>DG - PA</label>
+            </value>
+            <value>
+                <fullName>DG - PR</fullName>
+                <default>false</default>
+                <label>DG - PR</label>
+            </value>
+            <value>
+                <fullName>DG - RI</fullName>
+                <default>false</default>
+                <label>DG - RI</label>
+            </value>
+            <value>
+                <fullName>DG - SC</fullName>
+                <default>false</default>
+                <label>DG - SC</label>
+            </value>
+            <value>
+                <fullName>DG - TX</fullName>
+                <default>false</default>
+                <label>DG - TX</label>
+            </value>
+            <value>
+                <fullName>DG - UT</fullName>
+                <default>false</default>
+                <label>DG - UT</label>
+            </value>
+            <value>
+                <fullName>DG - VA</fullName>
+                <default>false</default>
+                <label>DG - VA</label>
+            </value>
+            <value>
+                <fullName>DG - VT</fullName>
+                <default>false</default>
+                <label>DG - VT</label>
+            </value>
+            <value>
+                <fullName>DG - WA</fullName>
+                <default>false</default>
+                <label>DG - WA</label>
+            </value>
+            <value>
+                <fullName>DG - WI</fullName>
+                <default>false</default>
+                <label>DG - WI</label>
+            </value>
+            <value>
+                <fullName>East</fullName>
+                <default>false</default>
+                <label>East</label>
+            </value>
+            <value>
+                <fullName>EV - AL</fullName>
+                <default>false</default>
+                <label>EV - AL</label>
+            </value>
+            <value>
+                <fullName>EV - AR</fullName>
+                <default>false</default>
+                <label>EV - AR</label>
+            </value>
+            <value>
+                <fullName>EV - AZ</fullName>
+                <default>false</default>
+                <label>EV - AZ</label>
+            </value>
+            <value>
+                <fullName>EV - CA - Central</fullName>
+                <default>false</default>
+                <label>EV - CA - Central</label>
+            </value>
+            <value>
+                <fullName>EV - CA - North</fullName>
+                <default>false</default>
+                <label>EV - CA - North</label>
+            </value>
+            <value>
+                <fullName>EV - CA - South</fullName>
+                <default>false</default>
+                <label>EV - CA - South</label>
+            </value>
+            <value>
+                <fullName>EV - CO</fullName>
+                <default>false</default>
+                <label>EV - CO</label>
+            </value>
+            <value>
+                <fullName>EV - CT</fullName>
+                <default>false</default>
+                <label>EV - CT</label>
+            </value>
+            <value>
+                <fullName>EV - DC</fullName>
+                <default>false</default>
+                <label>EV - DC</label>
+            </value>
+            <value>
+                <fullName>EV - DE</fullName>
+                <default>false</default>
+                <label>EV - DE</label>
+            </value>
+            <value>
+                <fullName>EV - FL</fullName>
+                <default>false</default>
+                <label>EV - FL</label>
+            </value>
+            <value>
+                <fullName>EV - GA</fullName>
+                <default>false</default>
+                <label>EV - GA</label>
+            </value>
+            <value>
+                <fullName>EV - HI</fullName>
+                <default>false</default>
+                <label>EV - HI</label>
+            </value>
+            <value>
+                <fullName>EV - IA</fullName>
+                <default>false</default>
+                <label>EV - IA</label>
+            </value>
+            <value>
+                <fullName>EV - ID</fullName>
+                <default>false</default>
+                <label>EV - ID</label>
+            </value>
+            <value>
+                <fullName>EV - IL</fullName>
+                <default>false</default>
+                <label>EV - IL</label>
+            </value>
+            <value>
+                <fullName>EV - IN</fullName>
+                <default>false</default>
+                <label>EV - IN</label>
+            </value>
+            <value>
+                <fullName>EV - KS</fullName>
+                <default>false</default>
+                <label>EV - KS</label>
+            </value>
+            <value>
+                <fullName>EV - KY</fullName>
+                <default>false</default>
+                <label>EV - KY</label>
+            </value>
+            <value>
+                <fullName>EV - LA</fullName>
+                <default>false</default>
+                <label>EV - LA</label>
+            </value>
+            <value>
+                <fullName>EV - MA</fullName>
+                <default>false</default>
+                <label>EV - MA</label>
+            </value>
+            <value>
+                <fullName>EV - MD</fullName>
+                <default>false</default>
+                <label>EV - MD</label>
+            </value>
+            <value>
+                <fullName>EV - ME</fullName>
+                <default>false</default>
+                <label>EV - ME</label>
+            </value>
+            <value>
+                <fullName>EV - MI</fullName>
+                <default>false</default>
+                <label>EV - MI</label>
+            </value>
+            <value>
+                <fullName>EV - MN</fullName>
+                <default>false</default>
+                <label>EV - MN</label>
+            </value>
+            <value>
+                <fullName>EV - MO</fullName>
+                <default>false</default>
+                <label>EV - MO</label>
+            </value>
+            <value>
+                <fullName>EV - MS</fullName>
+                <default>false</default>
+                <label>EV - MS</label>
+            </value>
+            <value>
+                <fullName>EV - MT</fullName>
+                <default>false</default>
+                <label>EV - MT</label>
+            </value>
+            <value>
+                <fullName>EV - NC</fullName>
+                <default>false</default>
+                <label>EV - NC</label>
+            </value>
+            <value>
+                <fullName>EV - NE</fullName>
+                <default>false</default>
+                <label>EV - NE</label>
+            </value>
+            <value>
+                <fullName>EV - NH</fullName>
+                <default>false</default>
+                <label>EV - NH</label>
+            </value>
+            <value>
+                <fullName>EV - NJ</fullName>
+                <default>false</default>
+                <label>EV - NJ</label>
+            </value>
+            <value>
+                <fullName>EV - NM</fullName>
+                <default>false</default>
+                <label>EV - NM</label>
+            </value>
+            <value>
+                <fullName>EV - NV</fullName>
+                <default>false</default>
+                <label>EV - NV</label>
+            </value>
+            <value>
+                <fullName>EV - NY</fullName>
+                <default>false</default>
+                <label>EV - NY</label>
+            </value>
+            <value>
+                <fullName>EV - OH</fullName>
+                <default>false</default>
+                <label>EV - OH</label>
+            </value>
+            <value>
+                <fullName>EV - OK</fullName>
+                <default>false</default>
+                <label>EV - OK</label>
+            </value>
+            <value>
+                <fullName>EV - ON - Central</fullName>
+                <default>false</default>
+                <label>EV - ON - Central</label>
+            </value>
+            <value>
+                <fullName>EV - ON - Eastern</fullName>
+                <default>false</default>
+                <label>EV - ON - Eastern</label>
+            </value>
+            <value>
+                <fullName>EV - ON - Western</fullName>
+                <default>false</default>
+                <label>EV - ON - Western</label>
+            </value>
+            <value>
+                <fullName>EV - OR</fullName>
+                <default>false</default>
+                <label>EV - OR</label>
+            </value>
+            <value>
+                <fullName>EV - PA</fullName>
+                <default>false</default>
+                <label>EV - PA</label>
+            </value>
+            <value>
+                <fullName>EV - RI</fullName>
+                <default>false</default>
+                <label>EV - RI</label>
+            </value>
+            <value>
+                <fullName>EV - SC</fullName>
+                <default>false</default>
+                <label>EV - SC</label>
+            </value>
+            <value>
+                <fullName>EV - TBD</fullName>
+                <default>false</default>
+                <label>EV - TBD</label>
+            </value>
+            <value>
+                <fullName>EV - TN</fullName>
+                <default>false</default>
+                <label>EV - TN</label>
+            </value>
+            <value>
+                <fullName>EV - TX</fullName>
+                <default>false</default>
+                <label>EV - TX</label>
+            </value>
+            <value>
+                <fullName>EV - UT</fullName>
+                <default>false</default>
+                <label>EV - UT</label>
+            </value>
+            <value>
+                <fullName>EV - VA</fullName>
+                <default>false</default>
+                <label>EV - VA</label>
+            </value>
+            <value>
+                <fullName>EV - VT</fullName>
+                <default>false</default>
+                <label>EV - VT</label>
+            </value>
+            <value>
+                <fullName>EV - WA</fullName>
+                <default>false</default>
+                <label>EV - WA</label>
+            </value>
+            <value>
+                <fullName>EV - WI</fullName>
+                <default>false</default>
+                <label>EV - WI</label>
+            </value>
+            <value>
+                <fullName>FL</fullName>
+                <default>false</default>
+                <label>FL</label>
+            </value>
+            <value>
+                <fullName>GA</fullName>
+                <default>false</default>
+                <label>GA</label>
+            </value>
+            <value>
+                <fullName>HI</fullName>
+                <default>false</default>
+                <label>HI</label>
+            </value>
+            <value>
+                <fullName>IN</fullName>
+                <default>false</default>
+                <label>IN</label>
+            </value>
+            <value>
+                <fullName>MA</fullName>
+                <default>false</default>
+                <label>MA</label>
+            </value>
+            <value>
+                <fullName>MBS-Central</fullName>
+                <default>false</default>
+                <label>MBS-Central</label>
+            </value>
+            <value>
+                <fullName>MBS-Mid-Atlantic</fullName>
+                <default>false</default>
+                <label>MBS-Mid-Atlantic</label>
+            </value>
+            <value>
+                <fullName>MBS-Northeast</fullName>
+                <default>false</default>
+                <label>MBS-Northeast</label>
+            </value>
+            <value>
+                <fullName>MBS-Southeast</fullName>
+                <default>false</default>
+                <label>MBS-Southeast</label>
+            </value>
+            <value>
+                <fullName>MBS-Texas</fullName>
+                <default>false</default>
+                <label>MBS-Texas</label>
+            </value>
+            <value>
+                <fullName>MBS-West</fullName>
+                <default>false</default>
+                <label>MBS-West</label>
+            </value>
+            <value>
+                <fullName>MD</fullName>
+                <default>false</default>
+                <label>MD</label>
+            </value>
+            <value>
+                <fullName>Midwest</fullName>
+                <default>false</default>
+                <label>Midwest</label>
+            </value>
+            <value>
+                <fullName>Mountain West</fullName>
+                <default>false</default>
+                <label>Mountain West</label>
+            </value>
+            <value>
+                <fullName>NC</fullName>
+                <default>false</default>
+                <label>NC</label>
+            </value>
+            <value>
+                <fullName>NC - BES</fullName>
+                <default>false</default>
+                <label>NC - BES</label>
+            </value>
+            <value>
+                <fullName>NC - Northeast</fullName>
+                <default>false</default>
+                <label>NC - Northeast</label>
+            </value>
+            <value>
+                <fullName>NC - Southeast</fullName>
+                <default>false</default>
+                <label>NC - Southeast</label>
+            </value>
+            <value>
+                <fullName>NC - West</fullName>
+                <default>false</default>
+                <label>NC - West</label>
+            </value>
+            <value>
+                <fullName>NH</fullName>
+                <default>false</default>
+                <label>NH</label>
+            </value>
+            <value>
+                <fullName>NJ</fullName>
+                <default>false</default>
+                <label>NJ</label>
+            </value>
+            <value>
+                <fullName>NM</fullName>
+                <default>false</default>
+                <label>NM</label>
+            </value>
+            <value>
+                <fullName>North Atlantic</fullName>
+                <default>false</default>
+                <label>North Atlantic</label>
+            </value>
+            <value>
+                <fullName>NV</fullName>
+                <default>false</default>
+                <label>NV</label>
+            </value>
+            <value>
+                <fullName>NY</fullName>
+                <default>false</default>
+                <label>NY</label>
+            </value>
+            <value>
+                <fullName>OR</fullName>
+                <default>false</default>
+                <label>OR</label>
+            </value>
+            <value>
+                <fullName>PA</fullName>
+                <default>false</default>
+                <label>PA</label>
+            </value>
+            <value>
+                <fullName>Pacific Northwest</fullName>
+                <default>false</default>
+                <label>Pacific Northwest</label>
+            </value>
+            <value>
+                <fullName>PF-Demo</fullName>
+                <default>false</default>
+                <label>PF-Demo</label>
+            </value>
+            <value>
+                <fullName>Residential</fullName>
+                <default>false</default>
+                <label>Residential</label>
+            </value>
+            <value>
+                <fullName>RI</fullName>
+                <default>false</default>
+                <label>RI</label>
+            </value>
+            <value>
+                <fullName>South Atlantic</fullName>
+                <default>false</default>
+                <label>South Atlantic</label>
+            </value>
+            <value>
+                <fullName>Southwest</fullName>
+                <default>false</default>
+                <label>Southwest</label>
+            </value>
+            <value>
+                <fullName>TBD</fullName>
+                <default>false</default>
+                <label>TBD</label>
+            </value>
+            <value>
+                <fullName>Texas</fullName>
+                <default>false</default>
+                <label>Texas</label>
+            </value>
+            <value>
+                <fullName>TN</fullName>
+                <default>false</default>
+                <label>TN</label>
+            </value>
+            <value>
+                <fullName>TX</fullName>
+                <default>false</default>
+                <label>TX</label>
+            </value>
+            <value>
+                <fullName>UT</fullName>
+                <default>false</default>
+                <label>UT</label>
+            </value>
+            <value>
+                <fullName>Utility -</fullName>
+                <default>false</default>
+                <label>Utility -</label>
+            </value>
+            <value>
+                <fullName>Utility - AZ</fullName>
+                <default>false</default>
+                <label>Utility - AZ</label>
+            </value>
+            <value>
+                <fullName>Utility - CA - Central</fullName>
+                <default>false</default>
+                <label>Utility - CA - Central</label>
+            </value>
+            <value>
+                <fullName>Utility - CA - North</fullName>
+                <default>false</default>
+                <label>Utility - CA - North</label>
+            </value>
+            <value>
+                <fullName>Utility - CA - South</fullName>
+                <default>false</default>
+                <label>Utility - CA - South</label>
+            </value>
+            <value>
+                <fullName>Utility - CO</fullName>
+                <default>false</default>
+                <label>Utility - CO</label>
+            </value>
+            <value>
+                <fullName>Utility - CT</fullName>
+                <default>false</default>
+                <label>Utility - CT</label>
+            </value>
+            <value>
+                <fullName>Utility - FL</fullName>
+                <default>false</default>
+                <label>Utility - FL</label>
+            </value>
+            <value>
+                <fullName>Utility - GA</fullName>
+                <default>false</default>
+                <label>Utility - GA</label>
+            </value>
+            <value>
+                <fullName>Utility - IN</fullName>
+                <default>false</default>
+                <label>Utility - IN</label>
+            </value>
+            <value>
+                <fullName>Utility - MN</fullName>
+                <default>false</default>
+                <label>Utility - MN</label>
+            </value>
+            <value>
+                <fullName>Utility - NC</fullName>
+                <default>false</default>
+                <label>Utility - NC</label>
+            </value>
+            <value>
+                <fullName>Utility - NJ</fullName>
+                <default>false</default>
+                <label>Utility - NJ</label>
+            </value>
+            <value>
+                <fullName>Utility - NV</fullName>
+                <default>false</default>
+                <label>Utility - NV</label>
+            </value>
+            <value>
+                <fullName>Utility - NY</fullName>
+                <default>false</default>
+                <label>Utility - NY</label>
+            </value>
+            <value>
+                <fullName>Utility - OH</fullName>
+                <default>false</default>
+                <label>Utility - OH</label>
+            </value>
+            <value>
+                <fullName>Utility - OR</fullName>
+                <default>false</default>
+                <label>Utility - OR</label>
+            </value>
+            <value>
+                <fullName>Utility - TBD</fullName>
+                <default>false</default>
+                <label>Utility - TBD</label>
+            </value>
+            <value>
+                <fullName>Utility - TN</fullName>
+                <default>false</default>
+                <label>Utility - TN</label>
+            </value>
+            <value>
+                <fullName>Utility - TX</fullName>
+                <default>false</default>
+                <label>Utility - TX</label>
+            </value>
+            <value>
+                <fullName>Utility - UT</fullName>
+                <default>false</default>
+                <label>Utility - UT</label>
+            </value>
+            <value>
+                <fullName>VA</fullName>
+                <default>false</default>
+                <label>VA</label>
+            </value>
+            <value>
+                <fullName>VT</fullName>
+                <default>false</default>
+                <label>VT</label>
+            </value>
+            <value>
+                <fullName>WA</fullName>
+                <default>false</default>
+                <label>WA</label>
+            </value>
+            <value>
+                <fullName>West</fullName>
+                <default>false</default>
+                <label>West</label>
+            </value>
+            <value>
+                <fullName>WWS - Construction</fullName>
+                <default>false</default>
+                <label>WWS - Construction</label>
+            </value>
+            <value>
+                <fullName>WWS – Iowa</fullName>
+                <default>false</default>
+                <label>WWS – Iowa</label>
+            </value>
+            <value>
+                <fullName>WWS – Kansas</fullName>
+                <default>false</default>
+                <label>WWS – Kansas</label>
+            </value>
+            <value>
+                <fullName>WWS - Main</fullName>
+                <default>false</default>
+                <label>WWS - Main</label>
+            </value>
+            <value>
+                <fullName>WWS – North East</fullName>
+                <default>false</default>
+                <label>WWS – North East</label>
+            </value>
+            <value>
+                <fullName>WWS – Northern California</fullName>
+                <default>false</default>
+                <label>WWS – Northern California</label>
+            </value>
+            <value>
+                <fullName>WWS – South East</fullName>
+                <default>false</default>
+                <label>WWS – South East</label>
+            </value>
+            <value>
+                <fullName>WWS – Texas</fullName>
+                <default>false</default>
+                <label>WWS – Texas</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

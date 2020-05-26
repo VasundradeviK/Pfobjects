@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Active_RFI_IB__c</fullName>
+    <externalId>false</externalId>
+    <label>Active RFI IB</label>
+    <summaryFilterItems>
+        <field>RFI__c.RFI_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Closed</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>RFI__c.Implementation_Blocked__c</field>
+        <operation>equals</operation>
+        <value>True</value>
+    </summaryFilterItems>
+    <summaryForeignKey>RFI__c.Plant_Asset__c</summaryForeignKey>
+    <summaryOperation>count</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

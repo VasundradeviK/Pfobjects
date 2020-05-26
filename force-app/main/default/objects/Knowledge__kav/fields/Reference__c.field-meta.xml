@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reference__c</fullName>
+    <description>Reference link</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Use this field to link to any outside references for this content.</inlineHelpText>
+    <label>Reference</label>
+    <required>false</required>
+    <type>TextArea</type>
+</CustomField>

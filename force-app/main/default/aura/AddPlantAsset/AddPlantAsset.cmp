@@ -1,0 +1,128 @@
+<aura:component implements="force:lightningQuickAction,lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access = "global" controller = "inlineRfiDetail">
+
+<!--handlers for plant -->
+<aura:handler name = "init" value = "{!this}" action = "{!c.doInit}"/>
+<lightning:navigation aura:id="navService"/>
+
+<!--Attribute for plant -->
+<aura:attribute name = "showParagraph" type = "Boolean" default = "false"/>
+<aura:attribute name = "showPlantAsset" type = "Boolean" default = "false"/>
+<aura:attribute name = "loadedSpinner" type = "Boolean" default = "false"/>
+<aura:attribute name = "showRFICat" type = "Boolean" default = "false"/>
+<aura:attribute name = "listPlantAsset" type = "Plant_Asset__c[]"/>
+<aura:attribute name = "selectedPlant" type = "String[]" default = "[]"/>
+<aura:attribute name = "showError" type = "Boolean" default = "false"/>
+
+<!--call parent component attribute -->
+<aura:attribute name = "callParent" type = "Boolean" default = "false"/>
+<aura:attribute name = "showParent" type = "Boolean" default = "false"/>
+<aura:handler name="change" value="{!v.callParent}" action="{!c.calledPrevious}"/>
+<aura:handler name="change" value="{!v.showParent}" action="{!c.doShowParent}"/>
+
+<!-- size of the container -->
+<ltng:require styles="{!$Resource.ModalContainer}"/> 
+
+    <div class="slds-modal__container">
+        <aura:if isTrue = "{!v.showParagraph == true}">
+            <lightning:layout class="slds-page-header slds-page-header--object-home" multipleRows="true" VerticalAlign="center" horizontalAlign="center">
+                <lightning:layoutItem flexibility="auto" padding="horizontal-medium">
+                    <h4 class="slds-text-heading--small"> This is a utility tool to create bulk RFIs. In the Utility once you click the button given below you will be requested to select list of Customer Plant Assets. Once it is chosen then you will be requested to choose list of category.</h4>
+                </lightning:layoutItem><br/><br/>
+                <lightning:layoutItem  flexibility="auto" padding="horizontal-medium">
+                    <lightning:button label="Create RFIs" onclick="{!c.doShowPlantAsset}"  class="slds-button slds-button--brand"/>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </aura:if>
+        <aura:if isTrue = "{!v.showError == true}">
+            <lightning:layout class="slds-page-header slds-page-header--object-home" multipleRows="true" VerticalAlign="center" horizontalAlign="center">
+                <lightning:layoutItem flexibility="auto" padding="horizontal-medium">
+                    <h4 class="slds-text-heading--small"> No Customer Plant Asset is available for selection.</h4>
+                </lightning:layoutItem><br/><br/>
+                <lightning:layoutItem  flexibility="auto" padding="horizontal-medium">
+                    <lightning:button label="Cancel" onclick="{!c.doCancelParent}"/>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </aura:if>
+        
+        <aura:if isTrue = "{!v.showPlantAsset == true}">
+            <header class="modal-header slds-modal__header slds-size_1-of-1">
+                <h4 class="title slds-text-heading--medium" ><p> Select Customer Plant Assets </p></h4>
+            <br/>
+            <form class="slds-form--stacked">
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table_fixed-layout">
+                        <thead>
+                            <tr class="slds-text-title">
+                                <th style="width:3.25rem;" class="slds-text-align--right">
+                                    <div class="slds-form-element">
+                                        <div class="slds-form-element__control">
+                                            <label class="slds-checkbox">
+                                                <!--header checkbox for select all-->
+                                                <ui:inputCheckbox aura:id="selectAll" change="{!c.selectAll}"/>
+                                                <span class="slds-checkbox--faux"></span>
+                                                <span class="slds-form-element__label text"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-text-heading_small slds-cell-wrap" title="Category Classification">Plant Asset Name</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-text-heading_small slds-cell-wrap" title="RFI Description">Account</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-text-heading_small  slds-cell-wrap" title="RFI Item Status">Parent Plant Asset</div>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </form>    
+            </header>
+            <div class="slds-modal__content slds-m-top--none slds-m-around--none slds-p-vertical--none" id="modal-content-id-1">
+                    <form class="slds-form--stacked">
+                        <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table_fixed-layout">
+                        <tbody>
+                            <aura:iteration items="{!v.listPlantAsset}" var="plant">
+                                <tr>
+                                    <th scope = "row" style="width:5rem;" class="slds-text-align--right">
+                                        <div class="slds-form-element">
+                                            <div class="slds-form-element__control">
+                                                <label class="slds-checkbox">
+                                                    <ui:inputCheckbox text="{!plant.Id}"
+                                                                        aura:id="boxPlant"/>
+                                                    <span class="slds-checkbox--faux"></span>
+                                                    <span class="slds-form-element__label text"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-cell-wrap" title="{!plant.Name}">{!plant.Name}</div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-cell-wrap" title="{!plant.Account__r.Name}">{!plant.Account__r.Name}</div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-cell-wrap" title="{!plant.Parent__r.Name}">{!plant.Parent__r.Name}</div>
+                                    </th>
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <footer class="slds-modal__footer">
+                <lightning:button label="Cancel" onclick="{!c.doCancelParent}"/>
+                <lightning:button label="Next" onclick="{!c.next}"  class="slds-button slds-button--brand"/>
+            </footer>
+        </aura:if>
+
+        <aura:if isTrue = "{!v.showRFICat == true}">
+            <c:AddRfiDetailToMassCreateRfi selectedPlant = "{!v.selectedPlant}" callParent ="{!v.callParent}" showParent = "{!v.showParent}"/>
+        </aura:if>
+        
+    </div>
+    <aura:if isTrue="{! v.loadedSpinner }">
+        <lightning:spinner alternativeText="Loading" size="medium" />
+    </aura:if>
+</aura:component>

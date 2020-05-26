@@ -1,0 +1,1811 @@
+<apex:page standardStylesheets="true" action="{!ensureTask}" cache="false"
+	controller="Wrike_TaskController">
+	<!-- standardController="*" extensions="Wrike_TaskController" --> 
+            <style type="text/css">
+                body { padding:0; margin: 0 !important; }
+                
+                .wrikePanel { }
+		
+		          body .wrikePanel .bPageBlock .pbHeader .pbTitle .off { padding-left:5px;padding-top:5px; }
+		          body .wrikePanel .bPageBlock .pbHeader > table > tbody > tr > td { padding:0; }
+		          body .wrikePanel .accountBlock img.relatedListIcon {
+		          	background: url({!$Resource.Wrike_Logo24}) no-repeat 0 0 transparent;
+				  }
+		          
+		          .wrikePanel #message { height:205px;padding-top:90px;text-align:center; }
+		          .wrikePanel #message h1 { display:block;font-size:28px;font-weight:normal; }
+		          .wrikePanel #message p { font-size:16px; margin:10px 0 16px; }
+		
+        		.taskPanel .inlineEditModified { color:#42975B; }
+        		
+        		.taskPanel .bPageBlock { border-top-color: #42975B !important; }
+		         body .taskPanel .bPageBlock .pbHeader .pbTitle { padding:0 5px; }
+		         body .taskPanel .bPageBlock .pbHeader .pbButton { padding:0 5px;  }
+		         body .taskPanel .bPageBlock .pbHeader .pbLinks { padding: 0 10px; }
+		         body .taskPanel .bPageBlock .pbHeader > table { border-bottom:0; }
+		         body .taskPanel .accountBlock img.relatedListIcon {
+		         	background: url({!$Resource.Wrike_Logo24}) no-repeat 0 0 transparent;
+			  	}
+                
+                body .taskPanel .bPageBlock .pbBody .bordered {
+                	border: solid 1px #ECECEC; background: #fff; padding:0;
+               	}
+		      	body .taskPanel .bPageBlock .pbBody .pbSubsection {
+		      		margin: 0 -25px 0 -30px; width:auto; box-sizing:content-box;
+		      	}
+		        .bPageBlock .pbBody .pbSubsection .detailList tr td,
+		        .bPageBlock .pbBody .pbSubsection .detailList tr th {
+		        	border-bottom: solid 1px #ECECEC;
+		        }
+		         
+		        .bPageBlock .detailList .titleRow td { vertical-align:middle; }
+                .titleCell { font-size:1.5em; padding-right: 2em; }
+                .titleCell input { font-size:1em; width:95%;}
+                .editableCell:hover {
+                    background: url(/img/func_icons/util/pencil12.gif) #eff8df no-repeat right center; /*#e3f3ff*/
+                }
+                tbody { bg: url(/img/func_icons/remove12_on.gif) }
+
+                td.dataCol { line-height: 1.3em; }
+                td.dataCol { line-height: 1.3em; }
+                td.titleCell .inlineEditModified { font-weight: 300; }
+                
+                .bPageBlock .detailList td.editableCell, .editableCell input, .editableCell select {
+                    vertical-align: baseline; }
+                body .bDetailBlock.bPageBlock .pbBody .titleRow td { padding-bottom: 5px;  padding-top: 5px;}
+                body .bDetailBlock.bPageBlock .pbBody .descriptionRow .labelCol { padding-top: 12px;}
+                body .bDetailBlock.bPageBlock .pbBody .descriptionRow .dataCol.descriptionCell { padding: 0px; }
+                .descriptionCell div, .descriptionCell textarea {
+                    line-height: 1.4em;
+                    border: none; padding: 12px 10px; width:100%;
+                    height: {!IF(isNewTask,"235", "195")}px;
+                    overflow: auto; box-sizing: border-box;
+                }
+                .wa { width:auto !important; }
+                .w4 { width:2% !important; }
+                .w14 { width:16% !important; }
+                .w18 { width:18% !important; }
+                .w28 { width:30% !important; }
+                .w32 { width:32% !important; }
+                
+                .inlineForm { display: inline; }
+                .inlineForm > div { display: inline; }
+                .overdueDate { color:#e00;
+                    background: url(/img/func_icons/util/alert16.gif) no-repeat 0 50%;
+                    padding-left: 20px;}
+                #assignedCell span {
+                    position: relative;
+                    display: inline-block;
+                    margin-right: 8px;
+                }
+                #assignedCell span:last-child {
+                    margin: 0;
+                }
+                #assignedCell .contactIcon { width:16px; height: 16px; 
+                    background: transparent no-repeat;
+                    position: relative;
+                    margin: 2px 5px 0 0;
+                    vertical-align: bottom; }
+                body .bPageBlock .pbBody .labelCol {
+                    line-height: 1.3em;
+                }
+            </style>
+            
+    <apex:form id="errors">
+	<apex:outputPanel id="errorMessagesPanel">
+	<apex:pageMessages id="errorMessages"/>
+	</apex:outputPanel>
+	<apex:actionFunction name="rerenderErrorMessages" action="{!addErrorsToPage}" rerender="errorMessagesPanel" />		
+	</apex:form>
+
+            <apex:outputPanel layout="block" rendered="{!isError}">
+              <p>
+	              Something has gone wrong.<br/>
+	              Contact your Salesforce and Wrike administrators to check Wrike and integration settings<br/>
+	              - most likely some folders are not shared with your Wrike user.
+	          </p>
+            </apex:outputPanel>
+
+             <apex:outputPanel layout="block" rendered="{!NOT(isAuthorized)}"
+				styleClass="wrikePanel bRelatedList">
+      	
+		      	<apex:pageBlock mode="edit">
+		      		<apex:facet name="header">
+		      			<table cellpadding="0" cellspacing="0" border="0">
+		                      <tbody>
+		                     	 <tr>
+		                     	 	<td>
+							        	<div class="pbTitle">
+							        		<img class="relatedListIcon" src="/s.gif" />
+								            <h3 class="mainTitle">Wrike Tasks</h3>		        
+							        	</div>
+							        </td>
+				        		</tr>
+				        	</tbody>
+			        	</table>
+			        </apex:facet>
+			        
+			        <div id="message">
+			            <h1>To get started, please authorize Salesforce to access data from Wrike.</h1>
+			            <p>To authorize Salesforce you will need to login to Wrike with your Wrike username and password.
+			            If you don't have a Wrike account please contact you Salesforce Administrator.</p>
+			            <apex:form target="_top">
+			                <apex:commandButton action="{!authorize}" value="Authorize" id="authorizeButton"/>
+			            </apex:form>
+			       	</div>
+		      	</apex:pageBlock>
+		      </apex:outputPanel>
+
+            <apex:outputPanel layout="block" rendered="{!isAuthorized && NOT(isError) && (NOT(ISBLANK(taskId)))}"
+            	styleClass="taskPanel bRelatedList">
+            	              
+              <apex:outputPanel layout="block" id="refreshBlock" rendered="{!NOT(isNewTask)}">
+
+                  <script type="application/json" id="taskJSON">
+                    {!HTMLENCODE(taskJSON)}
+                  </script>
+                  <script type="application/json" id="taskCommentsJSON">
+                    {!HTMLENCODE(taskCommentsJSON)}
+                  </script>
+                  <script type="application/json" id="taskAttachmentsJSON">
+                    {!HTMLENCODE(taskAttachmentsJSON)}
+                  </script>
+                  
+              </apex:outputPanel>    
+
+              <script type="text/javascript">//<![CDATA[
+
+                // TODO drop legacy browsers
+
+                var global = this;
+
+                if (!window.addEventListener) {
+                    window.addEventListener = new function(event, handler) {
+                        if (window.attachEvent) {
+                            window.attachEvent('on' + event, handler);
+                        }
+                    }
+                }
+                window.addEventListener('load', initialize);
+
+                function initialize() {
+
+                  global.taskId = '{!JSENCODE(taskId)}';
+                  
+                  window.contactsData = JSON.parse(window.contactCache);
+                  window.accountWorkflows = JSON.parse(window.workflowCache);
+                  global.taskData = parseJSON('taskJSON');
+                  global.taskAttachmentsData = parseJSON('taskAttachmentsJSON');
+                  global.taskCommentsData = parseJSON('taskCommentsJSON');
+                
+                  
+                  global.getChangeSet = fillData(global.taskData, global.taskAttachmentsData,
+                                taskCommentsData, global.contactsData, global.accountWorkflows);
+                }
+
+                function refresh(buttonId) {
+                    
+                  initialize();
+
+                  if (buttonId)
+                    document.getElementById(buttonId).blur();
+                }
+
+                function beforeSave() {
+                    if (document.getElementById('saveButton'))
+                    	document.getElementById('saveButton').disabled = true;
+                    if (document.getElementById('cancelButton'))
+                    	document.getElementById('cancelButton').disabled = true;
+                }
+
+
+                function afterSave() {
+
+                    if (document.getElementById('saveButton'))
+                    	document.getElementById('saveButton').disabled = false;
+                     if (document.getElementById('cancelButton'))
+                     	document.getElementById('cancelButton').disabled = false;
+
+                    document.getElementById('nochangesButtons').style.display='block';
+                    document.getElementById('changesButtons').style.display='none';
+                    
+                    global.taskData = parseJSON('taskJSON');
+
+                    global.getChangeSet = fillData(global.taskData, global.taskAttachmentsData,
+                                taskCommentsData, global.contactsData, global.workflowsData);
+                }
+
+                function dropChanges() {
+                    
+                    if (taskId == "NEW") {
+                        window.location = '{!JSENCODE(callbackUrl)}';
+                    }
+                    else {
+                        global.getChangeSet = fillData(global.taskData, global.taskAttachmentsData,
+                                    taskCommentsData, global.contactsData, global.workflowsData);
+    
+                        document.getElementById('nochangesButtons').style.display='block';
+                        document.getElementById('changesButtons').style.display='none';
+                    }
+                }
+
+                function parseJSON(elementId) {
+                  
+                  var jsonElement = document.getElementById(elementId);
+                  if (jsonElement) {
+                      var jsonText = jsonElement.textContent?
+                    jsonElement.textContent : jsonElement.innerText;
+                      if (jsonText) {
+                        try {
+                            jsonText = jsonText.replace(/^\s*<!\[CDATA\[/,'').replace(/\]\]>\s*$/,"");
+                            
+                            jsonText = jsonText
+                                .replace(/(&)#39;/g, '\'')
+                                .replace(/(&)quot;/g, '"')
+                                .replace(/(&)lt;/g, '<')
+                                .replace(/(&)gt;/g, '>')
+                                .replace(/(&)amp;/g, '&');
+                                
+                            return JSON.parse(jsonText)
+                          } catch(e) {}
+                      }
+                  }
+                  return {};
+                }
+
+                function fillData(taskData, taskAttachmentsData, taskCommentsData, contactsData, workflowsData) {
+
+                    var task = taskData && taskData.data && taskData.data[0] ||
+                        { title: '', responsibleIds: [], description: '', dates: { type: 'Backlog'} };
+                        
+                    task.attachments = taskAttachmentsData && taskAttachmentsData.data || [];
+                    task.comments = taskCommentsData && taskCommentsData.data || [];
+                    window.taskPermalink = task.permalink; //TODO remove link to global object
+
+                    var contacts = contactsData && contactsData.data;
+
+                    var delta = (taskId == "NEW")? 
+                        { title: 'New Task' } : { };
+
+                    var activator = createTextCell(task, delta, 'title', 'titleCell');                    
+                    if (taskId == 'NEW')
+                        window.setTimeout(activator,0);
+                    
+                    createStatusCell(task, delta, 'customStatusId', 'statusCell', workflowsData);
+                    
+                    createSelectCell(task, delta, 'importance', 'importanceCell',
+                            ['High','Normal','Low']);
+                    
+                    if (taskId == 'NEW')
+                        createSimpleDatesCell(task, delta, 'dates', 'datesCell');
+                    else
+                        createDatesCell(task, delta, 'dates', 'datesCell');
+                    
+                    createContactsCell(task, delta, 'responsibleIds', 'assignedCell', contacts);
+                    
+                    createTextareaCell(task, delta, 'description', 'descriptionCell');
+
+                    if (global.taskId != "NEW") createFooter(task);
+
+                    return function() {
+
+                        var result = '';
+
+                        for (field in delta) {
+                            
+                            if (field == 'responsibleIds') {
+                                
+                                if (taskId == 'NEW') {
+                                    result +=
+                                    'responsibles=' +
+                                    encodeURIComponent(JSON.stringify(delta.responsibleIds));
+                                }
+                                else {
+                                    var oldIds = task.responsibleIds.slice().sort();
+                                    var newIds = delta.responsibleIds.slice().sort();
+    
+                                    var addIds = [];
+                                    var removeIds = [];
+    
+                                    for(var oi=0, ni=0;
+                                            ni < newIds.length || oi < oldIds.length;) {
+                                        
+                                        if (oi >= oldIds.length ||
+                                                oldIds[oi] > newIds[ni]) {
+                                            addIds.push(newIds[ni]);
+                                            ni++;
+                                        }
+                                        else if (ni >= newIds.length ||
+                                                oldIds[oi] < newIds[ni]) {
+                                            removeIds.push(oldIds[oi]);
+                                            oi++;
+                                        }
+                                        else { //(oldIds[oi] == newIds[ni])
+                                            oi++; ni++;
+                                        } 
+                                    }
+                                    if (addIds.length > 0)
+                                        result += 'addResponsibles=' +
+                                            encodeURIComponent(JSON.stringify(addIds));
+                                    if (removeIds.length > 0)
+                                        result += 'removeResponsibles=' +
+                                            encodeURIComponent(JSON.stringify(removeIds));
+                                }
+                                
+                            }
+                            else if (field == "description") {
+                                var d = htmlVersion(delta[field])
+                                result += 'description=' +
+                                    encodeURIComponent(d);
+                            }
+                            else if (field == "customStatusId") {
+                                result +=
+                                    encodeURIComponent("customStatus") + '=' +
+                                    encodeURIComponent(delta[field]);
+                            }
+                            else if (typeof(delta[field]) == 'string')
+                                result +=
+                                    encodeURIComponent(field) + '=' +
+                                    encodeURIComponent(delta[field]);
+                            else 
+                                result +=
+                                    encodeURIComponent(field) + '=' +
+                                    encodeURIComponent(JSON.stringify(delta[field]));
+                            result += '&';
+                        };
+
+                        return result;
+                    }
+                }
+                
+                function getOptionNameByValue(fieldName, optionValue)
+                {
+                    var optionName = optionValue;
+                    if (fieldName == "customStatusId")
+                    {
+                        optionName = getStatusName(optionValue);
+                    }
+                    return optionName;
+                }
+                
+                 function getStatusName(customStatusId)
+                  {
+                    var currentStatus;
+                    if(accountWorkflows && accountWorkflows.data) {
+                    for (var i = 0; i < accountWorkflows.data.length; i++)
+                    {
+                        var customStatuses = accountWorkflows.data[i].customStatuses;
+                        for (var j = 0; j < customStatuses.length; j++)
+                        {
+                            if (customStatusId == customStatuses[j].id)
+                            {
+                                currentStatus = customStatuses[j].name;
+                                break;
+                            }
+                        }
+                        if (currentStatus) break;
+                    }
+                    }               
+                    return currentStatus;
+                  }
+
+                function createFooter(task) {
+                
+                    var extraElement = document.getElementById('extra');
+                    if (extraElement) {
+
+                        dropElementContents(extraElement);
+                        
+                        var text = task.comments && task.comments.length > 0?
+                                task.comments.length + ' comments' : 'no comments';
+                        var a = document.createElement('a');
+                        a.appendChild(document.createTextNode(text));
+                        a.href='#';
+                        a.addEventListener('click', function(){
+                            window.open(task.permalink,'_wrike')
+                        });
+                        extraElement.appendChild(a);
+
+                        extraElement.appendChild(document.createTextNode(', '));
+
+                        var text = task.attachments && task.attachments.length > 0?
+                                task.attachments.length + ' attachment(s)' : 'no attachments';
+                        var a = document.createElement('a');
+                        a.appendChild(document.createTextNode(text));
+                        a.href='#';
+                        a.addEventListener('click', function(){
+                            window.open(task.permalink,'_wrike')
+                        });
+                        extraElement.appendChild(a);
+
+                        extraElement.appendChild(document.createTextNode(', '));
+
+                        var text =  'shared with ' + (task.sharedIds.length + 0) + ' people';
+                        var a = document.createElement('a');
+                        a.appendChild(document.createTextNode(text));
+                        a.href='#';
+                        a.addEventListener('click', function(){
+                            window.open(task.permalink,'_wrike')
+                        });
+                        extraElement.appendChild(a);
+                    }
+                }
+
+                function dropElementContents(element) {
+                    while (element.firstChild) {
+                        element.removeChild(element.firstChild);
+                    }
+                }
+
+                function cloneAndReplace(element) {
+                    var newElement = element.cloneNode();
+                    element.parentNode.replaceChild(newElement, element);
+                    return newElement;
+                }
+
+                function smartBlur(callback) {
+                    
+                    var elements = [];
+                    
+                    var checkAndBlur = function() {
+                        if (!~elements.indexOf(document.activeElement)) {
+
+                            for(var i=0; i<elements.length; i++) {
+                                elements[i].removeEventListener('blur', blur);
+                            }
+                            callback();
+                            document.getElementById('nochangesButtons').style.display='none';
+                            document.getElementById('changesButtons').style.display='block';
+                        }
+                    };
+
+                    var blur = function() {
+                        window.setTimeout(checkAndBlur, 0);
+                    }
+
+                    for(var i=1; i<arguments.length; i++) {
+                        if (arguments[i] != null) {
+                            elements.push(arguments[i]);
+                            arguments[i].addEventListener('blur', blur);
+                        }
+                    }
+                }
+
+                function createResetButton(id, delta, handler) {
+                    var a = document.createElement('a');
+                    a.innerHTML = '<a class="inlineEditUndoLink" title="Undo" href="#" style="display: inline;"><img width="16px" height="16px" src="/s.gif" alt="Undo" class="inlineEditUndo"></a>';
+                    a.addEventListener('click', function() {
+                        delete delta[id];
+                        handler();
+                    });
+                    return a;
+                }
+
+                function createTextCell(task, delta, id, cellId) {
+                
+                    var cellElement = document.getElementById(cellId);
+                    if (cellElement && id in task) {
+
+                        cellElement = cloneAndReplace(cellElement);
+                        
+                        function createText() {
+
+                            dropElementContents(cellElement);
+
+                            var textNode = document.createTextNode(
+                                 id in delta? delta[id] : task[id]);
+
+                            var divElement = document.createElement('div');
+                            divElement.appendChild(textNode);
+                            if (id in delta) {
+                                divElement.className='inlineEditModified';
+                                divElement.appendChild(createResetButton(id, delta, createText));
+                            }
+                            cellElement.appendChild(divElement);
+                        }
+
+                        function createInput() {
+
+                            dropElementContents(cellElement);
+
+                            var inputElement = document.createElement('input');
+                            inputElement.type = 'text';
+                            inputElement.size = 20; //TODO make dynamic
+                            inputElement.value = id in delta? delta[id] : task[id];
+
+                            cellElement.appendChild(inputElement);
+
+                            inputElement.addEventListener('keypress', function(e) {
+                                //save
+                                if (e && e.keyCode == 13) {
+                                    inputElement.blur();
+                                }
+                                else if (e && e.keyCode == 27) {
+                                    inputElement.value = delta[id];
+                                    inputElement.blur();
+                                }
+                            });
+
+                            smartBlur(function(){
+
+                                delta[id] = inputElement.value;
+                                if (delta[id] == task[id]) delete delta[id];
+                                
+                                createText();
+                                cellElement.editMode = false;
+
+                            }, cellElement, inputElement);
+
+                            inputElement.focus();
+                            inputElement.select();
+                        }
+
+                        createText();
+
+                        var dblclickListener = (function() {
+                            if (!cellElement.editMode) {
+                                createInput();
+                                cellElement.editMode = true;
+                            }
+                        });
+                        cellElement.addEventListener('dblclick', dblclickListener);
+                        return dblclickListener;
+                    }
+                }
+
+                function createTextareaCell(task, delta, id, cellId) {
+                
+                    var cellElement = document.getElementById(cellId);
+                    if (cellElement && id in task) {
+
+                        cellElement = cloneAndReplace(cellElement);
+                        
+                        function createText() {
+                            dropElementContents(cellElement);
+                            
+                            var divElement = document.createElement('div');
+                            if (id in delta) {
+                                var value = delta[id];
+                                divElement.innerHTML = htmlVersion(value);
+                            }
+                            else {
+                                divElement.innerHTML = task[id];
+                            }
+                            sanitizeElements(divElement);
+                            if (id in delta) {
+                                divElement.className='inlineEditModified';
+
+                            }
+                            
+                            var element = cellElement, labelElement = null;
+                            while(element != null) {
+                                element = element.previousSibling;
+                                if (element && element.nodeType == element.ELEMENT_NODE) {
+                                    labelElement = element;
+                                    break;
+                                }
+                            }
+
+                            if (labelElement) {
+                                dropElementContents(labelElement);
+                                labelElement.appendChild(document.createTextNode('Description'));
+                                if (id in delta) {
+                                    labelElement.appendChild(document.createElement('br'));
+                                    labelElement.appendChild(document.createElement('br'));
+                                    labelElement.appendChild(createResetButton(id, delta, createText));
+                                }
+                            }
+
+                            cellElement.appendChild(divElement);
+                            cellElement.appendChild(divElement);
+                        }
+
+                        function createTextarea() {
+                            
+                            dropElementContents(cellElement);
+
+                            var textareaElement = document.createElement('textarea');
+                            textareaElement.type = 'text';
+                            
+                            
+                            textareaElement.appendChild(
+                                document.createTextNode(delta[id]));
+
+                            cellElement.appendChild(textareaElement);
+                            cellElement.editMode = true;
+
+                            textareaElement.addEventListener('keypress', function(e) {
+                                if (e && e.keyCode == 27) {
+
+                                    textareaElement.value = delta[id];
+                                    textareaElement.blur();
+                                }
+                            });
+                            
+                            smartBlur(function(){
+
+                                delta[id] = textareaElement.value;
+                                
+                                createText();
+                                cellElement.editMode = false;
+
+                            }, cellElement, textareaElement);
+
+                            textareaElement.focus();
+                            textareaElement.select();
+                        }
+
+                        createText();
+
+                        cellElement.addEventListener('dblclick', function() {
+                            if (!cellElement.editMode) {
+
+                                if(taskId != 'NEW' && !delta[id] &&  
+                                        String(task[id]).match(/<[^b].|<.[^r]/) &&
+                                        !window.confirm(
+                                            "Rich formatting is supported only in Wrike. " + 
+                                            "Are you sure to remove formatting in order to edit description?")) {
+                                    return;
+                                }
+
+                                var divElement = document.createElement('div');
+                                divElement.innerHTML = id in delta? delta[id] : task[id];
+                                sanitizeElements(divElement);
+
+                                delta[id] = textVersion(divElement);
+
+                                createTextarea();
+                                cellElement.editMode = true;
+                            }
+                        });
+                    }
+                }
+
+                function createSelectCell(task, delta, id, cellId, options) {
+                
+                    var cellElement = document.getElementById(cellId);
+                    if (cellElement && id in task) {
+
+                        cellElement = cloneAndReplace(cellElement);
+                        
+                        function createText() {
+
+                            dropElementContents(cellElement);
+
+                            var textNode = document.createTextNode(
+                                 id in delta? delta[id] : task[id]);
+                            
+                            var divElement = document.createElement('div');
+                            divElement.appendChild(textNode);
+                            if (id in delta) {
+                                divElement.className='inlineEditModified';
+                                divElement.appendChild(createResetButton(id, delta, createText));
+                            }
+                            cellElement.appendChild(divElement);
+                        }
+
+                        function createSelect() {
+
+                            dropElementContents(cellElement);
+                            if (document.getSelection) {
+                                if (!document.getSelection().isCollapsed) {
+                                    document.getSelection().removeAllRanges();
+                                }
+                            }
+
+                            var selectElement = document.createElement('select');
+                            var value = id in delta? delta[id] : task[id];
+
+                            for (var i=0; i<options.length; i++) {
+                                var option = options[i];
+                                var optionElement = document.createElement('option');
+
+                                if (option == value) {
+                                    optionElement.setAttribute('selected','selected');
+                                }
+                                optionElement.appendChild(document.createTextNode(option));
+                                selectElement.appendChild(optionElement);
+                            }
+
+                            cellElement.appendChild(selectElement);
+
+                            smartBlur(function(){
+
+                                delta[id] = options[selectElement.selectedIndex];
+                                if (delta[id] == task[id]) delete delta[id];
+
+                                createText();
+                                cellElement.editMode = false;
+
+                            }, cellElement, selectElement);
+
+                            selectElement.focus();                        
+                        }
+
+                        createText();
+
+                        cellElement.addEventListener('dblclick', function(e) {
+                            if (!cellElement.editMode) {
+                                createSelect();
+                                cellElement.editMode = true;
+                                e.preventDefault();
+                            }
+                        });
+                    }
+                }
+                
+                function createComplexSelectCell(task, delta, id, cellId, advancedOptions) {
+
+                    var cellElement = document.getElementById(cellId);
+
+                    if (cellElement && id in task) {
+
+                        cellElement = cloneAndReplace(cellElement);
+                        
+                        function createText() {
+
+                            dropElementContents(cellElement);
+                            var optionValue = id in delta? delta[id] : task[id];
+                            
+                            var textNode = document.createTextNode(getOptionNameByValue(id, optionValue));
+                            
+                            var divElement = document.createElement('div');
+                            divElement.appendChild(textNode);
+                            if (id in delta) {
+                                divElement.className='inlineEditModified';
+                                divElement.appendChild(createResetButton(id, delta, createText));
+                            }
+                            cellElement.appendChild(divElement);
+                        }
+
+                        function createSelect() {
+
+                            dropElementContents(cellElement);
+                            if (document.getSelection) {
+                                if (!document.getSelection().isCollapsed) {
+                                    document.getSelection().removeAllRanges();
+                                }
+                             }
+
+                                var selectElement = document.createElement('select');
+                                var value = id in delta? delta[id] : task[id];
+
+                                for (var i=0; i<advancedOptions.length; i++) {
+                                var option = advancedOptions[i];
+                                var optionElement = document.createElement('option');
+                                optionElement.value = option.value;
+
+                                if (option.value == value) {
+                                    optionElement.setAttribute('selected','selected');
+                                }
+                                optionElement.appendChild(document.createTextNode(option.name));
+                                selectElement.appendChild(optionElement);
+                            }
+                            
+                            
+
+                            cellElement.appendChild(selectElement);
+
+                            smartBlur(function(){
+
+                                delta[id] = advancedOptions[selectElement.selectedIndex].value;
+                                if (delta[id] == task[id]) delete delta[id];
+
+                                createText();
+                                cellElement.editMode = false;
+
+                            }, cellElement, selectElement);
+
+                            selectElement.focus();                        
+                        }
+
+                        createText();
+
+                        cellElement.addEventListener('dblclick', function(e) {
+                            if (!cellElement.editMode) {
+                                createSelect();
+                                cellElement.editMode = true;
+                                e.preventDefault();
+                            }
+                        });
+                    }
+                }
+
+                function createStatusCell(task, delta, id, cellId, workflows) {                
+                    if (taskId != "NEW") {
+                        var currentWF;
+                        if(workflows && workflows.data) {
+                        for (var i = 0; i < workflows.data.length; i++)
+                        {
+                            var customStatuses = workflows.data[i].customStatuses;
+                            for (var j = 0; j < customStatuses.length; j++)
+                            {
+                                if (task.customStatusId == customStatuses[j].id)
+                                {
+                                    currentWF = workflows.data[i];
+                                    break;
+                                }
+                            }
+                            if (currentWF) break;
+                        }
+                        }
+                        var statusList = [];
+                        if (currentWF && currentWF.customStatuses)
+                        {
+                            for(var i = 0; i < currentWF.customStatuses.length; i++)
+                            {
+                                var status = currentWF.customStatuses[i];
+                                if(!status.hidden)
+                                {
+                                    statusList.push({name: status.name, value: status.id});
+                                }
+                            }
+                        };
+                        if(statusList && statusList.length > 0) { 
+                            createComplexSelectCell(task, delta, id, cellId, statusList);
+                            }
+                        else {
+                            createSelectCell(task, delta, 'status', 'statusCell', ['Active','Completed','Deferred','Cancelled']);
+                        }
+                    }                   
+                }
+                
+                function createContactsCell(task, delta, id, cellId, accountContacts) {
+                
+                    var cellElement = document.getElementById(cellId);
+                    if (cellElement && id in task) {
+
+                        cellElement = cloneAndReplace(cellElement);
+
+
+                        function formatContactName(c) {
+                            return c.lastName ? c.firstName + ' ' + c.lastName : c.firstName;
+                        }
+
+                        function findContactInAccount(c) {
+                            for(var j=0; j< accountContacts.length; j++) {
+                                var a = accountContacts[j];
+                                if (a.id && a.id === c) {
+                                    return a;
+                                }
+                            }
+                        }
+                        
+                        function createText() {
+
+                            dropElementContents(cellElement);
+
+                            var contacts = id in delta? delta[id] : task[id];
+                            var divElement = document.createElement('div');
+
+                             
+                            if(contacts.length > 0) {
+                                
+                                for (var i=0; i<contacts.length; i++) {
+                                    var contact = findContactInAccount(contacts[i]);
+                                    if (!contact) continue;
+                                    
+                                    var spanElement = document.createElement('span'),
+                                        iconElement = document.createElement('img');
+                                    
+                                    iconElement.src = contact.avatarUrl? contact.avatarUrl:
+                                            '/img/icon/alohaProfile16.png';
+                                    iconElement.className ='contactIcon';
+                                    iconElement.title = formatContactName(contact);
+
+                                    spanElement.appendChild(iconElement);
+
+                                    spanElement.appendChild(document.createTextNode(
+                                        formatContactName(contact) ));
+                                    
+                                    divElement.appendChild(spanElement);
+                                }
+                            }
+                            
+                            if (id in delta) {
+                                if (contacts.length == 0) {
+                                    divElement.appendChild(document.createTextNode("Unassigned"));     
+                                }
+
+                                divElement.className='inlineEditModified';
+                                divElement.appendChild(createResetButton(id, delta, createText));
+                            }
+                            cellElement.appendChild(divElement);
+                        }
+
+                        function createControls() {
+
+                            dropElementContents(cellElement);
+                            if (document.getSelection) {
+                                if (!document.getSelection().isCollapsed) {
+                                    document.getSelection().removeAllRanges();
+                                }
+                            }
+
+
+                            var contacts = id in delta? delta[id] : task[id];
+                            var divElement = document.createElement('div');
+                            var focusableElements = [];
+
+                            for (var i=0; i<contacts.length; i++) {
+
+                                var contact = findContactInAccount(contacts[i]);
+                                if (!contact) continue; 
+                                
+                                var text = formatContactName(contact);
+                                divElement.appendChild(document.createTextNode(text));
+
+                                var a = createRemoveButton(function(){
+                                    if (!(id in delta)) {
+                                        delta[id] = task[id].slice();
+                                    }
+                                    for (var j=this.contactPosition + 1;
+                                                j < delta[id].length; j++) {
+                                        delta[id][j - 1] = delta[id][j];
+                                    }
+                                    delta[id].length--;
+                                    
+                                    createText();
+                                    cellElement.editMode = false;
+                                    
+                                    document.getElementById('nochangesButtons').style.display='none';
+                                    document.getElementById('changesButtons').style.display='block';
+                                });
+                                a.contactPosition = i;
+                                divElement.appendChild(document.createTextNode(" \u00a0 "));
+                                divElement.appendChild(a);
+                                divElement.appendChild(document.createElement('br'));
+                                focusableElements.push(a);
+                            }
+
+                            var selectElement = document.createElement('select');
+                            var defaultOption = document.createElement('option');
+                            defaultOption.appendChild(document.createTextNode("--Add assignee--"));
+                            selectElement.appendChild(defaultOption);
+                            var count = 0;
+
+                            for (var i=0; i<accountContacts.length; i++) {
+                                var contact = accountContacts[i];
+
+                                if (contact.type == "Person" && !contact.deleted)  {
+
+                                    var already = false;
+                                    for (var k=0; k<contacts.length; k++) {
+                                        if (contacts[k] == contact.id) {
+                                            already = true;
+                                            break;
+                                        }
+                                    }
+                                    if (already) continue;
+                                    
+                                    var optionElement = document.createElement('option');
+
+                                    optionElement.value = contact.id;
+                                    
+                                    optionElement.appendChild(document.createTextNode(
+                                        formatContactName(contact)));
+
+                                    selectElement.appendChild(optionElement);
+                                    count++;
+
+                                }
+                            }
+
+                            selectElement.addEventListener('change', function(){
+
+                                if (!(id in delta)) {
+                                    delta[id] = JSON.parse(JSON.stringify(task[id]));
+                                }
+                                delta[id].push(selectElement.value);
+
+                                createText();
+	                            cellElement.editMode = false;
+	                            
+	                            document.getElementById('nochangesButtons').style.display='none';
+                            	document.getElementById('changesButtons').style.display='block';
+
+                            });
+
+                            if (count > 0) {
+                                divElement.appendChild(selectElement);
+                            }
+
+                            cellElement.appendChild(divElement);
+                            
+                            focusableElements.push(cellElement);
+                            focusableElements.push(selectElement);
+                            
+                            focusableElements.unshift(function(){
+
+                                if (cellElement.editMode) {
+                                    createText();
+                                    cellElement.editMode = false;
+                                }
+
+                            });
+                            smartBlur.call(this, focusableElements);                    
+                        }
+
+                        createText();
+
+                        cellElement.addEventListener('dblclick', function(e) {
+                            if (!cellElement.editMode) {
+                                createControls();
+                                cellElement.editMode = true;
+                                e.preventDefault();
+                            }
+                        });
+                    }
+                }
+
+                function mmddyyyy(date) {
+                	return formatISODate(date).replace(/^(\d{4})\-(\d{2})\-(\d{2}).*$/, '$2/$3/$1');
+                }
+
+                function createSimpleDatesCell(task, delta, id, cellId) {
+
+                    var typeOptions = {'Backlog': 'Backlogged', 'Planned': 'Planned', 'Milestone': 'Milestone'};
+                
+                    var cellElement = document.getElementById(cellId);
+                    if (cellElement && id in task) {
+
+                        cellElement = cloneAndReplace(cellElement);
+
+                        var activateEditMode = function() {
+                           
+                            if (!cellElement.editMode) {
+                            	
+                            	var dates = id in delta? delta[id] : task[id];
+                            	if (dates.type == "Backlog") {
+                            		delta[id] = {}
+                            		delta[id].type = "Planned";
+                            		var startDate = new Date();
+                            		startDate.setHours(9,0,0,0);
+                            		delta[id].start = formatISODate(startDate);
+                            		
+                            		var dueDate = new Date();
+                            		dueDate.setDate(dueDate.getDate() + 1);
+                            		dueDate.setHours(17,0,0,0);
+                            		delta[id].due = formatISODate(dueDate)
+                            		
+                            	}
+                            	
+                                createDatesControls();
+                                cellElement.editMode = true;
+                            }
+                        };
+                        
+                        function createText() {
+
+                            dropElementContents(cellElement);
+                            var dates = id in delta? delta[id] : task[id];
+
+                            var divElement = document.createElement('div');
+                            
+                            if (dates.type == "Backlog") {
+                            divElement.appendChild(document.createTextNode(
+                                'Not specified'));
+                            }
+                            else {
+                                var startDate = dates.start? parseISODate(dates.start) : new Date(),
+                                    dueDate = dates.due? parseISODate(dates.due) : new Date();
+                                
+                                divElement.appendChild(document.createTextNode(
+                                        mmddyyyy(dueDate)));
+                            }
+                            cellElement.appendChild(divElement);
+                        }
+
+                        function createDatesControls() {
+
+                            dropElementContents(cellElement);
+                            if (document.getSelection) {
+                            	if (!document.getSelection().isCollapsed) {
+                            		document.getSelection().removeAllRanges();
+                            	}
+                            }
+
+                            
+                            var dates = id in delta? delta[id] : task[id];
+                            
+                            var finishDateElement;
+
+                             /*   delta[id].start =
+                                    dates.start? dates.start :
+                                    task[id].start? task[id].start :
+                                    todayISO();
+                                delta[id].due =
+                                    dates.due? dates.due :
+                                    task[id].due? task[id].due :
+                                    todayISO(); */
+						
+                            var finishDateElement = document.createElement('input');
+                                finishDateElement.type = 'text';
+                                finishDateElement.size = 10;
+                                finishDateElement.value =
+                                    mmddyyyy(parseISODate(dates.due))
+
+                            cellElement.appendChild(finishDateElement);
+                            
+                            finishDateElement.addEventListener('keypress', function(e) {
+                                //save
+                                if (e && e.keyCode == 13) {
+                                    finishDateElement.blur();
+                                }
+                                else if (e && e.keyCode == 27) {
+                                    finishDateElement.value='';
+                                    finishDateElement.blur();
+                                }
+                            });
+                       
+
+                            smartBlur(function(){
+
+                                if (cellElement.editMode) {
+
+                                    var dateValue = new Date(finishDateElement.value);
+                                    if (dateValue.toString() == "Invalid Date") {
+                                        dateValue = new Date();
+                                    }
+
+                                    dateValue.setHours(17,0,0,0);
+                                    delta[id].due = formatISODate(dateValue);
+                                    
+                                    var today = new Date();
+
+                                    var startValue = dateValue < today ? dateValue : today;                                          
+                                    startValue.setHours(9,0,0,0);
+                                    delta[id].start = formatISODate(startValue);                       
+                                
+                                    createText();
+                                    cellElement.editMode = false;
+                                }
+
+                            }, finishDateElement);
+
+                            finishDateElement.focus();
+                        }
+
+                        createText();
+
+                        cellElement.addEventListener('dblclick', activateEditMode);
+
+                    }
+                }
+                
+                function createDatesCell(task, delta, id, cellId) {
+
+                    var typeOptions = {'Backlog': 'Backlogged', 'Planned': 'Planned', 'Milestone': 'Milestone'};
+                
+                    var cellElement = document.getElementById(cellId);
+                    if (cellElement && id in task) {
+
+                        cellElement = cloneAndReplace(cellElement);
+
+                        var activateEditMode = function(e) {
+                           
+                            if (!cellElement.editMode) {
+                                createDatesControls();
+                                cellElement.editMode = true;
+                                if (e) e.preventDefault();
+                            }
+                        };
+                        
+                        function createText() {
+
+                            dropElementContents(cellElement);
+                            var dates = id in delta? delta[id] : task[id];
+
+                            var text, divElement = document.createElement('div');
+                            
+                            divElement.appendChild(document.createTextNode(
+                                typeOptions[dates.type] + (dates.type == 'Backlog' ? '' : ', ')));
+                            
+                            if (dates.type == "Planned" ||
+                                    dates.type == "Milestone") {
+                                
+                                var startDate = dates.start? parseISODate(dates.start) : new Date(),
+                                    dueDate = dates.due? parseISODate(dates.due) : new Date();
+                                
+                                if (dates.type != "Milestone" &&
+                                        startDate != dueDate) {
+                                    divElement.appendChild(document.createTextNode(
+                                        mmddyyyy(startDate) + " \u2013 "));
+                                }
+                                var container = divElement,
+                                    today = new Date();
+                                    today.setHours(9,0,0,0);
+
+                                if(today > dueDate) {
+                                    var spanElement = document.createElement('span');
+                                    spanElement.className = 'overdueDate';
+                                    spanElement.title = 'Overdue';
+                                    divElement.appendChild(spanElement);
+                                    container = spanElement;
+                                }
+                                
+                                container.appendChild(document.createTextNode(
+                                    mmddyyyy(dueDate) + ' '));
+                            }
+                            
+                            if (dates.duration) {
+                                if (dates.duration >=960) {
+                                    text = '(' + (Math.ceil(dates.duration / 480))  + ' days)';
+                                }
+                                else if (dates.duration >=480) {
+                                    text = '(1 day)';
+                                }
+                                else if (dates.duration >0) {
+                                    text = '(<1 day)';
+                                }
+                                else {
+                                    text = '(? days)';   
+                                }
+                                divElement.appendChild(document.createTextNode(text));
+                            }
+
+                            if (id in delta) {
+                                divElement.className='inlineEditModified';
+                                divElement.appendChild(createResetButton(id, delta, createText));
+                            }
+                            cellElement.appendChild(divElement);
+                        }
+
+                        function createDatesControls() {
+
+                            dropElementContents(cellElement);
+                            if (document.getSelection) {
+                            	if (!document.getSelection().isCollapsed) {
+                            		document.getSelection().removeAllRanges();
+                            	}
+                            }
+
+                            
+                            var dates = id in delta? delta[id] : task[id];
+
+                            var startDateElement,
+                                finishDateElement,
+                                durationElement,
+                                typeSelectElement = document.createElement('select');
+                            
+                            for (var option in typeOptions) {
+                                var optionElement = document.createElement('option');
+                                optionElement.value = option;
+
+                                if (option == dates.type) {
+                                    optionElement.setAttribute('selected','selected');
+                                }
+                                optionElement.appendChild(document.createTextNode(typeOptions[option]));
+                                typeSelectElement.appendChild(optionElement);
+                            }
+
+                            cellElement.appendChild(typeSelectElement);
+                            cellElement.appendChild(document.createTextNode(', '));
+
+                            typeSelectElement.addEventListener('change', function(e) {
+                                
+                                delta[id] = { 'type' : typeSelectElement.value };
+                                
+                                function todayISO() {
+                                    var date = new Date();
+                                    date.setHours(8);
+                                    date.setMinutes(0);
+                                    date.setHours(0);
+                                    date.setMilliseconds(0);
+                                    return formatISODate(date);
+                                }
+
+                                if (typeSelectElement.value == 'Planned' ) {
+                                    delta[id].start =
+                                        dates.start? dates.start :
+                                        task[id].start? task[id].start :
+                                        todayISO();
+                                }
+                                if (typeSelectElement.value == 'Milestone'
+                                        || typeSelectElement.value == 'Planned') {
+                                    delta[id].due =
+                                        dates.due? dates.due :
+                                        task[id].due? task[id].due :
+                                        todayISO();
+                                }
+                                if (typeSelectElement.value == 'Backlog') {
+                                    delta[id].duration =
+                                        dates.duration? dates.duration :
+                                        task[id].duration? task[id].duration :
+                                        480;
+                                }
+
+                                cellElement.editMode = false;
+                                typeSelectElement.blur();
+
+                                window.setTimeout(activateEditMode, 10);
+
+                            });
+
+                            if (dates.type == "Planned") {
+
+                                startDateElement = document.createElement('input');
+                                startDateElement.type = 'text';
+                                startDateElement.size = 10; 
+                                startDateElement.value =
+                                    mmddyyyy(parseISODate(dates.start));
+
+                                cellElement.appendChild(startDateElement);
+                                cellElement.appendChild(document.createTextNode(' \u2013 '));
+                                
+                                startDateElement.addEventListener('keypress', function(e) {
+                                    //save
+                                    if (e && e.keyCode == 13) {
+                                        startDateElement.blur();
+                                    }
+                                    else if (e && e.keyCode == 27) {
+                                        startDateElement.value = '';
+                                        startDateElement.blur();
+                                    }
+                                }); 
+                            }
+
+                            if (dates.type == "Planned" || dates.type == "Milestone") {
+
+                                    finishDateElement = document.createElement('input');
+                                    finishDateElement.type = 'text';
+                                    finishDateElement.size = 10;
+                                    finishDateElement.value =
+                                        mmddyyyy(parseISODate(dates.due));
+
+                                    cellElement.appendChild(finishDateElement);
+                                    
+                                
+                                    finishDateElement.addEventListener('keypress', function(e) {
+                                        //save
+                                        if (e && e.keyCode == 13) {
+                                            finishDateElement.blur();
+                                        }
+                                        else if (e && e.keyCode == 27) {
+                                            finishDateElement.value='';
+                                            finishDateElement.blur();
+                                        }
+                                    });
+                            }
+
+                            if (dates.type == "Backlog") {
+
+                                var durationElement = document.createElement('input');
+                                    durationElement.type = 'text';
+                                    durationElement.size = 3;
+                                    durationElement.value = dates.duration > 0?
+                                        Math.floor(dates.duration / 480) : '1';
+
+                                    cellElement.appendChild(durationElement);
+                                    cellElement.appendChild(document.createTextNode(" day(s)"));
+                                    
+
+                                    durationElement.addEventListener('keypress', function(e) {
+                                        //save
+                                        if (e && e.keyCode == 13) {
+                                            durationElement.blur();
+                                        }
+                                        else if (e && e.keyCode == 27) {
+                                            durationElement.value='';
+                                            durationElement.blur();
+                                        }
+                                    });
+                            }
+
+                            smartBlur(function(){
+
+                                if (cellElement.editMode) {
+
+                                    delta[id] = { 'type': dates.type };
+
+                                    if (startDateElement) {
+                                        var dateValue = new Date(startDateElement.value);
+                                        if (dateValue.toString() == "Invalid Date") {
+                                            dateValue = new Date();
+                                        }
+
+                                        dateValue.setHours(9,0,0,0);
+                                        delta[id].start = formatISODate(dateValue);
+                                    }
+                                    if (finishDateElement) {
+                                        var dateValue = new Date(finishDateElement.value);
+                                        if (dateValue.toString() == "Invalid Date") {
+                                            dateValue = new Date();
+                                        }
+
+                                        dateValue.setHours(17,0,0,0);
+                                        delta[id].due = formatISODate(dateValue);
+                                    }
+                                    if (durationElement) {
+                                        var durationValue = durationElement.value.toString() | 0;
+                                        delta[id].duration = durationValue > 0 ? 
+                                            durationValue * 480 : 480;
+                                    }
+
+                                    createText();
+                                    cellElement.editMode = false;
+                                }
+
+                            }, cellElement, typeSelectElement, startDateElement, finishDateElement, durationElement);
+
+                            typeSelectElement.focus();
+                        }
+
+                        createText();
+
+                        cellElement.addEventListener('dblclick', activateEditMode);
+
+                    }
+                    
+                }
+                
+
+                function createRemoveButton(handler) {
+                    var a = document.createElement('a');
+                    a.appendChild(document.createTextNode('Remove'));
+                    a.href='#';
+                    /*a.innerHTML = '<a class="inlineRemoveLink" title="Remove" href="#" style="display: inline;"><img width="16px" height="16px" src="/s.gif" alt="Undo" class="inlineRemove"></a>';*/
+                    a.addEventListener('click', handler);
+                    return a;
+                }
+
+                function applyTemplate(template, fields) {
+                    return template.replace(/\{\{(\w+)\}\}/g, function(match, fieldName) {
+                        return fields[fieldName] ? fields[fieldName] : '';
+                    });
+                }
+
+                function parseISODate(s) {
+                    return new Date(s.substr(0,4)|0, (s.substr(5,2)|0) - 1, s.substr(8,2)|0,
+                            s.substr(11,2)|0, s.substr(14,2)|0, s.substr(17,2)|0, 0);
+                }
+
+                function formatISODate(d) {
+                    function z(n) { return ('0'+n).substr(-2); }
+                    return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate())
+                            + 'T'
+                            + z(d.getHours()) + ':' + z(d.getMinutes()) + ':' + z(d.getSeconds());
+
+                }
+
+                function formatImportance(task) { 
+                    var src = '';
+                    if (task.importance == 'High') {
+                        src += '<span class="highImportanceIcon"></span>';
+                    } else if (task.importance == 'Low') {
+                        src += '<span class="lowImportanceIcon"></span>';
+                    }
+                    if (task.hasAttachments) {
+                        src += '<span class="attachmentIcon"></span>';
+                    }
+                    return src;
+                }
+
+                function htmlEncode(str) {
+                  return str.replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;');
+                }
+
+                 function htmlDecode(str) {
+                  return str.replace(/&lt;/g, '<')
+                            .replace(/&gt;/g, '>')
+                            .replace(/&amp;/g, '&');
+                }
+
+                function sanitizeElements(element) {
+                
+                    var E = {},
+                        STYLES = /^(?:(?:background-)?color\s*:\s*\#[0-9a-zA-Z]{3,6}\s*;?|opacity\s*:\s*(?:[\.0-9]+)\s*;?)+$/i,
+                        TASKLIST_CLASSES = /^\s*tasklist-(?:not-)?done\s*$/i,
+                        BULLET_CLASS = /^\s*bullet\s*$/i,
+                        BULLET_REL = /^\s*list-bullet[1-6]\s*$/i,
+                        NUMBER_CLASS = /^\s*number\s*$/i,
+                        NUMBER_REL = /^\s*list-number[1-6]\s*$/i,
+                        NUMBER = /^\s*\d+\s*$/,
+                        ONSITE_OR_OFFSITE_URL = /^\s*(?:(?:ht|f)tps?:\/\/.*|\/.*)$/i,
+                        ONSITE_OR_WRIKE_URL = /^\s*(?:(?:ht|f)tps?:\/\/www\.wrike\.com\/.*|\/.*)$/i,
+                        ANY = /.*/;
+
+                    var allowedElements = {
+                        'b':E, 'strong':E, 'i':E, 'em':E, 'u':E, 's':E,
+                        'span': { 'style': STYLES, 'class': TASKLIST_CLASSES },
+                        'font': { 'style': STYLES, 'class': TASKLIST_CLASSES },
+                        'table':E, 'tbody':E, 'tr':E, 'td':E, 'th':E,
+                        'ul': { 'rel': BULLET_REL, 'class': BULLET_CLASS },
+                        'ol': { 'rel': NUMBER_REL, 'class': NUMBER_CLASS, 'start': NUMBER },
+                        'li':E, 'br':E,
+                        'a':{ 'href': ONSITE_OR_OFFSITE_URL, 'rel': ANY },
+                        'img':{ 'src': ONSITE_OR_WRIKE_URL, 'alt': ANY },
+                        'h1':E, 'h2':E, 'h3':E, 'h4':E, 'h5':E, 'h6':E, 'div':E
+                    };
+
+                    walkAndDropFragment(element, function(node) {
+                        
+                        if (node.nodeType == node.ELEMENT_NODE) {
+                            if (node.nodeName.toLowerCase() in allowedElements) {
+                            
+                                var allowed = allowedElements[node.nodeName.toLowerCase()];
+                                var attrs = node.attributes;
+                            
+                                for(var i = attrs.length-1; i >= 0; i--) {
+                                    var attr = attrs[i];
+                            
+                                    if (attr.name.toLowerCase() in allowed &&
+                                            attr.value.match(allowed[attr.name.toLowerCase()]))
+                                        continue;
+                            
+                                    node.removeAttribute(attr.name);
+                                }
+                                if (node.nodeName.toLowerCase() == "img") {
+                                    var src = node.getAttribute('src');
+                                    if (src) {
+                                        node.setAttribute('src', 'https://www.wrike.com' + src);
+                                    }
+                                }
+                                return null;
+                            }
+                        }
+                        else if(node.nodeType == node.TEXT_NODE ||
+                            node.nodeType == node.ATTRIBUTE_NODE) {
+
+                            return null;
+                        }
+                        return node;
+                    });
+                }
+
+                function walkAndDropFragment(fragment, nodeHandler) {
+
+                    for (var node = fragment; node; ) {
+                      
+                        var drop = nodeHandler(node);
+
+                        if (!drop && node.firstChild)
+                            node = node.firstChild
+                        else {
+                            while(node && !node.nextSibling) {
+                                node = node.parentNode;
+                            }
+                            node = node? node.nextSibling : node;
+                        }
+                        if (drop && drop.parentNode) {
+                            drop.parentNode.removeChild(drop);
+                        }
+                      }
+                }
+				
+				function htmlVersion(value) {				
+					value = value.replace(/&/g, "&amp;");
+                    value = value.replace(/</g, "&lt;");
+                    value = value.replace(/>/g, "&gt;");
+                    value = value.replace(/\r\n|\r|\n/mg, '<br>');
+                    value = value.replace(/  /mg, ' \u00a0');
+                    return value;
+				}
+				
+                function textVersion(fragment) {
+
+                    var noContent = {
+                        'table':1, 'tbody':1, 'tr':1, 'ol':1, 'ul':1 };
+                    
+                    var blockContent = {
+                        'table':1, 'ul':1, 'ol':1, 'li':1, 
+                        'h1':1, 'h2':1, 'h3':1, 'h4':1, 'h5':1, 'h6':1 };
+
+                    var parentElement = fragment;  
+                    var nextListIndex = {};
+
+                    var result = '';
+                    function ifBlockAddCRLF() {
+                        if (node.nodeName.toLowerCase() in blockContent
+                            && !result.match(/\r\n$/)) {
+                                result += "\r\n";
+                        }
+                    }
+                    var breaks = [];
+
+                    for (var node = fragment; node; ) {
+                    
+                        if (node.nodeType == node.TEXT_NODE) {
+                            if (!(parentElement.nodeName.toLowerCase() in noContent)) {
+
+                                var value = node.nodeValue.replace(/(\r\n|\r|\n|\t)+/g, ' ');
+                                if (value.match(/\S/)) {
+                                    result += value; 
+                                }
+                            }
+                        }
+                        else if (node.nodeType == node.ELEMENT_NODE) {
+                            ifBlockAddCRLF(node);
+                            var tag = node.nodeName.toLowerCase();
+                            if (tag == 'br') {
+                                breaks.push(result.length);
+                            }
+                            else if (tag == 'td') {
+                                result += '\t';
+                            }
+                            else if (tag == 'tr') {
+                                breaks.push(result.length);
+                            }
+                            else if (tag == 'ol') {
+                                nextListIndex[node] = 1;
+                            }
+                            else if (tag == 'li') {
+                                parentTag = parentElement && parentElement.nodeName.toLowerCase();
+                                if (parentTag == 'ol') {
+                                    result += nextListIndex[parentElement] + '. ';
+                                    nextListIndex[parentElement]++;
+                                }
+                                else if (parentTag == 'ul') {
+                                    result += '\u2022 ';
+                                }
+                            }
+                        }
+                            
+                        if (node.firstChild) {
+                            parentElement = node;
+                            node = node.firstChild;
+                        }
+                        else {
+                            while(node && !node.nextSibling) {
+                                ifBlockAddCRLF(node);
+                                node = node.parentNode;
+                                if (node)
+                                    parentElement = node.parentNode;
+                            }
+                            if (node) {
+                                ifBlockAddCRLF(node);
+                                node = node.nextSibling;
+                            }
+                        }
+                    }
+
+                    for(var i=breaks.length-1; i>=0; i--) {
+                        var index = breaks[i];
+                        result = result.substring(0,index) + "\r\n" + result.substring(index);
+                    }
+
+                    return result.replace(/ +/g, ' ');
+                }
+                
+                </script>
+<apex:form >
+      
+    <script type="text/javascript">
+    function supports_html5_storage() {
+              try {
+                return 'localStorage' in window && window['localStorage'] !== null;
+              } catch (e) {
+                return false;
+              }
+            }
+    </script>      
+                  
+    <apex:outputPanel id="cacheBlock">
+             <script type="text/javascript">
+             window.contactCache = '{!JSENCODE(contactsJSON)}';
+             window.workflowCache = '{!JSENCODE(workflowsJSON)}';
+             
+             if(supports_html5_storage()) {
+                 localStorage.setItem('wrikeWorkflows', window.workflowCache);
+                 localStorage.setItem('wrikeContacts', window.contactCache);  
+             }
+             initialize();
+             </script>
+       </apex:outputPanel>
+    </apex:form>  
+                <div class="apexp"><div class="individualPalette"><div class="accountBlock"><div class="editPage">
+                <div id="taskView" class="bPageBlock brandSecondaryBrd bEditBlock secondaryPalette">
+                    <div class="pbHeader">
+                        <table cellpadding="0" cellspacing="0" border="0">
+                              <tbody>
+                                 <tr>
+                                    <td class="pbTitle">
+                                        <img class="relatedListIcon" src="/s.gif" />
+                                        <h3 class="mainTitle">Wrike Tasks</h3>              
+                                    </td>
+                                    <td class="pbButton">
+                                        <div id="nochangesButtons"
+                                            style="{!IF(isNewTask,"display:none","")}">
+                                            <apex:form styleClass="inlineForm" rendered="{!taskStatus != 'Completed'}">
+                                                <apex:commandButton value="Mark as Done" id="doneButton" action="{!complete}"/>
+                                            </apex:form>
+                                            <input value="Open in Wrike" class="btn" title="Open in Wrike..." name="create" onclick="window.open(window.taskPermalink,'_wrike')" type="button"/>
+                                            <apex:form styleClass="inlineForm">
+                                                <apex:actionFunction name="backtolist" action="{!back}" reRender="refreshBlock">
+                                                </apex:actionFunction>
+                                                <input class="btn" type="button" value="Back to List" id="backButton" onclick="backtolist()"/>
+                                            </apex:form>
+                                       </div>
+    
+                                        <div id="changesButtons"
+                                            style="{!IF(HTMLENCODE(taskId) = "NEW","","display:none")}">
+                                            <apex:form styleClass="inlineForm" onsubmit="beforeSave()">
+    
+                                                <input value="{!IF(isNewTask,"Create","Save")}" class="btn"
+                                                    title="{!IF(isNewTask,"Create","Save")}"
+                                                    name="save" id="saveButton" onclick="saveChanges(global.getChangeSet())" type="button"/>
+    
+                                                    <apex:actionFunction name="saveChanges" action="{!save}"
+                                                        oncomplete="afterSave()" reRender="refreshBlock,errorMessagesPanel">
+                                                        <apex:param name="changeSet" value="" />
+                                                    </apex:actionFunction>
+                                               
+                                            </apex:form>
+                                            <apex:outputPanel layout="inline" rendered="false">
+                                                <input value="Cancel" class="btn" title="Cancel" name="cancel" id="cancelButton"
+                                                    onclick="dropChanges()" type="button"/>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel layout="inline" rendered="true">
+                                                <apex:form styleClass="inlineForm">
+                                                    <input class="btn" type="button" value="Cancel" id="cancelButton" onclick="cancel()"/>
+                                                    <apex:actionFunction name="cancel" action="{!back}" reRender="refreshBlock">
+                                                    </apex:actionFunction>
+                                                </apex:form>
+                                            </apex:outputPanel>
+                                       </div>  
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- apex:form ><apex:inputField value="!DateInput.ActivityDate" /></apex:form-->
+                    <div class="pbBody">
+                        <div class="bordered">
+                        <div class="pbSubsection">
+                            <table class="detailList" border="0" cellpadding="0" cellspacing="0">
+                                <tbody>
+                                <tr class="titleRow">
+                                    <td rowspan="{!IF(isNewTask,"3", "5")}" class="w4"></td>
+                                    <td class="labelCol w14">Title</td>
+                                    <td class="dataCol editableCell titleCell wa" colspan="3"
+                                            id="titleCell" tabindex="0"></td>
+                                    <td rowspan="{!IF(isNewTask,"3", "5")}" class="w4"></td>
+                                </tr>
+                                <tr style="{!IF(isNewTask,"display:none", "")}">
+                                    <td class="labelCol w14">Status</td>
+                                    <td class="dataCol editableCell w32"
+                                            id="statusCell" tabindex="0"></td>
+
+                                    <td class="labelCol w18">Importance</td>
+                                    <td class="dataCol editableCell w28" id="importanceCell"
+                                        tabindex="0"></td>
+                                </tr>
+                                <tr>
+                                    <td class="labelCol w14">
+                                    	{!IF(isNewTask, "Due date", "Dates")}
+                                    </td>
+                                    <td class="dataCol editableCell w32" id="datesCell"
+                                        tabindex="0"><!--  <apex:form ><apex:inputField value="{!DateInput.ActivityDate}" /></apex:form>-->
+                                        </td>
+
+                                    <td class="labelCol w18">Assigned to</td>
+                                    <td class="dataCol editableCell w28" id="assignedCell"
+                                        tabindex="0"></td>
+                                </tr>
+                                <tr class="descriptionRow">
+                                    <td class="labelCol w14">Description</td>
+                                    <td class="dataCol editableCell descriptionCell wa" colspan="3"
+                                        id="descriptionCell"
+                                        tabindex="0">                            
+                                    </td>
+                                </tr>
+                                <tr style="{!IF(isNewTask, "display:none", "")}">
+                                    <td class="labelCol w14"> </td>
+                                    <td class="dataCol wa" id="lea1_ilecell" colspan="3">
+                                        <div id="extra"></div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                             </table>
+                         </div>
+                         </div>
+                    </div>
+                </div>
+			</div></div></div></div>                
+
+
+            </apex:outputPanel>
+
+        </apex:page>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_Asset_required_for_Customer_Asset</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(RecordType.Name = &quot;Customer Asset&quot;,  ISBLANK( Parent__c )  )</errorConditionFormula>
+    <errorMessage>Parent Asset required for Customer Asset Creation</errorMessage>
+</ValidationRule>

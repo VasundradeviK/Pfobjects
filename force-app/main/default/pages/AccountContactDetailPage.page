@@ -1,0 +1,68 @@
+<apex:page standardController="Account" extensions="AccountContactController" id="pageId">   
+   <apex:form id="formId">
+       <apex:actionFunction name="populateCustomer" action="{!populateCustomerId}" reRender="accountCustomerId" immediate="true">
+           <apex:param name="customerId" assignTo="{!customerId}" value=""/>
+       </apex:actionFunction>
+       <apex:pagemessages id="msgPanel"/>
+       <apex:outputPanel id="accountPanel"> 
+           <apex:pageBlock rendered="{!accountFlag}" id="blockId">
+               <apex:pageBlockSection title="Account Detail" id="sectionId">                
+                   <apex:inputField value="{!account.Name}"/>
+                   <apex:inputField value="{!account.ParentId}" id="parentId" onchange="populateCustomerIdJS();"/>
+                   <apex:inputField value="{!account.Account_Email__c}"/>
+                   <apex:outputField value="{!account.Customer_ID__c}" id="accountCustomerId"/>
+               </apex:pageBlockSection>
+               <apex:pageBlockButtons location="bottom">
+                   <apex:commandButton action="{!accountNext}" value="Next" rerender="msgPanel, accountPanel, assetTagPanel"/>
+                   <apex:CommandButton action="{!cancel}" value="Cancel" immediate="true"/>
+               </apex:pageBlockButtons>
+           </apex:pageBlock>    
+       </apex:outputPanel>
+       <!--<apex:outputPanel id="contactPanel"> 
+           <apex:pageBlock rendered="{!contactFlag}">    
+               <apex:pageBlockSection title="Contact Detail">
+                   <apex:inputField value="{!contact.FirstName}"/>
+                   <apex:inputField value="{!contact.LastName}"/>         
+                   <apex:inputField value="{!contact.Email}"/>
+                   <apex:inputField value="{!contact.Phone}" /> 
+               </apex:pageBlockSection>  
+               <apex:pageBlockButtons location="bottom">
+                   <apex:commandButton action="{!contactPrevious}" value="Back" rerender="msgPanel, accountPanel, contactPanel, assetTagPanel" immediate="true"/>
+                   <apex:commandButton action="{!contactNext}" value="Next" rerender="msgPanel, contactPanel, assetTagPanel"/>
+                   <apex:CommandButton action="{!cancel}" value="Cancel" immediate="true"/>
+               </apex:pageBlockButtons>
+           </apex:pageBlock>                 
+       </apex:outputPanel>-->
+       <apex:outputPanel id="assetTagPanel">
+           <apex:pageBlock rendered="{!assetTagFlag}">    
+               <apex:pageBlockSection title="Asset Tag Detail">
+                   <!--<apex:inputField value="{!assetTag.Name}"/>-->   
+                   <apex:inputField value="{!assetTag.Plant_Business_Segment__c}"/>
+                   <apex:inputField value="{!assetTag.Operator__c}"/>     
+                   <apex:inputField value="{!assetTag.Service_Region__c}"/>
+               </apex:pageBlockSection>
+               <apex:pageBlockButtons location="bottom">
+                   <apex:commandButton action="{!assetTagPrevious}" value="Back" rerender="msgPanel, accountPanel, assetTagPanel" immediate="true"/>
+                   <apex:commandButton action="{!save}" value="Save" rerender="msgPanel, populateAccountIdPanel" oncomplete="navigateToAccount();"/>
+                   <apex:CommandButton action="{!cancel}" value="Cancel" immediate="true"/>
+               </apex:pageBlockButtons>
+           </apex:pageBlock>
+       </apex:outputPanel>
+       <apex:outputPanel id="populateAccountIdPanel">
+           <script>
+               var accountId = '{!accountId}';
+           </script>
+       </apex:outputPanel>
+       <script>
+           function navigateToAccount(){
+               window.opener.location.href = '/'+accountId;
+               window.close();
+           }
+           
+           function populateCustomerIdJS(){
+               var customerId = document.getElementById("pageId:formId:blockId:sectionId:parentId_lkid").value;
+               populateCustomer(customerId);
+           }
+       </script>
+   </apex:form>
+</apex:page>

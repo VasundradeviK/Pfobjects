@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Plant_Asset_Name__c</fullName>
+    <externalId>false</externalId>
+    <label>Plant Asset Name</label>
+    <referenceTo>Plant_Asset__c</referenceTo>
+    <relationshipLabel>Plant Asset Attachments</relationshipLabel>
+    <relationshipName>Plant_Asset_Attachments</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

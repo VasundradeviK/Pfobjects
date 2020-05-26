@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Assets_with_Capacities_and_Statuses</fullName>
+    <columns>NAME</columns>
+    <columns>DPSA_AC_Capacity__c</columns>
+    <columns>DPSA_DC_Capacity__c</columns>
+    <columns>AC_Capacity__c</columns>
+    <columns>DC_Capacity__c</columns>
+    <columns>Implementation_Status__c</columns>
+    <columns>Project_Lifecycle_Status__c</columns>
+    <columns>Account__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Plant_Asset__c.Child_Asset</value>
+    </filters>
+    <filters>
+        <field>Account__c</field>
+        <operation>equals</operation>
+        <value>Greenbacker Capital</value>
+    </filters>
+    <label>Assets with Capacities and Statuses</label>
+</ListView>

@@ -1,0 +1,257 @@
+<aura:component implements="flexipage:availableForAllPageTypes" controller="InlineEditHandler">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>    
+    <aura:attribute name="objInfoForPicklistValues" type="RFI_Detail__c" default="{sobjectType : 'RFI_Detail__c'}" description="object information to fetch picklist values"/>
+    <aura:attribute name="RFIItemStatusPicklistOpts" type="string[]" description="store picklist options values"/>
+    <aura:attribute name="OnsiteRemediationPicklistOpts" type="string[]" description="store Onsite Remediation picklist options values"/>
+    <aura:attribute name="showSaveCancelBtn" type="boolean"/>
+    <aura:attribute name="showErrorClass" type="boolean" default="false"/>
+    <aura:attribute name="makerequired" type="boolean" default="false"/>
+    <aura:attribute name="makeonsiterequired" type="boolean" default="false"/>
+    <aura:attribute name="valid" type="boolean" default="true"/>
+    <aura:attribute name="sNo" type="string" />
+    <!--<aura:handler name="change" value="{!v.singleRec.Due_Date__c}" action="{!c.onduedateChange}"/>-->
+    <aura:attribute name="RFIDetailDescriptionEditMode" type="boolean" default="false" />
+    <aura:attribute name="CancelcannnotcompletedescriptionEditMode" type="boolean" default="false" />
+    <aura:attribute name="onsiteremediationdescriptionEditMode" type="boolean" default="false" />
+    <aura:attribute name="implementationBlockedEditMode" type="boolean" default="false" />
+    <aura:attribute name="RFIItemStatusEditMode" type="boolean" default="false" />
+    <aura:attribute name="OnsiteremediationEditMode" type="boolean" default="false" />
+    <aura:attribute name="OnsitedescriptionEditMode" type="boolean" default="false" />
+    <aura:attribute name="duedateEditMode" type="boolean" default="false" />
+    <aura:attribute name="singleRec" type="sobject" default="{'sobjectType' : 'RFI_Detail__c',
+                                                             'Name' : '','RFI_Detail_Description__c' : '','RFI_Item_Status__c': '','Cancel_Cannot_Complete_Description__c':'',
+                                                             'Implementation_Blocked__c': 'boolean' ,'Onsite_Remediation_Required__c':'','Onsite_Remediation_Description__c':'',
+                                                             'Due_Date__c':'2016-02-15','Customer_Comments__c':''}"/>
+    <!--Attribute to collect field permission
+<aura:attribute name="fields" type="List" default="[]" />-->
+    <aura:attribute name="fieldPermission" type="Map"/>
+    
+    
+    <tr>
+        
+        <td><div class="slds-cell-wrap" title="Name">{!v.singleRec.Name}</div></td>
+        
+        <td ondblclick="{!c.inlineEditRFIDetailDescription}">
+            <span class="slds-grid slds-grid_align-spread">
+                <!-- show input and output section based on boolean flag -->
+                <aura:if isTrue="{!v.RFIDetailDescriptionEditMode == false}" >
+                    <span class="slds-cell-wrap" title="RFI Detail Description">{!v.singleRec.RFI_Detail_Description__c}</span>
+                    <button onclick="{!c.inlineEditRFIDetailDescription}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Website">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case-->
+                    <aura:set attribute="else">
+                        <section  tabindex="0" class="slds-popover slds-popover_edit" role="dialog" style="position: absolute; top: 0px">
+                            <div class="slds-popover__body">
+                                <div class="slds-form-element slds-grid slds-wrap">
+                                    <div class="slds-form-element__control slds-grow">
+                                        <ui:inputText class="slds-input inputWidth"
+                                                      labelClass="slds-form-element__label slds-form-element__label_edit slds-no-flex"
+                                                      aura:id="inputRFIDetailDescription"
+                                                      blur="{!c.closeRFIDetailDescriptionBox}"
+                                                      change="{!c.onRFIDetailDescriptionChange}"                                                      
+                                                      label="Description"
+                                                      value="{!v.singleRec.RFI_Detail_Description__c}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <span id="form-end" tabindex="0"></span>
+                        </section>
+                    </aura:set>
+                </aura:if>
+            </span>
+        </td>
+        <td ondblclick="{!c.inlineEditRFIItemStatus}">
+            <span class="slds-grid slds-grid_align-spread">
+                <!-- show input and output section based on boolean flag -->
+                <aura:if isTrue="{!v.RFIItemStatusEditMode == false}">
+                    <span class="slds-cell-wrap" title="RFI Item Status">{!v.singleRec.RFI_Item_Status__c}</span>
+                    <button onclick="{!c.inlineEditRFIItemStatus}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Rating">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case-->
+                    <aura:set attribute="else">
+                        <section  tabindex="0" class="slds-popover slds-popover_edit" role="dialog" style="position: absolute; top: 0px;width:80%">
+                            <div class="slds-popover__body">
+                                <div class="slds-form-element slds-grid slds-wrap">
+                                    <div class="slds-form-element__control slds-grow">
+                                        <label class="slds-form-element__label">Status</label>
+                                        <ui:inputSelect aura:id="RFIItemStatus"
+                                                        class="slds-select inputRatingWidth"
+                                                        blur="{!c.closeRFIItemStatusBox}"
+                                                        change="{!c.onRFIItemStatusChange}"
+                                                        value="{!v.singleRec.RFI_Item_Status__c}"
+                                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <span id="form-end" tabindex="0"></span>
+                        </section>
+                    </aura:set>
+                </aura:if>
+            </span>
+        </td>
+        <td ondblclick="{!c.inlineEditCancelcannnotcompletedescription}" class="{! v.showErrorClass == true ? 'slds-cell-edit slds-has-error' : 'slds-cell-edit'}">
+            <span class="slds-grid slds-grid_align-spread">
+                <!-- show input and output section based on boolean flag -->
+                <aura:if isTrue="{!v.CancelcannnotcompletedescriptionEditMode == false}" >
+                    <span class="slds-cell-wrap" title="Cancel Cannot Complete Description">{!v.singleRec.Cancel_Cannot_Complete_Description__c}</span>
+                    <button onclick="{!c.inlineEditCancelcannnotcompletedescription}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Cancel Cannnot Complete Description">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case-->
+                    <aura:set attribute="else">
+                        <section  tabindex="0" class="slds-popover slds-popover_edit" role="dialog" style="position: absolute; top: 0px">
+                            <div class="slds-popover__body">
+                                <div class="slds-form-element slds-grid slds-wrap">
+                                    <div class="slds-form-element__control slds-grow">
+                                        <ui:inputText class="slds-input inputWidth"
+                                                      labelClass="slds-form-element__label slds-form-element__label_edit slds-no-flex"
+                                                      aura:id="inputCancelcannnotcompletedescription"
+                                                      blur="{!c.closeCancelcannnotcompletedescriptionBox}"
+                                                      change="{!c.onCancelcannnotcompletedescriptionChange}"                                                      
+                                                      label="Description"
+                                                      required ="{!v.makerequired}"
+                                                      value="{!v.singleRec.Cancel_Cannot_Complete_Description__c}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <span id="form-end" tabindex="0"></span>
+                        </section>
+                    </aura:set>
+                </aura:if>
+            </span>
+        </td>
+        <!--Implementatiob blocked-->
+        
+        <td ondblclick="{!c.inlineEditimplementationBlocked}" class="{! v.showErrorClass == true ? 'slds-cell-edit slds-has-error' : 'slds-cell-edit'}">
+            <span class="slds-grid slds-grid_align-spread">
+                <!-- show input and output section based on boolean flag -->
+                <aura:if isTrue="{!v.implementationBlockedEditMode == false}" >
+                    <span class="slds-cell-wrap" title="Implementation Blocked">{!v.singleRec.Implementation_Blocked__c}</span>
+                    <button onclick="{!c.inlineEditimplementationBlocked}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Implementation blocked">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case-->
+                    <aura:set attribute="else">
+                        <section  tabindex="0" class="slds-popover slds-popover_edit" role="dialog" style="position: absolute; top: 0px">
+                            <div class="slds-popover__body">
+                                <div class="slds-form-element slds-grid slds-wrap">
+                                    <div class="slds-form-element__control slds-grow">
+                                        <ui:inputCheckbox labelClass="slds-form-element__label slds-form-element__label_edit slds-no-flex"
+                                                          aura:id="inputImplementationBlocked"
+                                                          blur="{!c.closeinputImplementationBlocked}"
+                                                          change="{!c.oninputImplementationBlocked}"                                                      
+                                                          label="Implementation Blocked"
+                                                          value="{!v.singleRec.Implementation_Blocked__c}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <span id="form-end" tabindex="0"></span>
+                        </section>
+                    </aura:set>
+                </aura:if>
+            </span>
+        </td>
+        <!--- Onsite Remediation-->
+        
+        <td ondblclick="{!c.inlineEditOnsiteremediation}">
+            <span class="slds-grid slds-grid_align-spread">
+                <!-- show input and output section based on boolean flag -->
+                <aura:if isTrue="{!v.OnsiteremediationEditMode == false}">
+                    <span class="slds-cell-wrap" title="RFI Item Status">{!v.singleRec.Onsite_Remediation_Required__c}</span>
+                    <button onclick="{!c.inlineEditOnsiteremediation}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Rating">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case-->
+                    <aura:set attribute="else">
+                        <section  tabindex="0" class="slds-popover slds-popover_edit" role="dialog" style="position: absolute; top: 0px;width:80%">
+                            <div class="slds-popover__body">
+                                <div class="slds-form-element slds-grid slds-wrap">
+                                    <div class="slds-form-element__control slds-grow">
+                                        <label class="slds-form-element__label">Onsite Remediation</label>
+                                        <ui:inputSelect aura:id="OnsiteRemediation"
+                                                        class="slds-select inputRatingWidth"
+                                                        blur="{!c.closeonsiteremediationBox}"
+                                                        change="{!c.ononsiteremediationChange}"
+                                                        value="{!v.singleRec.Onsite_Remediation_Required__c}"
+                                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <span id="form-end" tabindex="0"></span>
+                        </section>
+                    </aura:set>
+                </aura:if>
+            </span>
+        </td>
+        
+        
+        <!-- Onsite Remediation Description-->
+        <td ondblclick="{!c.inlineEditonsiteremediationdescription}" class="{! v.showErrorClass == true ? 'slds-cell-edit slds-has-error' : 'slds-cell-edit'}">
+            <span class="slds-grid slds-grid_align-spread">
+                <!-- show input and output section based on boolean flag -->
+                <aura:if isTrue="{!v.OnsitedescriptionEditMode == false}" >
+                    <span class="slds-cell-wrap" title="Cancel Cannot Complete Description">{!v.singleRec.Onsite_Remediation_Description__c}</span>
+                    <button onclick="{!c.inlineEditonsiteremediationdescription}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Cancel Cannnot Complete Description">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    <!-- Inline Edit Section in else case-->
+                    <aura:set attribute="else">
+                        <section  tabindex="0" class="slds-popover slds-popover_edit" role="dialog" style="position: absolute; top: 0px">
+                            <div class="slds-popover__body">
+                                <div class="slds-form-element slds-grid slds-wrap">
+                                    <div class="slds-form-element__control slds-grow">
+                                        <ui:inputText class="slds-input inputWidth"
+                                                      labelClass="slds-form-element__label slds-form-element__label_edit slds-no-flex"
+                                                      aura:id="inputOnsiteRemediationdescription"
+                                                      blur="{!c.closeonsiteremediationdescriptionBox}"
+                                                      change="{!c.ononsiteremediationdescriptionChange}"                                                      
+                                                      label="Onsite Remediation Decs"
+                                                      required ="{!v.makeonsiterequired}"
+                                                      value="{!v.singleRec.Onsite_Remediation_Description__c}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <span id="form-end" tabindex="0"></span>
+                        </section>
+                    </aura:set>
+                </aura:if>
+            </span>
+        </td>	
+        <!-- <td ondblclick="{!c.inlineEditduedate}">
+            <span class="slds-grid slds-grid_align-spread">
+                show input and output section based on boolean flag 
+                <aura:if isTrue="{!v.duedateEditMode == false}">
+                    <span class="slds-truncate" title="Due Date">{!v.singleRec.Due_Date__c}</span>
+                    <button onclick="{!c.inlineEditduedate}" class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="0" title="Edit Rating">
+                        <lightning:icon iconName="utility:edit" size="xx-small" alternativeText="edit"/>
+                    </button>
+                    Inline Edit Section in else case
+                    <aura:set attribute="else">
+                        <section  tabindex="0" class="slds-popover slds-popover_edit" role="dialog" style="position: absolute; top: 0px;width:80%">
+                            <div class="slds-popover__body">
+                                <div class="slds-form-element slds-grid slds-wrap">
+                                    <div class="slds-form-element__control slds-grow">
+                                        <label class="slds-form-element__label">Due Date</label>
+                                        <ui:inputDate aura:id="duedate"
+                                                      class="slds-input"
+                                       labelClass="slds-form-element__label"
+                                                      blur="{!c.closeduedateBox}"
+                                                      change="{!c.onduedateChange}"
+                                                      displayDatePicker="true"
+                                                      value="{!v.singleRec.Due_Date__c}"
+                                                      />
+                                    </div>
+                                </div>
+                            </div>
+                            <span id="form-end" tabindex="0"></span>
+                        </section>
+                    </aura:set>
+                </aura:if>
+            </span>
+        </td>   -->
+        <td><div class="slds-cell-wrap" title="Due Date"><lightning:input type="date" name="input1" value = "{!v.singleRec.Due_Date__c}" onblur="{!c.closeduedateBox}"  aura:id = "dueDate" onchange="{!c.onChangeDate}"/></div></td>
+        <td><div class="slds-cell-wrap" title="Customer Comments">{!v.singleRec.Customer_Comments__c}</div></td>
+    </tr>    
+</aura:component>

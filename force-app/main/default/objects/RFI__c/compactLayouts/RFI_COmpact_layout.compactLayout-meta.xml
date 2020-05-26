@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RFI_COmpact_layout</fullName>
+    <fields>RFI_Status__c</fields>
+    <fields>Implementation_Blocked__c</fields>
+    <fields>IE_Owner__c</fields>
+    <fields>Plant_Asset__c</fields>
+    <label>RFI COmpact layout</label>
+</CompactLayout>

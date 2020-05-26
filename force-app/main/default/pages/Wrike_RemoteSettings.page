@@ -1,0 +1,101 @@
+<apex:page standardStylesheets="true" cache="false" controller="Wrike_RemoteSettingsController">
+	<style type="text/css">
+		body .bPageTitle .pageTitleIcon.wrikeIcon {
+			background-image: url({!$Resource.Wrike_Logo64});
+			background-position:0 0;
+			background-repeat:no-repeat;
+			width: 64px; height: 64px;
+			margin-top: -10px;
+			}
+		.pbBottomButtons .pbButtonb { padding-left:0; padding-right:0; }
+		.pbBottomButtons .pbButtonb input { margin-left:28.5%; }
+		.remoteSettingSteps { margin-left: 0px; padding-left: 0px; }
+	</style>
+    <div class="bPageTitle" id="pageTitleDiv">
+	    <div class="ptBody">
+	        <div class="content">    
+	            <img src="/s.gif" alt="Wrike" class="pageTitleIcon wrikeIcon" title="Wrike"/>
+	            <h1 class="pageType clean-ml">Package settings<span class="titleSeparatingColon">:</span></h1>
+	            <h2 class="pageDescription clean-ml">Wrike Integraton Settings</h2>
+	            <div class="blank">&nbsp;</div>
+	        </div>
+	    </div>
+    </div>
+    <apex:form target="_top">
+    	<apex:actionFunction name="proceedInstallationJS" action="{!proceedInstallation}"  rendered="{!NOT(showManualSettingsBlock)}" />
+        <apex:pageBlock title="Please setup security settings" mode="detail" rendered="{!showManualSettingsBlock}" id="manualSettingsBlock">
+            <apex:outputPanel layout="block">
+                <ol class="remoteSettingSteps">
+                    <li>In new tab open Salesforce setup page</li>
+                    <li>In the Setup menu (located in the left sidebar) find 'Security controls' in the 'Administer' section and expand it, click on 'Remote Site Settings'</li>
+                    <li>In the 'Remote Sites' table click 'New remote site'</li>
+                    <li>You need to enter 'SF' as name and <strong>{!host}</strong> as Remote site URL</li>
+                    <li>Click 'Proceed to Installation' on this screen after you're finished</li>
+                </ol>
+            </apex:outputPanel>
+            <apex:pageBlockButtons location="bottom">
+                  <apex:commandButton action="{!proceedInstallation}" value="Proceed to Installation"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+    
+    <style>
+        ol.remoteSettingSteps li {
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+    </style>
+    <script type="text/javascript">
+	// remote site setting insertion
+	function callMetadataApi()
+	{
+		showBusyStatus();
+	    var currentHost = '{!host}';
+		
+		var binding = new XMLHttpRequest(currentHost);
+	    binding.open('POST', currentHost+'/services/Soap/m/31.0');
+	    binding.setRequestHeader('SOAPAction','""');
+	    binding.setRequestHeader('Content-Type', 'text/xml');
+	    
+	    getRemoteMetadataRequestBody(currentHost, binding);
+	    
+	    binding.onreadystatechange = 
+	        function() { 
+	            if(this.readyState==4) 
+	            {
+	            	proceedInstallationJS();
+	            	hideBusyStatus();
+	            }
+	        }		
+	}
+	
+	function showBusyStatus()
+	{
+		var parentForm = document.getElementById('pageTitleDiv');
+		var loadingDiv = document.createElement('div');
+		loadingDiv.setAttribute('id', 'loadingDiv');
+		var loadingImg = document.createElement('img');
+	    loadingImg.src = '{!$Resource.Wrike_LoadingIcon}';
+	    loadingDiv.appendChild(loadingImg);               
+	    loadingDiv.appendChild(document.createTextNode(" Working..."));
+	    parentForm.appendChild(loadingDiv);  
+    }
+    
+    function hideBusyStatus()
+    {
+    	var element = document.getElementById("loadingDiv");
+		element.parentNode.removeChild(element);
+    }
+    
+	   function getRemoteMetadataRequestBody(host, binding) {
+	    	
+	    	Wrike_RemoteSettingsController.getMetadataRequestBody(host, function(result, event) { 
+																			binding.send(result);
+																		},
+																	{escape: false});
+				}
+			
+	if({!NOT(showManualSettingsBlock)}) callMetadataApi();
+	else hideBusyStatus();	    
+	</script>
+</apex:page>

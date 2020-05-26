@@ -1,0 +1,113 @@
+<apex:page standardStylesheets="true" cache="false" showHeader="true" sidebar="true"
+    controller="Wrike_SetupController">
+    
+<style type="text/css"> 
+.pageTitleIcon.wrikeIcon {
+background-image: url({!$Resource.Wrike_Logo64});
+background-position:0 0;
+background-repeat:no-repeat;
+width: 64px; height: 64px;
+margin-top: -10px;
+}
+
+table#setupOptions td {width:50%; padding-right: 15%; vertical-align: top;}
+table#setupOptions {margin-top:10px; width: 100%; font-size: 14px; line-height:20px;}
+table#setupOptions input.btn {padding-left:5px; padding-right:5px; min-width: 48px;}
+
+td.pbTitle h2.mainTitle {padding-left:9px;}
+a.actionLink { color: #015ba7; cursor:pointer; text-decoration: none;}
+
+</style>
+    
+  <div class="bPageTitle">
+    <div class="ptBody">
+        <div class="content">    
+            <img src="/s.gif" alt="Wrike" class="pageTitleIcon wrikeIcon" title="Wrike"/>
+            <h1 class="pageType clean-ml">Package settings<span class="titleSeparatingColon">:</span></h1>
+            <h2 class="pageDescription clean-ml">Wrike Integraton Beta</h2>
+            <div class="blank">&nbsp;</div>
+                        
+        </div>
+        <div class="links">
+            <!-- <a href="#" class="configLinks zen-deemphasize" title="Tell me more! (New Window)">Tell me more!</a>
+             | <a href="#" title="Help for this Page (New Window)"><span class="helpLink">Help for this Page</span>
+             <img src="/s.gif" alt="" class="helpIcon"/></a> -->
+        </div>
+    </div>
+</div>
+<apex:form id="startForm">
+
+<apex:outputPanel id="mainPanel">
+<apex:outputPanel rendered="{!NOT(setupExists)}">
+
+       <apex:pageBlock title="How do you wish to proceed?" mode="detail" rendered="true">
+
+           <table id="setupOptions">
+           <tr><td>
+               <h3>First time installation</h3> 
+               <p>1. Connect your Salesforce organization to your Wrike account. You will need a Wrike User or Admin account to complete the setup.</p>
+               <p>2. Download <a class="actionLink" href="https://cdn.wrike.com/resources/Wrike_Salesforce_Integration_Manual.pdf" target="_blank">our guide</a> and set up the package to fit your goals.</p>
+               <p><input type="button" value="Setup package" class="btn" onclick="toSetup()" /></p>
+           </td>
+           
+           <td>
+               <h3>Package Update</h3>
+               <p>Import the file with your previous settings. If you do not have a file with your previous settings, use the first time installation.</p>
+               <p><input type="button" value="Import settings" class="btn" onclick="toImport()" /></p>
+           </td></tr>
+           </table>
+           
+       </apex:pageBlock>    
+ </apex:outputPanel>       
+    
+       <script type="text/javascript">
+
+        function toSetup() {
+        
+            redirectTo('{!URLFOR($Page.Wrike_SetupPage)}');
+        }
+        
+        function toImport() {
+            
+            redirectTo('{!URLFOR($Page.WrikeUpdate_Main)}');
+        }
+
+        function redirectTo(target) {
+        
+            if(isLightningExperienceOrSalesforce1()) {
+                sforce.one.navigateToURL(target);
+            } else {
+        
+            if (inIframe()) {
+                window.top.location.href = target;
+                return false;
+            } else {
+              window.location.href = target;             
+            }
+            }
+        }
+        
+        function inIframe() {
+            try {
+                return window.self !== window.top;
+            } catch (e) {
+                return true;
+            }
+        }
+        
+        
+        function isLightningExperienceOrSalesforce1() {
+            return((typeof sforce != 'undefined') && sforce && (!!sforce.one));
+        }
+
+      </script>
+       </apex:outputPanel>  
+       <apex:outputPanel id="redirectToSetup" rendered="{!setupExists}">
+            <script type="text/javascript">
+                toSetup();
+            </script>
+       </apex:outputPanel>
+      
+    </apex:form>
+
+</apex:page>

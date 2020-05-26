@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_Plant_Assets</fullName>
+    <columns>NAME</columns>
+    <columns>AC_Capacity__c</columns>
+    <columns>DC_Capacity__c</columns>
+    <columns>CREATED_DATE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Plant_Asset__c.Parent_Asset</value>
+    </filters>
+    <label>Parent Plant Assets</label>
+</ListView>

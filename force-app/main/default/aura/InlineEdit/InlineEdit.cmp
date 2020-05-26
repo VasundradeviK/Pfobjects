@@ -1,0 +1,39 @@
+<aura:component controller="InlineEditHandler" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:availableForFlowScreens" access="global">   
+    <aura:handler name="init" value="{!this}" action="{!c.initRecords}"/>
+    <aura:attribute name="RFIDetailList" type="RFI_Detail__c[]" description="store RFIDetail records list"/>
+    <aura:attribute name="makerequired" type="boolean" default="false"/>
+    <aura:attribute name="showSaveCancelBtn" type="boolean" default="false" description="flag for rendered save and cancel buttons in aura:if "/>    
+    <br/><center style="font-size:16px;font-weight:bold;"><u>Edit RFI Item Records</u></center><br/>      
+    {!RFIDetailList}
+    <table  class=" slds-table_fixed-layout slds-table slds-table_cell-buffer slds-max-medium-table_stacked-horizontal slds-table_bordered">
+        <thead>
+            	<th scope="col"><div class="slds-cell-wrap" title="RFI Detail">Name</div></th>
+                <th scope="col"><div class="slds-cell-wrap" title="RFI Detail Desccription" >RFI Item Description</div></th>
+                <th scope="col"><div class="slds-cell-wrap" title="RFI Item Status">RFI Item Status</div></th>
+                <th scope="col"><div class="slds-cell-wrap" title="RFI Detail Desccription" required ="{!v.makerequired}">Cancel/Cannot Complete Description</div></th>
+            	<th scope="col"><div class="slds-cell-wrap" title="Implementation Blocked">Implementation Blocked</div></th>
+                <th scope="col"><div class="slds-cell-wrap" title="Onsite Remediation Required">Onsite Remediation Required</div></th>
+                <th scope="col"><div class="slds-cell-wrap" title="Onsite Remediation Description">Onsite Remediation Description</div></th>
+            	<th scope="col"><div class="slds-cell-wrap" title="Due Date">Due Date</div></th>
+            	<th scope="col"><div class="slds-cell-wrap" title="Customer Comments">Customer Comments</div></th>
+            
+        </thead>          
+        <tbody class = "vTable">
+            <!--### display all records of RFIDetailList attribute one by one by aura:iteration ###-->
+            <aura:iteration items="{!v.RFIDetailList}" var="rfid" indexVar="sNo">
+                <!-- Child Lightning Component -->
+                <c:InlineEditChild singleRec="{!rfid}" showSaveCancelBtn="{!v.showSaveCancelBtn}" makerequired="{!v.makerequired}" sNo="{!sNo + 1}" />
+            </aura:iteration>
+        </tbody>
+    </table>
+    <br/>
+    <center>
+        <!-- use aura:if for show/hide buttons -->      
+        <aura:if isTrue="{!v.showSaveCancelBtn}">
+            <!--button for save and cancel Record after Inline Edit-->
+            <lightning:button label="Cancel" onclick="{!c.cancelDo}"/>&nbsp;
+            <lightning:button label="Save" onclick="{!c.Save}" variant="success"/>                
+        </aura:if> 
+    </center>   
+    
+ </aura:component>

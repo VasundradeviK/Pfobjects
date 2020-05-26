@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AC_Capacity__c</fullName>
+    <description>Device AC Capacity</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Device AC Capacity</inlineHelpText>
+    <label>AC Capacity</label>
+    <precision>16</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

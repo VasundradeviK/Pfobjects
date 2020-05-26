@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Open_RFI_s_For_Customer</fullName>
+    <columns>NAME</columns>
+    <columns>RFI_Status__c</columns>
+    <columns>Total_RFI_Details__c</columns>
+    <columns>Percentage_of_closed_RFI_Details__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>RFI_Status__c</field>
+        <operation>notEqual</operation>
+        <value>Closed</value>
+    </filters>
+    <label>Open RFIs</label>
+    <sharedTo>
+        <allCustomerPortalUsers/>
+    </sharedTo>
+</ListView>

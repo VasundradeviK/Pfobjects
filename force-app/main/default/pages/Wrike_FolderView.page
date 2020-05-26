@@ -1,0 +1,961 @@
+<apex:page standardStylesheets="true" action="{!verifyFolder}" cache="false" showHeader="false" sidebar="false"
+      controller="Wrike_FolderController">
+      
+      <style type="text/css">
+          body { padding:0; margin: 0 !important; }
+          
+          .wrikePanel { }
+
+          body .wrikePanel .bPageBlock .pbHeader .pbTitle .off { padding-left:5px;padding-top:5px; }
+          body .wrikePanel .bPageBlock .pbHeader > table > tbody > tr > td { padding:0; }
+          body .wrikePanel .accountBlock img.relatedListIcon {
+            background: url({!$Resource.Wrike_Logo24}) no-repeat 0 0 transparent;
+          }
+          
+          .wrikePanel #message { height:135px;padding-top:90px;text-align:center; }
+          .wrikePanel #message h1 { display:block;font-size:28px;font-weight:normal; }
+          .wrikePanel #message p { font-size:16px; margin:10px 0 16px; }
+          
+          .tasksPanel .bPageBlock { border-top-color: #42975B !important; }
+          body .tasksPanel .bPageBlock .pbHeader .pbTitle { padding:0 5px; }
+          body .tasksPanel .bPageBlock .pbHeader .pbButton { padding:0 5px;  }
+          body .tasksPanel .bPageBlock .pbHeader .pbLinks { padding: 0 10px; }
+          body .tasksPanel .bPageBlock .pbHeader > table { border-bottom:0; }
+          body .tasksPanel .accountBlock img.relatedListIcon {
+            background: url({!$Resource.Wrike_Logo24}) no-repeat 0 0 transparent;
+          }
+          
+          .filterOptionSelected { font-weight: 600; cursor:pointer; }
+          .filterOption { color: #015ba7; cursor:pointer; }
+          .messagebox { margin-left: 180px; padding-top:40px;}
+          .taskIcon {
+            height: 16px; width:32px; vertical-align: middle;
+            background: url({!$Resource.Wrike_TaskIcons}) 0 16px transparent no-repeat; position:relative;
+            display:inline; display:inline-block; 
+          }
+          p.semi { margin-top: 6px; margin-bottom:6px;} 
+          body .bPageBlock.bDetailBlock .pbHeader { background: #fff; 
+                border-bottom: solid 1px #eee; height: 34px; width:100%; }
+
+          .iconHighImportance { background-position: 0 0; }
+          .iconLowImportance { background-position: 0 -16px; }
+          .iconHighImportanceAttachments { background-position: 0 -32px; }
+          .iconHighImportanceAttachments { background-position: 0 -48px; }
+          .iconAttachments { background-position: 0 -64px; }
+          .inlineForm { display: inline; }
+          .inlineForm > div { display: inline; }
+          
+          .headerRow th img {
+              width:7px; height:11px; 
+              margin: 0 5px;
+              vertical-align: -2px;
+          }
+          .headerRow th a {
+            display:block;
+          }
+          .headerRow th.row-desc, .headerRow th.row-asc {
+              background-color: #e0e3e6 !important;
+          }
+          .headerRow th.row-desc img, .headerRow th.row-asc img {
+              background: url({!$Resource.Wrike_SortIcons}) transparent no-repeat 0 50%;
+          }
+          .headerRow th.row-desc img {
+              background-position:-7px 50%;
+          }
+          .footerRow {
+             background-color: rgb(242, 243, 243) !important;
+          }
+          .emptyRow td {
+            height:16px;
+            border-width:0 0 1px 0 !important;
+          }
+          .statusCell, .statusHeader {
+              text-align:right;
+          }
+          .statusHeader {
+              padding-right: 14px !important;
+          }
+          .statusCell div {
+              font-size:0.9em !important;
+              display:inline-block;
+              border-radius:4px;
+              padding:3px 6px;
+              margin:-4px 7px -4px 0;
+              border:solid 1px transparent;
+              
+          }
+          .statusCell .statusActive {
+              background: white;
+              border-color: #eee;
+              color: #555;
+          }
+          .statusCell .statusCompleted {
+              background: #d2f2ad;
+              border-color: #d2f2ad;
+              color: #525e49;
+          }
+          .statusCell .statusCancelled {
+              background: #e7e7e7;
+              border-color: #e7e7e7;
+              color:#545454;
+          }
+          .statusCell .statusDeferred {
+              background: #deceff;
+              border-color: #deceff;
+              color: #62566e;
+          }
+          tr#taskTableRow0 td { padding-top:6px !important; }
+          tr#taskTableRow9 td { padding-bottom:6px !important; } 
+          
+          .dataCell .titleField, .dataCell .assignedField  {
+              line-height: 14px;
+              height: 14px;
+              overflow: hidden;
+          }
+          
+          .paginator .prevNextLinks span.disabled { display:none; }
+          .paginator .prevNextLinks img { vertical-align: inherit; margin-righ:0; }
+          
+          body .pbBody table.list #taskTableBody tr.dataRow.highlight td {
+            background-color: #eff8df; }
+
+          .overdueDate { color:#e00;
+                    background: url(/img/func_icons/util/alert16.gif) no-repeat 0 50%;
+                    margin:-4px 0; padding: 4px 0 4px 20px;}
+          
+          .editTaskBtn { position:absolute; width:0; height:0; visibility:hidden; }
+          
+          .titleField, .assignedField { white-space:nowrap; text-overflow: ellipsis; }
+          
+          #toggleDescendants { margin-right:10px; }
+          
+          /* task table widths */
+          #taskList { table-layout: fixed; width: 100%;}
+          .dataCell { width: 10%; }
+          .titleCell { max-width: 500px; min-width: 500px;}
+          .assignedCell { max-width: 100px; min-width: 100px;}
+          
+          @media screen and (max-width: 1400px) {
+            .titleCell { max-width: 200px; min-width: 200px;}
+            .assignedCell { max-width: 50px; min-width: 50px;}
+          }
+        }
+          
+      </style>
+
+<div style="width:100%;">
+    
+    <apex:form id="errors">
+    <apex:outputPanel id="errorMessagesPanel">
+    <apex:pageMessages id="errorMessages"/>
+    </apex:outputPanel>
+    <apex:actionFunction name="rerenderErrorMessages" action="{!addErrorsToPage}" rerender="errorMessagesPanel" />      
+    </apex:form>
+</div>
+      <apex:outputPanel layout="block" rendered="{!NOT(isAuthorized)}"
+        styleClass="wrikePanel bRelatedList">
+        
+        <apex:pageBlock mode="edit">
+            <apex:facet name="header">
+                <table cellpadding="0" cellspacing="0" border="0">
+                      <tbody>
+                         <tr>
+                            <td>
+                                <div class="pbTitle">
+                                    <img class="relatedListIcon" src="/s.gif" />
+                                    <h3 class="mainTitle">Wrike Tasks</h3>              
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </apex:facet>
+            
+            <div id="message">
+                <h1>To get started, please authorize Salesforce to access data from Wrike.</h1>
+                <p>To authorize Salesforce you will need to login to Wrike with your Wrike username and password.
+                If you don't have a Wrike account please contact your Salesforce Administrator.</p>
+                <apex:form target="_top">
+                    <apex:commandButton action="{!authorize}" value="Authorize" id="authorizeButton"/>
+                </apex:form>
+            </div>
+        </apex:pageBlock>
+        
+      </apex:outputPanel>
+      
+      <apex:outputPanel layout="block" rendered="{!isAuthorized}">
+      
+      <apex:outputPanel layout="block" rendered="{!isError}"
+        styleClass="wrikePanel bRelatedList">
+        
+        <apex:pageBlock mode="edit">
+            <apex:facet name="header">
+                <table cellpadding="0" cellspacing="0" border="0">
+                      <tbody>
+                         <tr>
+                            <td>
+                                <div class="pbTitle">
+                                    <img class="relatedListIcon" src="/s.gif" />
+                                    <h3 class="mainTitle">Wrike Tasks</h3>              
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </apex:facet>
+            
+            <div id="message">
+                <h1>Something has gone wrong.</h1>
+                <p>Contact your Salesforce and Wrike administrators to check Wrike and integration settings<br/> </p>
+            </div>
+        </apex:pageBlock>
+      </apex:outputPanel>
+      
+      <apex:outputPanel layout="block" rendered="{!NOT(isError)}">
+      
+<script type="text/javascript">
+
+if (!window.addEventListener) {
+    window.addEventListener = new function(event, handler) {
+        if (window.attachEvent) {
+            window.attachEvent('on' + event, handler);
+        }
+    }
+}
+function launchTemplateWizard(e,element) {
+ 
+  var recordId = '{!currentRecordId}';
+
+  var xPosition = Math.round(2*screen.width / 5);
+  var yPosition = Math.round(2*screen.height / 5);
+  
+  var _width=960;
+  var _height=405;
+  
+  var templateWizardWindow = window.open('{!URLFOR($Page.Wrike_TemplateWizard)}' + 
+              '?currentRecordId='+recordId, "_blank", "width="+_width+",height="+_height+",left="+xPosition+",top="+yPosition+",directories=0,toolbar=0,location=0,status=0,menubar=0,resizable=0,scrollbars=0");
+  templateWizardWindow.focus();
+  
+  
+  function keepFocus() {
+        if(templateWizardWindow != null && ! templateWizardWindow.closed)
+            templateWizardWindow.focus();
+        updateState();
+    }
+    
+    window.addEventListener('focus', keepFocus);
+    
+    function updateState() {
+        window.location.href = window.location.href;
+    }
+    
+}
+</script>
+      
+
+      <apex:outputPanel layout="block" rendered="{!NOT(isRecordMapped)}"
+        styleClass="tasksPanel bRelatedList">
+
+          <div class="apexp"><div class="individualPalette"><div class="accountBlock"><div class="editPage"><div class="bPageBlock brandSecondaryBrd bEditBlock secondaryPalette">
+            <div class="pbHeader">
+                <table cellpadding="0" cellspacing="0" border="0">
+                      <tbody>
+                         <tr>
+                            <td class="pbTitle">
+                                <img class="relatedListIcon" src="/s.gif" />
+                                <h3 class="mainTitle">Wrike Tasks</h3>              
+                            </td>
+                            <td class="pbButton">
+                               <apex:form styleClass="inlineForm" rendered="{!HTMLENCODE(bindRule) == 'AUTO' && canWrite}">
+                                  <apex:commandButton action="{!createTask}" value="New Task" id="createTaskButton"
+                                   immediate="true" rendered="{!canWrite}"/>
+                                  <apex:outputPanel rendered="{!showTemplateButton}">
+                                  <input type="button" class="btn" value="Choose Template" id="templateWizarLauncher" 
+                                    onclick="launchTemplateWizard(event, this);" />
+                                  </apex:outputPanel>
+                              </apex:form>
+                          </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pbBody">
+                <table class="list" border="0" cellspacing="0" cellpadding="0" id="taskTable">
+                    <thead id="taskTableHead"> </thead>
+                    <tbody id="taskTableBody"> <tr class="headerRow" id="taskTableHeader0">
+                  <th class="actionColumn" scope="col">Action</th>
+                  <th class="statusHeader" scope="col">Status<img src="/s.gif"/></th>
+                  <th scope="col">Title<img src="/s.gif"/></th>
+                  <th scope="col">Start Date<img src="/s.gif"/></th>
+                  <th scope="col">Due Date<img src="/s.gif"/></th>
+                  <th scope="col">Duration<img src="/s.gif"/></th>
+                  <th scope="col">Assigned To<img src="/s.gif"/></th>
+              </tr>
+                 <tr class="emptyRow" id="taskTableRow0"><td colspan="7"></td></tr><tr class="emptyRow" id="taskTableRow1"><td colspan="7"></td></tr><tr class="emptyRow" id="taskTableRow2"><td colspan="7"></td></tr><tr class="emptyRow" id="taskTableRow3"><td colspan="7"></td></tr><tr class="emptyRow" id="taskTableRow4"><td colspan="7"></td></tr><tr class="emptyRow" id="taskTableRow5"><td colspan="7"></td></tr><tr class="emptyRow" id="taskTableRow6"><td colspan="7"></td></tr><tr class="emptyRow" id="taskTableRow7"><td colspan="7"></td></tr><tr class="emptyRow" id="taskTableRow8"><td colspan="7"></td></tr><tr class="emptyRow" id="taskTableRow9"><td colspan="7"></td></tr>
+                 <tr class="footerRow" id="taskTableFooter">
+                  <td colspan="7">
+                    <div class="left">No tasks</div>
+                  </td>
+              </tr></tbody>
+                </table>
+            </div>
+        </div></div></div></div></div>
+        
+      </apex:outputPanel>
+
+      <apex:outputPanel layout="block" rendered="{!isRecordMapped}" id="mainPanel"
+        styleClass="tasksPanel bRelatedList">
+        
+        <apex:outputPanel layout="block" id="refreshBlock">
+
+            <script type="application/json" id="folderTasksJSON">
+              {!HTMLENCODE(folderTasksJSON)}
+            </script>
+            
+        </apex:outputPanel>  
+        
+        
+        
+        <script type="text/javascript">//<![CDATA[
+
+          window.addEventListener('load', initialize);
+
+          function initialize() {
+
+            window.folderTasks = parseJSON('folderTasksJSON');
+            window.folderPermalink = '{!JSENCODE(folderPermalink)}';
+            window.contacts = JSON.parse(window.contactCache);
+            window.accountWorkflows = JSON.parse(window.workflowCache);
+            window.thisFolderId = '{!JSENCODE(folderId)}';
+            
+            rerenderErrorMessages();
+            
+            window.showDescendants = true;
+
+            window.pageNumber = 0;
+            fillHeader();
+            window.taskOrder = 'due';
+            sortTasks();
+            applyFilter('All');
+          }
+
+          function refresh(buttonId) {
+
+            window.folderTasks = parseJSON('folderTasksJSON');
+            //window.contacts = parseJSON('contactsJSON');
+    
+            sortTasks();
+            fillContents();
+
+            document.getElementById(buttonId).blur();
+          }
+          
+          function parseJSON(elementId) {
+            
+            var jsonElement = document.getElementById(elementId);
+            if (jsonElement) {
+                var jsonText = jsonElement.textContent?
+                    jsonElement.textContent : jsonElement.innerText;
+                if (jsonText) {
+                  try {
+                    jsonText = jsonText.replace(/^\s*<!\[CDATA\[/,'').replace(/\]\]>\s*$/,"");
+                    
+                    jsonText = jsonText
+                        .replace(/(&)#39;/g, '\'')
+                        .replace(/(&)quot;/g, '"')
+                        .replace(/(&)lt;/g, '<')
+                        .replace(/(&)gt;/g, '>')
+                        .replace(/(&)amp;/g, '&');
+                        
+                    return JSON.parse(jsonText)
+                  } catch(e) {}
+                }
+            }
+            return [];
+          }
+          
+          function getStatusName(customStatusId, status)
+          {
+            var currentStatus;
+            if(accountWorkflows && accountWorkflows.data) {
+            for (var i = 0; i < accountWorkflows.data.length; i++)
+            {
+                var customStatuses = accountWorkflows.data[i].customStatuses;
+                for (var j = 0; j < customStatuses.length; j++)
+                {
+                    if (customStatusId == customStatuses[j].id)
+                    {
+                        currentStatus = customStatuses[j].name;
+                        break;
+                    }
+                }
+                if (currentStatus) break;
+            }      
+            } 
+            if(!currentStatus) {
+                flushLocalStorageWorkflows();
+            }      
+            return currentStatus ? currentStatus : status;
+          }
+
+          function applyFilter(filter) {
+
+              var filterLink,
+                  filters = ['Active', 'Completed', 'Deferred', 'Canceled', 'All'];
+              
+              for(var i=0; i < filters.length; i++) {
+                  filterLink = document.getElementById('filter' + filters[i]);
+                  if(filterLink) filterLink.className = 'filterOption';
+              }
+              
+              filterLink = document.getElementById('filter' + filter)
+              if(filterLink) filterLink.className = 'filterOptionSelected';
+
+              window.statusFilter = filter;
+              var lastPage = fillContents();
+              if (lastPage < window.pageNumber) {
+                window.pageNumber = lastPage;
+                fillContents();
+              }
+          }
+          
+          function toggleDescendants() {
+                showDescendants = !showDescendants;
+                var thisToggle = document.getElementById('toggleDescendants');
+                thisToggle.innerHTML = (thisToggle.innerHTML == 'Hide descendants') ? 'Show descendants' : 'Hide descendants' ;
+                fillContents();
+          }
+          
+          function selectOrToogleSort(column, link) {
+                if(window.taskOrder &&  
+                        window.taskOrder == column) {
+                    window.taskOrderReversed = !window.taskOrderReversed
+                }
+                else {
+                    window.taskOrder = column;
+                    window.taskOrderReversed = 0;
+                }
+                sortTasks();
+                fillContents();
+                
+                var row = link.parentNode.parentNode.childNodes;
+                for (var i=0; i < row.length; i++) {
+                    if (row.item(i).className)
+                        row.item(i).className =
+                            row.item(i).className
+                            .replace('row-asc','').replace('row-desc','');
+                } 
+                link.parentNode.className = 
+                (link.parentNode.className? link.parentNode.className : '') +
+                    (window.taskOrderReversed? ' row-desc':' row-asc'); 
+                
+          }
+          
+          var titleComparer = function(a, b) {
+              if (a.title == b.title) return 0;
+              return (a.title > b.title)^
+                    window.taskOrderReversed? 1 : -1;  
+            }
+            
+          var dateComparer =  function(date1, date2) {
+              if(!date1 || date1 == 'Backlogged') {
+                return 1; 
+              }
+              if(!date2 || date2 == 'Backlogged') {
+                return -1; 
+              }
+              return (date1 > date2)^
+                    window.taskOrderReversed? 1 : -1;
+          }
+          
+          function fieldComparer(field) {
+            function compareSimple(a, b) {
+              if (a[field] == b[field]) return titleComparer(a,b);
+              return (a[field] > b[field])^
+                    window.taskOrderReversed? 1 : -1;  
+            }
+            if (!~field.indexOf('.')) { 
+                return compareSimple; 
+            }
+            function compareDeeper(a,b) {
+                var aValue = (first in a && second in a[first])? a[first][second] : '';
+                var bValue = (first in b && second in b[first])? b[first][second] : '';
+                if (aValue == bValue) return titleComparer(a,b);
+                if (first == 'dates') return dateComparer(aValue, bValue);
+                return (aValue > bValue)^
+                        window.taskOrderReversed? 1 : -1;
+            }
+            var parts = field.split('.');
+            var first = parts[0], second = parts[1];
+            return compareDeeper;
+          }       
+          
+          window.sortingOperators = {
+            //status: fieldComparer("exactStatus"),
+            status: fieldComparer("status"),
+            title: titleComparer,
+            start: fieldComparer("dates.start"),
+            due: fieldComparer("dates.due"),
+            duration: fieldComparer("dates.duration"),
+            assignedTo: fieldComparer("responsibleIds.length")
+          }
+          
+          function sortTasks(th) {
+            if (taskOrder && taskOrder in window.sortingOperators)
+                window.folderTasks.data.sort(
+                    window.sortingOperators[window.taskOrder]);
+          }
+
+          function fillHeader() {
+              var headerTemplateElement = document.getElementById('taskTableHeader'),
+              tableBodyElement = document.getElementById('taskTableHead');
+              
+              if (!headerTemplateElement || !tableBodyElement) return;
+              
+              var headerElement = headerTemplateElement.cloneNode(true);
+              headerElement.id = "taskTableHeader0";
+              tableBodyElement.appendChild(headerElement);
+                  
+          }
+          
+          function fillContents() {
+              var headerTemplateElement = document.getElementById('taskTableHeader'),
+                  rowTemplateElement = document.getElementById('taskTableRow'),
+                  footerTemplateElement = document.getElementById('taskTableFooter'),
+                  tableBodyElement = document.getElementById('taskTableBody');
+              
+              if (!headerTemplateElement || !rowTemplateElement ||
+                    !footerTemplateElement || !tableBodyElement) return;
+
+              while(tableBodyElement.lastChild && tableBodyElement.lastChild.id != 'taskTableHeader0') {
+                tableBodyElement.removeChild(tableBodyElement.lastChild);
+              }
+
+              if (window.folderTasks && window.folderTasks.data) {
+                  
+                  var dataRowsCount = 0;
+                  var tableRowsCount = 0;
+                  var TASKS_PER_PAGE = 10;
+                  var from = window.pageNumber * TASKS_PER_PAGE,
+                        to = from + TASKS_PER_PAGE - 1;
+                  
+                  for (var i = 0; i < window.folderTasks.data.length; i++) {
+                      var task = window.folderTasks.data[i];
+                      
+                     // task.exactStatus = getStatusName(task.customStatusId, task.status);
+
+                      if ((showDescendants || !isDescendant(task)) && 
+                                (window.statusFilter == 'All' || window.statusFilter == task.status)) {
+                        
+                         if (dataRowsCount >= from && dataRowsCount <= to) {
+                              var rowElement = applyTemplate(rowTemplateElement, {
+                                  'id' : task.id,
+                                  'link' : task.permalink,
+                                  'title' : task.title,
+                                  'icons' : formatIcons(task),
+                                  'startdate' : formatStartDate(task.dates),
+                                  'duedate' : formatDueDate(task.dates),
+                                  'overdueClass' : isOverdue(task)? "overdueDate" : "",
+                                  'duration' : formatDuration(task.dates),
+                                  'status' : getStatusName(task.customStatusId, task.status),
+                                  'statusGroup' : task.status,
+                                  'assigned' : task.responsibleIds ? 
+                                      formatAssignees(task.responsibleIds) : ""
+                              });
+                              rowElement.id = "taskTableRow" + tableRowsCount;
+    
+                              tableBodyElement.appendChild(rowElement);
+                              tableRowsCount++;
+                         }
+                         
+                         dataRowsCount++;
+                      }
+                      
+
+                  }
+                  while (tableRowsCount < TASKS_PER_PAGE) {
+                    
+                    var emptyCellElement = document.createElement('td');
+                    emptyCellElement.setAttribute('colspan','7');
+                    var emptyRowElement = document.createElement('tr');
+                    emptyRowElement.id = "taskTableRow" + tableRowsCount;
+                    emptyRowElement.className = "emptyRow";
+                    
+                    emptyRowElement.appendChild(emptyCellElement)
+                    tableBodyElement.appendChild(emptyRowElement);
+                    
+                    tableRowsCount++;
+                  }
+                  var lastPage = Math.max(0, Math.ceil(dataRowsCount / TASKS_PER_PAGE) - 1);
+                   
+                  window.firstPage = function() {
+                    window.pageNumber = 0;
+                    fillContents();
+                  }
+                  window.prevPage = function() {
+                    window.pageNumber--;
+                    fillContents();
+                  }
+                  window.nextPage = function() {
+                    window.pageNumber++;
+                    fillContents();
+                  }
+                  window.lastPage = function() {
+                    window.pageNumber = lastPage;
+                    fillContents();
+                  }
+                  var footerElement = applyTemplate(footerTemplateElement, {
+                                  'from' : from + 1,
+                                  'to' : Math.min(to + 1, dataRowsCount),
+                                  'total' : dataRowsCount,
+                                  'notFirstPage' : (window.pageNumber > 0? '':'disabled'),
+                                  'firstPage' : (window.pageNumber == 0? '':'disabled'),
+                                  'lastPage' : (window.pageNumber == lastPage? '':'disabled'),
+                                  'notLastPage' : (window.pageNumber < lastPage? '':'disabled'),
+                                  'nonZeroTasks' : (dataRowsCount > 0? '': 'disabled')
+                              });
+                tableBodyElement.appendChild(footerElement);
+                  var links = document.getElementById('paginatorLinks');
+                  
+                return lastPage;
+              }
+
+              function applyTemplateParameter(value, fields) {
+                  
+                  var matched = false,
+                      
+                      result = value.replace(
+                      /\{\{(\w+)\}\}/g,
+                      function(match, fieldName) {
+                          matched = true;
+                          return (fieldName in fields)? fields[fieldName] : '';
+                      });
+
+                  return matched? result : null;
+              }
+
+              function applyTemplate(templateElement, fields) {
+
+                  var element = templateElement.cloneNode(true);
+                  
+                  walkFragment(element, function(node) {
+                      if (node.nodeType == Node.TEXT_NODE) {
+
+                          var newNodeValue =
+                              applyTemplateParameter(node.nodeValue, fields);
+                          
+                          if (newNodeValue != null) {
+                               node.nodeValue = newNodeValue;
+                          }
+                      }
+                      else if (node.nodeType == Node.ELEMENT_NODE) {
+                          var attrs = node.attributes;
+
+                          for(var i=0; i < attrs.length; i++) {
+                              var newValue =
+                                  applyTemplateParameter(attrs[i].value, fields);
+                              
+                              if (newValue != null) {
+                                   attrs[i].value = newValue;
+                              }
+                          }
+                      }
+                  });
+
+                  return element;
+              }
+
+              function walkFragment(fragment, nodeHandler) {
+
+                  for (var node = fragment; node; ) {
+                      
+                      nodeHandler(node);
+                      
+                      if (node.firstChild)
+                          node = node.firstChild
+                      else {
+                          while(node && !node.nextSibling) {
+                              node = node.parentNode;
+                          }
+                          node = node? node.nextSibling : node;
+                      }
+                  }
+              }
+
+              function parseISODate(s) {
+                    return new Date(s.substr(0,4)|0, (s.substr(5,2)|0) - 1, s.substr(8,2)|0,
+                            s.substr(11,2)|0, s.substr(14,2)|0, s.substr(17,2)|0, 0);
+              }
+              
+              function formatISODate(d) {
+                    function z(n) { return ('0'+n).substr(-2); }
+                    return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate())
+                            + 'T'
+                            + z(d.getHours()) + ':' + z(d.getMinutes()) + ':' + z(d.getSeconds());
+
+              }
+
+              function mmddyyyy(date) {
+                    return formatISODate(date).replace(/^(\d{4})\-(\d{2})\-(\d{2}).*$/, '$2/$3/$1');
+              }
+                
+              function isOverdue(task) {
+                if (task.status != "Active" ||
+                    !task.dates.due) return false;
+                  
+                var dueDate = parseISODate(task.dates.due),
+                    today = new Date()
+                    today.setHours(9,0,0,0);
+                
+                return today > dueDate;
+              }
+              
+              function isDescendant(task) {
+                return (task.parentIds.indexOf(thisFolderId) == -1);
+              }
+                
+              function formatStartDate(dates) {
+                  if (dates.type == "Planned")
+                      return mmddyyyy(parseISODate(dates.start));
+                  else if (dates.type == "Backlog") 
+                      return "Backlogged";
+                  else
+                      return dates.type;
+              }
+
+              function formatDueDate(dates) {
+                  if (dates.type == "Planned" || dates.type == "Milestone")
+                      return mmddyyyy(parseISODate(dates.due));
+                  else
+                      return '';
+              }
+
+              function formatDuration(dates) {
+                  if (!dates.duration) return '';
+                  if (dates.duration >=480)
+                      return (Math.ceil(dates.duration / 480))  + 'd';
+                  else if (dates.duration >=60)
+                      return ((dates.duration / 60) | 0)  + 'h';
+                  else
+                      return '< 1h';
+              }
+
+              function formatAssignees(ids) {
+                  var aa = [];
+                  for (var i=0; i<ids.length; i++) {
+                      var id = ids[i];
+                      for(var j=0; j<contacts.data.length; j++) {
+                          var a = contacts.data[j];
+                          if (a.id && a.id == id) {
+                              aa.push(a.lastName ? a.firstName + ' ' + a.lastName : a.firstName );
+                              break;
+                          }
+                      }
+                  }
+                  if (aa.length == 0 && ids.length > 0) {
+                    flushLocalStorageContacts();
+                  }
+                  return aa.join(', ');
+              }
+
+              function formatIcons(task) { 
+                  var iconClass = 'icon';
+                  if (task.importance == 'High') {
+                      iconClass += 'HighImportance';
+                  } 
+                  else if (task.importance == 'Low') {
+                      iconClass += 'LowImportance';
+                  }
+                  if (task.hasAttachments) {
+                      iconClass += 'Attachments';
+                  }
+                  return iconClass;
+              }
+          }
+          
+          function supports_html5_storage() {
+              try {
+                return 'localStorage' in window && window['localStorage'] !== null;
+              } catch (e) {
+                return false;
+              }
+            }
+            
+          function flushLocalStorageContacts() {
+             if(supports_html5_storage()) {
+                localStorage.removeItem('wrikeContacts');
+             }
+          }
+          
+          function flushLocalStorageWorkflows() {
+             if(supports_html5_storage()) {
+                localStorage.removeItem('wrikeWorkflows');
+             }
+          }
+
+        //]]></script>
+        
+    <apex:form >
+    <apex:actionFunction name="refreshCacheBlockJS" action="{!switchCache}" rerender="cacheBlock" />           
+    <apex:outputPanel id="cacheBlock">
+      <apex:outputPanel rendered="{!NOT(cacheExists)}" >
+             <script type="text/javascript">
+             window.contactCache = '{!JSENCODE(contactsJSON)}';
+             window.workflowCache = '{!JSENCODE(workflowsJSON)}';
+             if(supports_html5_storage()) {
+	             localStorage.setItem('wrikeWorkflows', window.workflowCache);
+	             localStorage.setItem('wrikeContacts', window.contactCache);  
+             }
+             initialize();
+             </script>
+       </apex:outputPanel> 
+                     
+       <apex:outputPanel rendered="{!cacheExists}" >
+	        <script type="text/javascript">
+	            
+	            window.workflowCache, window.contactCache
+	            
+	            if(supports_html5_storage()) {
+	               window.workflowCache = localStorage.getItem('wrikeWorkflows');
+	               window.contactCache = localStorage.getItem('wrikeContacts');
+	             }
+	             if(!(window.workflowCache && window.contactCache)) {
+	               refreshCacheBlockJS();
+	             }
+	        </script>
+         </apex:outputPanel>
+       </apex:outputPanel>
+    </apex:form>  
+          <table style="display: none" id="taskList">
+              <tr class="headerRow" id="taskTableHeader">
+                  <th class="actionColumn" scope="col">Action</th>
+                  <th scope="col" class="statusHeader"><a href="#" onclick="selectOrToogleSort('status',this)">Status<img src="/s.gif" alt=""/></a></th>
+                  <th scope="col"><a href="#" onclick="selectOrToogleSort('title',this)">Title<img src="/s.gif" alt=""/></a></th>
+                  <th scope="col"><a href="#" onclick="selectOrToogleSort('start',this)">Start Date<img src="/s.gif" alt=""/></a></th>
+                  <th scope="col" class="row-asc"><a href="#" onclick="selectOrToogleSort('due',this)">Due Date<img src="/s.gif" alt=""/></a></th>
+                  <th scope="col"><a href="#" onclick="selectOrToogleSort('duration',this)">Duration<img src="/s.gif" alt=""/></a></th>
+                  <th scope="col"><a href="#" onclick="selectOrToogleSort('assignedTo',this)">Assigned To<img src="/s.gif" alt=""/></a></th>
+              </tr>
+              <tr class="dataRow" id="taskTableRow" onmouseout="if(window.hiOff){hiOff(this);}"
+                    onmouseover="if(window.hiOn){hiOn(this);}">
+                  <td class="actionColumn">
+                      <a href="javascript:editTask('{{id}}')" class="actionLink" title="">{!IF(canWrite,'Edit','Open')}</a>&nbsp;|&nbsp;
+                      <a href="{{link}}" class="actionLink" title="" target="wrike">Open in Wrike</a>
+                      
+                  </td>
+                  <td scope="row" class="dataCell statusCell">
+                    <div class="status{{statusGroup}}">{{status}}</div></td>
+                  
+                  <td scope="row" class="dataCell titleCell">
+                    <div class="titleField">
+                      <a href="javascript:editTask('{{id}}')" class="actionLink" title="">{{title}}</a> <span class="taskIcon {{icons}}"></span>
+                    </div>  
+                  </td>
+                  <td scope="row" class="dataCell ">{{startdate}}</td>
+                  <td scope="row" class="dataCell "><div class="{{overdueClass}}">{{duedate}}</div></td>
+                  <td scope="row" class="dataCell ">{{duration}}</td>
+                  <td scope="row" class="dataCell assignedCell">
+                        <div class="assignedField">{{assigned}}</div></td>
+              </tr>
+              <tr class="footerRow" id="taskTableFooter">
+                  <td colspan="7"><div class="paginator">
+                    <div class="left">Showing <span class="{{nonZeroTasks}}">{{from}}-{{to}} of </span>{{total}} tasks</div>
+                    &#160;
+                    <span class="prevNextLinks {{nonZeroTasks}}" id="paginatorLinks">
+                        <span class="prevNext {{notFirstPage}}">
+                            <a href="javascript:firstPage()">
+                                <img src="/s.gif" title="First Page" alt="First Page" class="first"/></a>
+                        </span>
+                        <span class="prevNext {{notFirstPage}}">
+                            <a href="javascript:prevPage()">
+                                <img src="/s.gif" title="Previous" alt="Previous" class="prev"/>Previous</a>
+                        </span>
+                        <span class="prevNext {{firstPage}}">
+                            <img src="/s.gif" alt="First Page" class="firstoff"/>
+                        </span>
+                        <span class="prevNext {{firstPage}}">
+                            <img src="/s.gif" alt="Previous" class="prevoff"/>Previous
+                        </span>
+                        <span class="prevNext {{lastPage}}">
+                            Next<img src="/s.gif" class="nextoff" alt="Next"/>
+                        </span>
+                        <span class="prevNext {{lastPage}}">
+                            <img src="/s.gif" class="lastoff" alt="Last Page"/>
+                        </span>
+                        <span class="prevNext {{notLastPage}}">
+                            <a href="javascript:nextPage()">
+                                Next<img src="/s.gif" class="next" title="Next" alt="Next"/></a>
+                        </span>
+                        <span class="prevNext {{notLastPage}}">
+                            <a href="javascript:lastPage()">
+                                <img src="/s.gif" class="last" title="Last Page" alt="Last Page"/></a>
+                        </span>
+                    </span></div>
+                  </td>
+              </tr>
+          </table>
+          
+          
+        <div class="apexp"><div class="individualPalette"><div class="accountBlock"><div class="editPage"><div class="bPageBlock brandSecondaryBrd bEditBlock secondaryPalette">
+            <div class="pbHeader">
+                <table cellpadding="0" cellspacing="0" border="0">
+                      <tbody>
+                         <tr>
+                            <td class="pbTitle">
+                                <img class="relatedListIcon" src="/s.gif" />
+                                <h3 class="mainTitle">Wrike Tasks</h3>              
+                            </td>
+                            <td class="pbButton topButtonRow">
+                              <apex:form styleClass="inlineForm">
+                              <apex:commandButton action="{!createTask}" value="New Task" id="createTaskButton"
+                                   immediate="true" rendered="{!canWrite}"/>
+                               </apex:form>
+                               <input id="openFolderButton" value="Open Tasks in Wrike" class="btn"
+                                  onclick="window.open(window.folderPermalink);"  type="button"/>
+                                
+                                <apex:form styleClass="inlineForm" id="editTaskForm">
+                                    <apex:commandButton action="{!editTask}" value="Edit Task" id="editTaskButton"
+                                       immediate="true" styleClass="editTaskBtn"/>
+                                    <script type="text/javascript">
+                                     function editTask(taskId) {
+                                        var input = document.createElement('input');
+                                        input.type = "hidden"; 
+                                        input.name = "task" + (new Date()).getTime();
+                                        input.value = taskId;
+                                        
+                                        var form = document.getElementById('{!$Component.editTaskButton}');
+                                        form.appendChild(input);
+                                        
+                                        var formButton = document.getElementById('{!$Component.editTaskButton}');
+                                        formButton.click();
+                                      }
+                                     </script>
+                                  </apex:form>
+                          </td>
+                          <td style="text-align:right" class="pbLinks topButtonRow">
+                              <a href="" class="filterOption" id="toggleDescendants"
+                                 onclick="toggleDescendants()">Hide descendants</a> 
+                              Status:
+                              <a href="" class="optionLink" id="filterAll"
+                                 onclick="applyFilter('All')">All</a> |
+                              <a href="" class="optionLink" id="filterActive"
+                                 onclick="applyFilter('Active')">Active</a> |
+                              <a href="" class="optionLink" id="filterCompleted"
+                                 onclick="applyFilter('Completed')">Completed</a>
+                          </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pbBody">
+                <table class="list" border="0" cellspacing="0" cellpadding="0" id="taskTable">
+                    <thead id="taskTableHead"> </thead>
+                    <tbody id="taskTableBody"> </tbody>
+                </table>
+            </div>
+        </div></div></div></div></div>
+          
+    </apex:outputPanel>
+    </apex:outputPanel>
+    </apex:outputPanel>
+  </apex:page>

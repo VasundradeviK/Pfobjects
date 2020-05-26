@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Asset_Class__c</fullName>
+    <externalId>false</externalId>
+    <label>Asset Class</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>AC system</fullName>
+                <default>false</default>
+                <label>AC system</label>
+            </value>
+            <value>
+                <fullName>DC system</fullName>
+                <default>false</default>
+                <label>DC system</label>
+            </value>
+            <value>
+                <fullName>DAS/SCADA</fullName>
+                <default>false</default>
+                <label>DAS/SCADA</label>
+            </value>
+            <value>
+                <fullName>Building</fullName>
+                <default>false</default>
+                <label>Building</label>
+            </value>
+            <value>
+                <fullName>Fleet</fullName>
+                <default>false</default>
+                <label>Fleet</label>
+            </value>
+            <value>
+                <fullName>Auxiliary system</fullName>
+                <default>false</default>
+                <label>Auxiliary system</label>
+            </value>
+            <value>
+                <fullName>Plant</fullName>
+                <default>false</default>
+                <label>Plant</label>
+            </value>
+            <value>
+                <fullName>String</fullName>
+                <default>false</default>
+                <label>String</label>
+            </value>
+            <value>
+                <fullName>FAA Light System</fullName>
+                <default>false</default>
+                <label>FAA Light System</label>
+            </value>
+            <value>
+                <fullName>Gearbox</fullName>
+                <default>false</default>
+                <label>Gearbox</label>
+            </value>
+            <value>
+                <fullName>Generator</fullName>
+                <default>false</default>
+                <label>Generator</label>
+            </value>
+            <value>
+                <fullName>Hydraulic System</fullName>
+                <default>false</default>
+                <label>Hydraulic System</label>
+            </value>
+            <value>
+                <fullName>Pitch System</fullName>
+                <default>false</default>
+                <label>Pitch System</label>
+            </value>
+            <value>
+                <fullName>Nacelle</fullName>
+                <default>false</default>
+                <label>Nacelle</label>
+            </value>
+            <value>
+                <fullName>Alarm System</fullName>
+                <default>false</default>
+                <label>Alarm System</label>
+            </value>
+            <value>
+                <fullName>Rotor</fullName>
+                <default>false</default>
+                <label>Rotor</label>
+            </value>
+            <value>
+                <fullName>Yaw System</fullName>
+                <default>false</default>
+                <label>Yaw System</label>
+            </value>
+            <value>
+                <fullName>Meteorological Mast</fullName>
+                <default>false</default>
+                <label>Meteorological Mast</label>
+            </value>
+            <value>
+                <fullName>Ice System</fullName>
+                <default>false</default>
+                <label>Ice System</label>
+            </value>
+            <value>
+                <fullName>Testing Equipment/Tools</fullName>
+                <default>false</default>
+                <label>Testing Equipment/Tools</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

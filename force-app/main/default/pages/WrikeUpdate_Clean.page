@@ -1,0 +1,22 @@
+<apex:page standardStylesheets="true" cache="false"
+    controller="WrikeUpdate_CleanController" showheader="false" sidebar="false">
+    
+<h1>Cleaning</h1>
+<div id="log"></div>
+
+<c:WrikeUpdate_SequenceScript />
+
+<script type="text/javascript">
+    
+    sequence({
+        remoteInit : WrikeUpdate_CleanController.init.bind(this),
+        remoteStep : WrikeUpdate_CleanController.step.bind(this),
+
+        start : function() { return true },     
+        //beforestep : function(name) { },
+        //afterstep : function(name, data) { },     
+        finish : function() { }
+    });
+    
+</script>
+</apex:page>

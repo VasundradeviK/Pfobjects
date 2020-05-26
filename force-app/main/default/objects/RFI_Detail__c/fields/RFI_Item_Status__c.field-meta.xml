@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RFI_Item_Status__c</fullName>
+    <externalId>false</externalId>
+    <label>RFI Item Status</label>
+    <required>true</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Submitted – Pending Customer Review</fullName>
+                <default>false</default>
+                <label>Submitted – Pending Customer Review</label>
+            </value>
+            <value>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+                <label>In Progress</label>
+            </value>
+            <value>
+                <fullName>Needs Detail</fullName>
+                <default>false</default>
+                <label>Needs Detail</label>
+            </value>
+            <value>
+                <fullName>Completed – Pending PF Review</fullName>
+                <default>false</default>
+                <label>Completed – Pending PF Review</label>
+            </value>
+            <value>
+                <fullName>Closed</fullName>
+                <default>false</default>
+                <label>Closed</label>
+            </value>
+            <value>
+                <fullName>Canceled</fullName>
+                <default>false</default>
+                <label>Canceled</label>
+            </value>
+            <value>
+                <fullName>Cannot Complete</fullName>
+                <default>false</default>
+                <label>Cannot Complete</label>
+            </value>
+            <value>
+                <fullName>Completed - Pending PF Review</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Completed - Pending PF Review</label>
+            </value>
+            <value>
+                <fullName>Submitted - pending customer review</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Submitted - pending customer review</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

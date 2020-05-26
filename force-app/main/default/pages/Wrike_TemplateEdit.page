@@ -1,0 +1,489 @@
+<apex:page controller="Wrike_TemplateManagerController" showheader="false" sidebar="false" action="{!verifyWrike}"
+        standardStylesheets="true" cache="false">
+
+<style type="text/css">
+
+body {background: #fff url(/img/alohaSkin/lookup_bg.png) repeat-x;}
+         
+div.do-not-show { display: none;}
+
+div.filter-match {padding: 5px; font-size: 12px; line-height: 17px; border:none;}
+div.parent-list {color: gray; border:none;}
+div.filter-match span { border:none;}
+
+#typeSuggestContainer { line-height: 17px; margin-left: 5px;}
+div.type-suggest-show { width: 303px; max-height: 150px; overflow-y:auto; z-index: 9999; position:absolute; 
+                       background-color:white;  padding-top: 5px; padding-bottom: 10px;
+                       border-left: solid 1px black; border-right: solid 1px black; border-bottom: solid 1px black;}
+
+.inputColumn {width: 300px; font-size: 12px;}
+.inputColumn input, textarea {width: 100%; border: solid 1px; padding:3px; font-size: 12px; line-height: 17px;}
+.labelColumn {font-size: 12px;}
+
+.highlighted-part { font-weight: bold;}
+
+.actionLink { color: #015ba7; cursor:pointer; }
+
+#buttonRow { text-align: center;}
+
+#templateEditPanel { width:500px; padding: 15px; line-height: 17px;}
+#templateEditPanel h2, #templateSortPanel h2 {line-height:30px; font-size:22px}
+#templateSortPanel { width:400px; padding: 15px; line-height: 17px; font-size: 12px;}
+
+.labelColumn { font-weight: bold; text-align: right; font-size: 11px; line-height: 15px; color: #4a4a56; vertical-align:text-top;}
+.inputColumn {  vertical-align:top;}
+
+#templateForm td { padding:5px; }
+#templateForm {border-collapse: collapse;}
+
+#selectTable td {text-align: center; padding-top: 5px; padding-bottom: 5px;}
+
+input.btn {padding-left:5px; padding-right:5px; min-width: 48px;}
+
+div.errorText {color: #c00;}
+
+div.requiredField {border-left: 3px #c00 solid;}
+.inputColumn > div.requiredField input { margin-left: 2px;}
+.plainTextColumn span, .inputColumn textarea, .buttonColumn span  { margin-left: 5px;}
+</style>
+
+<apex:form id="errors">
+    <apex:outputPanel id="errorMessagesPanel">
+    <apex:pageMessages id="errorMessages"/>
+    </apex:outputPanel>
+    <apex:actionFunction name="rerenderErrorMessages" action="{!addErrorsToPage}" rerender="errorMessagesPanel" />      
+    </apex:form>
+
+<apex:outputPanel rendered="{!editMode}">
+   <div id="templateEditPanel">
+   <h2><apex:outputText value="{!IF(ISBLANK(currentTemplate.Name), 'Link New Template', 'Edit Template')}"/></h2> 
+    <apex:form >
+
+        
+        <table id="templateForm">
+            <tr>
+               <td class="labelColumn">Title</td>
+               <td class="inputColumn" id="titleCell">
+               <div class="requiredField">
+                   <input id="titleInput" type="text" value="{!currentTemplate.Name}" maxlength="38"/>
+               </div>
+               </td>
+            </tr>
+            <tr>
+            <td class="labelColumn">Description</td>
+              <td class="inputColumn"><apex:inputField value="{!currentTemplate.Description__c}" label="Template Description" /></td>
+            </tr>
+            <tr>
+              <td class="labelColumn">Link Folder</td>
+              <td class="plainTextColumn"><span>Select a Wrike folder to act as a template.</span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="inputColumn" id="folderCell">
+              <div class="requiredField">
+                <input id="searchBox" onkeyup="fillTypeSuggest();" placeholder="{!IF(ISBLANK(currentTemplate.Wrike_Folder_Name__c), 'Enter folder name',currentTemplate.Wrike_Folder_Name__c)}" onclick="showTypeSuggest();"/>
+                </div> 
+                <div id="typeSuggestContainer" class="do-not-show"></div>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="buttonColumn">
+              <span>
+                <input value="{!IF(ISBLANK(currentTemplate.Id), 'Create Template','Save Template')}" class="btn" id="saveTemplatebtn" onclick="extractDataAndSave('{!currentTemplate.Wrike_Folder_Id__c}');" type="button"/>
+                <input value="Cancel" class="btn" onclick="window.close();" type="button"/>
+              </span>
+              </td>
+            </tr>
+        </table>
+
+        
+        <apex:actionFunction action="{!saveTemplate}" name="saveTemplateJS" rerender="checkResultPanel" oncomplete="checkResult();">
+            <apex:param name="folderName" value=""/>
+            <apex:param name="folderId" value=""/>
+            <apex:param name="templateName" value=""/>
+        </apex:actionFunction>
+        
+        <apex:outputPanel id="checkResultPanel" >       
+            <apex:actionFunction name="checkResult" oncomplete="rerenderErrorMessages();" rendered="{!isError}"/>
+            <apex:actionFunction name="checkResult" oncomplete="window.close();" rendered="{!saveComplete}"/>    
+        </apex:outputPanel>
+        
+    </apex:form>
+    
+    </div>
+      
+    <script type="text/javascript">
+    
+      if (!window.addEventListener) {
+        window.addEventListener = new function(event, handler) {
+            if (window.attachEvent) {
+                window.attachEvent('on' + event, handler);
+            }
+        }
+    }
+    window.addEventListener('load', initialize);
+      
+      function initialize() {
+      
+      document.title = '{!currentTemplate.Name}' ? 'Edit Template' : 'Link New Template';
+      
+         window.rootFolderContainer = document.getElementById('typeSuggestContainer');
+                   
+         var folderTree = parseJSON('{!JSENCODE(folderTreeJSON)}');
+         
+         window.folderList = [];
+          
+         for (var i = 0; i < folderTree.data.length; i++) {
+        
+              var folder = folderTree.data[i];
+  
+              if(~folder.scope.indexOf('Ws') && folder.scope != 'WsRoot') {
+              
+                    var parentList = getParentFolderList(folder.id, folderTree);
+              
+                    folder.parentList = (parentList && parentList.length) ? 'Subfolder of: ' + parentList : '';
+  
+                    folderList.push(folder);                        
+              } 
+          }
+          
+         folderList.sort(compareFolders);
+        }
+        
+        function compareFolders(a,b) {
+	          if (a.title.toLowerCase() < b.title.toLowerCase())
+	            return -1;
+	          if (a.title.toLowerCase() > b.title.toLowerCase())
+	            return 1;
+	          return 0;    
+        }
+        
+        function parseJSON(jsonstring) {
+                    
+             var  jsonText = (jsonstring).replace(/^\s*<!\[CDATA\[/,'').replace(/\]\]>\s*$/,"");
+                        
+             jsonText = jsonText
+                .replace(/(&)#39;/g, '\'')
+                .replace(/(&)quot;/g, '"')
+                .replace(/(&)lt;/g, '<')
+                .replace(/(&)gt;/g, '>')
+                .replace(/(&)amp;/g, '&');
+             
+             return JSON.parse(jsonText);        
+        }
+         
+         function fillTypeSuggest() {
+        
+            while (rootFolderContainer.firstChild) {
+                rootFolderContainer.removeChild(rootFolderContainer.firstChild);
+            }
+        
+            var searchString = document.getElementById('searchBox').value;
+        
+            if(searchString) {
+        
+                for (var i = 0; i < folderList.length; i++) {
+        
+                    var folder = folderList[i];
+
+                    var txt = folder.title;
+     
+                    if(txt && (~txt.toLowerCase().indexOf(searchString.toLowerCase()))) {
+    
+                        var folderContainer = document.createElement('div');
+                        folderContainer.id = folder.id;
+                        
+                        var searchMatch = document.createElement('div');
+                        searchMatch.innerHTML = getHighlightedString(folder.title, searchString);
+                        folderContainer.appendChild(searchMatch);
+
+                        folderContainer.addEventListener('click', parseFolderData, false);
+                        folderContainer.className = 'filter-match';
+                        
+                        var parentListContainer = document.createElement('div');
+                        parentListContainer.className = 'parent-list';
+                        
+                        parentListContainer.appendChild(document.createTextNode(folder.parentList));
+                        folderContainer.appendChild(parentListContainer);
+    
+                        rootFolderContainer.appendChild(folderContainer);
+                    }
+                }
+             if(!rootFolderContainer.firstChild) {
+                var emptyResultContainer = document.createElement('div');
+                emptyResultContainer.className = 'filter-match';
+                var notFoundText = 'No matches. Make sure folder is in your Wrike.';
+                emptyResultContainer.appendChild(document.createTextNode(notFoundText));
+                rootFolderContainer.appendChild(emptyResultContainer);
+             }
+            } 
+            showTypeSuggest();
+
+        }
+        
+        function getHighlightedString(rawString, searchString) {
+          
+            var reg = new RegExp(searchString, 'gi');
+            return rawString.replace(reg, function(str) {return '<span class="highlighted-part">'+str+'</span>'});      
+        }
+        
+        function getParentFolderList(folderid, folderTree) {
+        
+              var parentNames = [];
+        
+              for (var i = 0; i < folderTree.data.length; i++) {
+        
+                    var folder = folderTree.data[i];
+
+                  if(~folder.childIds.indexOf(folderid) && folder.scope != 'WsRoot') {
+                        
+                        parentNames.push(folder.title);
+                    }
+              }
+              
+              return parentNames.join();
+        }
+         
+         var parseFolderData = function(e) {
+         
+               e.stopPropagation();
+               
+               window.chosenFolderName = getFolderTitle(this);
+               window.chosenFolderId = this.id;
+               
+               document.getElementById('searchBox').value = window.chosenFolderName;
+               
+               hideTypeSuggest();         
+         }
+         
+         function hideTypeSuggest() {
+         
+            rootFolderContainer.className = 'do-not-show';
+         }
+         
+         function showTypeSuggest() {
+            if(rootFolderContainer.firstChild) {
+                rootFolderContainer.className = 'type-suggest-show';
+             } else {
+                hideTypeSuggest();
+             }
+         }
+         
+         function getTopLevelElementText(node) {
+         
+           text = '';
+           
+            child = node.firstChild;
+            
+            while (child) {
+                if (child.nodeType == 3) {
+                    text += child.data;
+                }
+                child = child.nextSibling;
+            }
+              
+              return text;  
+         }
+         
+         function getFolderTitle(folderContainer) {
+            return folderContainer.firstChild.textContent || folderContainer.firstChild.innerText;
+         }
+         
+         function extractDataAndSave(mappedFolderId) {
+            
+            var nameError = '';
+
+            removeErrors();
+            
+            var titleInput = document.getElementById('titleInput');
+            
+            window.templateName = '';
+            
+            if(titleInput && titleInput.value) {
+                window.templateName = titleInput.value;
+            }
+            
+            
+            if(!window.templateName) {
+            
+                nameError = 'You must enter a value';
+                
+            } else {
+            
+                var templates = parseJSON('{!JSENCODE(templatesJSON)}');
+                
+                for (var i = 0; i < templates.length; i++) {
+                    if(templates[i].Name && templates[i].Name == window.templateName 
+                                                       && templates[i].Id != '{!currentTemplate.Id}') {
+                        nameError = "A template named '" + window.templateName + "' already exists. Please choose another name.";
+                        break;
+                    }
+                }
+            }
+            
+            if(nameError) {
+                appendError('titleCell', nameError);         
+            } 
+            
+            if(!(window.chosenFolderId || mappedFolderId)) {
+                appendError('folderCell', 'You must select an existing folder before save')
+                return;
+            } 
+            
+            if(!nameError) {
+                saveTemplateJS(window.chosenFolderName, window.chosenFolderId ? window.chosenFolderId : mappedFolderId, window.templateName);           
+               }
+         }
+         
+         function appendError(parentNodeId, errorText) {
+         
+            var parentNode = document.getElementById(parentNodeId);   
+            var errorContainer = document.createElement('div');
+            errorContainer.className = 'errorText';
+            errorContainer.innerHTML = '<strong>Error:</strong> ' + errorText;
+            parentNode.appendChild(errorContainer);             
+         }
+         
+         function removeErrors() {
+         
+            var elements = document.getElementsByClassName('errorText');
+            while(elements.length > 0) {
+              elements[0].parentNode.removeChild(elements[0]);
+             }   
+         }
+
+
+     </script>
+
+</apex:outputPanel> 
+
+
+<apex:outputPanel rendered="{!showSort}">
+
+<div id="templateSortPanel">
+<h2>Sort Templates</h2> 
+
+<p>Use the arrows to sort the templates into desired order.</p>
+
+<apex:form >
+
+<div id="selectDiv">
+<h3>Templates</h3> 
+    <table id="selectTable">
+        <tr>
+            <td>
+                <select size="10" id="sortSelectBox">
+                    <apex:repeat value="{!templates}" var="t">
+                        <option value="{!t.Id}">{!t.Name}</option>
+                    </apex:repeat>
+                </select>
+            </td>
+            <td>
+                <div class="text">Top</div>
+                <div>
+                    <a href="" onclick="moveToTop();" title=""><img class="doubleArrowUp" src="/s.gif" alt="Top"/></a>
+                </div>
+                <div class="text">Up</div>
+                <div>
+                    <a href="" onclick="moveUp();" title=""><img class="upArrowIcon" src="/s.gif" alt="Up"/></a>
+                </div>
+                <div>
+                    <a href="" onclick="moveDown();" title=""><img class="downArrowIcon" src="/s.gif" alt="Down"/></a>
+                </div>
+                <div class="text">Down</div>
+                <div>
+                    <a href="" onclick="moveToBottom();" title=""><img class="doubleArrowDwn" src="/s.gif" alt="Bottom"/></a>
+                </div>
+                <div class="text">Bottom</div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<input value="Save Sorting" class="btn" id="saveSortingbtn" onclick="calcOrder();" type="button"/>
+<input value="Cancel" class="btn" onclick="window.close();" type="button"/>      
+        
+ <apex:actionFunction action="{!saveSorting}" name="saveSortingJS" rerender="" oncomplete="window.close();">
+     <apex:param name="templateIds" value=""/>
+ </apex:actionFunction>
+
+</apex:form>
+
+</div>
+<script type="text/javascript">
+
+document.title = 'Sort templates';
+
+window.templateOrder = '';
+
+window.selectBox = document.getElementById('sortSelectBox');
+
+function moveUp() {
+
+    var selIndex = selectBox.selectedIndex;
+    if(selIndex > 0) {
+        var selOption = selectBox.options[selIndex];
+        
+        selectBox.options.remove(selIndex);
+        selectBox.options.add(selOption, selIndex -1);
+        selectBox.selectedIndex = selIndex -1;
+    }
+}
+
+function moveDown() {
+  var selIndex = selectBox.selectedIndex;
+  console.log('selIndex ' + selIndex);
+    if((selIndex > -1) && (selectBox.length - selIndex)) {
+    console.log('inside if');
+        var selOption = selectBox.options[selIndex];
+        
+        selectBox.options.remove(selIndex);
+        selectBox.options.add(selOption, selIndex + 1);
+        selectBox.selectedIndex = selIndex + 1;
+    }
+}
+
+function moveToBottom() {
+  var selIndex = selectBox.selectedIndex;
+    if((selIndex > -1) && (selectBox.length - selIndex)) {
+        var selOption = selectBox.options[selIndex];
+        
+        selectBox.options.remove(selIndex);
+        selectBox.options.add(selOption, selectBox.length);
+        selectBox.selectedIndex = selectBox.length;
+    }
+}
+
+function moveToTop() {
+  var selIndex = selectBox.selectedIndex;
+    if(selIndex > 0) {
+        var selOption = selectBox.options[selIndex];
+        
+        selectBox.options.remove(selIndex);
+        selectBox.options.add(selOption, 0);
+        selectBox.selectedIndex = 0;
+    }
+}
+
+function calcOrder() {
+
+templateArray = [];
+
+    var rows = document.getElementById('sortSelectBox').options;
+
+    for (var i = 0; i < rows.length; i++) {
+    
+        templateArray.push(rows[i].value);
+    }
+    
+    window.templateOrder = templateArray.join();
+       
+    saveSortingJS(templateOrder);
+}
+
+
+</script>   
+
+</apex:outputPanel> 
+</apex:page>

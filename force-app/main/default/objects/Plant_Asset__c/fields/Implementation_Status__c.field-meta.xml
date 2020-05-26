@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Implementation_Status__c</fullName>
+    <externalId>false</externalId>
+    <label>Implementation Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Project_Lifecycle_Status__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Pending Customer Submission</fullName>
+                <default>true</default>
+                <label>Pending Customer Submission</label>
+            </value>
+            <value>
+                <fullName>Ready</fullName>
+                <default>false</default>
+                <label>Ready</label>
+            </value>
+            <value>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+                <label>In Progress</label>
+            </value>
+            <value>
+                <fullName>Blocked</fullName>
+                <default>false</default>
+                <label>Blocked</label>
+            </value>
+            <value>
+                <fullName>Completed</fullName>
+                <default>false</default>
+                <label>Completed</label>
+            </value>
+            <value>
+                <fullName>Cancelled</fullName>
+                <default>false</default>
+                <label>Cancelled</label>
+            </value>
+            <value>
+                <fullName>Decommissioned</fullName>
+                <default>false</default>
+                <label>Decommissioned</label>
+            </value>
+            <value>
+                <fullName>Pending Full Documentation Submission</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Pending Full Documentation Submission</label>
+            </value>
+            <value>
+                <fullName>Submitted – Pending Customer Review</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Submitted – Pending Customer Review</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Pending</controllingFieldValue>
+            <valueName>Pending Customer Submission</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pending</controllingFieldValue>
+            <valueName>Ready</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Documentation Review</controllingFieldValue>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <controllingFieldValue>Data Connection</controllingFieldValue>
+            <controllingFieldValue>Data Validation</controllingFieldValue>
+            <controllingFieldValue>Customer Validation</controllingFieldValue>
+            <valueName>In Progress</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Documentation Review</controllingFieldValue>
+            <controllingFieldValue>Onboarding</controllingFieldValue>
+            <controllingFieldValue>Data Connection</controllingFieldValue>
+            <controllingFieldValue>Data Validation</controllingFieldValue>
+            <controllingFieldValue>Customer Validation</controllingFieldValue>
+            <valueName>Blocked</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Operations</controllingFieldValue>
+            <valueName>Completed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Decommissioned</controllingFieldValue>
+            <valueName>Cancelled</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Decommissioned</controllingFieldValue>
+            <valueName>Decommissioned</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

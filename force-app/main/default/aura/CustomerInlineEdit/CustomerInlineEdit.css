@@ -1,0 +1,6 @@
+.THIS {
+}
+
+.THIS .vTable.cTable.slds-table_fixed-layout tbody {
+    transform: none !important;
+}

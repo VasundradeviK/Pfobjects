@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DAS_SCADA_Provider__c</fullName>
+    <externalId>false</externalId>
+    <label>DAS/SCADA Provider</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>ABB AuroraVision</fullName>
+                <default>false</default>
+                <label>ABB AuroraVision</label>
+            </value>
+            <value>
+                <fullName>ABB Energy Recommerce</fullName>
+                <default>false</default>
+                <label>ABB Energy Recommerce</label>
+            </value>
+            <value>
+                <fullName>ABB FatSpaniel</fullName>
+                <default>false</default>
+                <label>ABB FatSpaniel</label>
+            </value>
+            <value>
+                <fullName>Also Energy</fullName>
+                <default>false</default>
+                <label>Also Energy</label>
+            </value>
+            <value>
+                <fullName>Cachelan</fullName>
+                <default>false</default>
+                <label>Cachelan</label>
+            </value>
+            <value>
+                <fullName>DECK</fullName>
+                <default>false</default>
+                <label>DECK</label>
+            </value>
+            <value>
+                <fullName>Draker</fullName>
+                <default>false</default>
+                <label>Draker</label>
+            </value>
+            <value>
+                <fullName>Eguage</fullName>
+                <default>false</default>
+                <label>Eguage</label>
+            </value>
+            <value>
+                <fullName>Enphase</fullName>
+                <default>false</default>
+                <label>Enphase</label>
+            </value>
+            <value>
+                <fullName>Fronius</fullName>
+                <default>false</default>
+                <label>Fronius</label>
+            </value>
+            <value>
+                <fullName>Green Power</fullName>
+                <default>false</default>
+                <label>Green Power</label>
+            </value>
+            <value>
+                <fullName>Inaccess</fullName>
+                <default>false</default>
+                <label>Inaccess</label>
+            </value>
+            <value>
+                <fullName>Locus Energy</fullName>
+                <default>false</default>
+                <label>Locus Energy</label>
+            </value>
+            <value>
+                <fullName>Meteocontrol</fullName>
+                <default>false</default>
+                <label>Meteocontrol</label>
+            </value>
+            <value>
+                <fullName>MOXA</fullName>
+                <default>false</default>
+                <label>MOXA</label>
+            </value>
+            <value>
+                <fullName>Obvius</fullName>
+                <default>false</default>
+                <label>Obvius</label>
+            </value>
+            <value>
+                <fullName>OSI Soft PI</fullName>
+                <default>false</default>
+                <label>OSI Soft PI</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+            <value>
+                <fullName>Red Lion</fullName>
+                <default>false</default>
+                <label>Red Lion</label>
+            </value>
+            <value>
+                <fullName>OPC DA</fullName>
+                <default>false</default>
+                <label>OPC DA</label>
+            </value>
+            <value>
+                <fullName>OPC UA</fullName>
+                <default>false</default>
+                <label>OPC UA</label>
+            </value>
+            <value>
+                <fullName>SEL</fullName>
+                <default>false</default>
+                <label>SEL</label>
+            </value>
+            <value>
+                <fullName>Skytron</fullName>
+                <default>false</default>
+                <label>Skytron</label>
+            </value>
+            <value>
+                <fullName>SMA Sunnyportal</fullName>
+                <default>false</default>
+                <label>SMA Sunnyportal</label>
+            </value>
+            <value>
+                <fullName>SolarCity</fullName>
+                <default>false</default>
+                <label>SolarCity</label>
+            </value>
+            <value>
+                <fullName>SolarEdge</fullName>
+                <default>false</default>
+                <label>SolarEdge</label>
+            </value>
+            <value>
+                <fullName>SolarLog</fullName>
+                <default>false</default>
+                <label>SolarLog</label>
+            </value>
+            <value>
+                <fullName>Solectria SolrenView</fullName>
+                <default>false</default>
+                <label>Solectria SolrenView</label>
+            </value>
+            <value>
+                <fullName>SunEdison</fullName>
+                <default>false</default>
+                <label>SunEdison</label>
+            </value>
+            <value>
+                <fullName>Sunpower</fullName>
+                <default>false</default>
+                <label>Sunpower</label>
+            </value>
+            <value>
+                <fullName>Trimark</fullName>
+                <default>false</default>
+                <label>Trimark</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

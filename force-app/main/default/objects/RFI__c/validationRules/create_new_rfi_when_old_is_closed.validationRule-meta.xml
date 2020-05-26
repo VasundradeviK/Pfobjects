@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>create_new_rfi_when_old_is_closed</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(OR(ISCHANGED( Assigned_Customer_Contact__c ) ,
+ISCHANGED( Name ) ,ISCHANGED( Account__c ) ,
+ISCHANGED( Plant_Asset__c ) ,ISCHANGED( RFI_Status__c ) ,ISCHANGED( Implementation_Blocked__c ) ,
+ISCHANGED( IE_Owner__c ) ,ISCHANGED( IE_Team__c )),ISPICKVAL( PRIORVALUE(RFI_Status__c ) , &quot;Closed&quot;), Plant_Asset__r.Active_RFI__c  &lt;&gt; 0)</errorConditionFormula>
+    <errorMessage>This RFI is already closed and there is an open RFI for this Plant Asset</errorMessage>
+</ValidationRule>

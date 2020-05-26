@@ -1,0 +1,21 @@
+.THIS .inputWidth {
+    width:80%;
+ }
+
+ .THIS .inputRatingWidth {
+    width:75%;
+ }
+
+
+.THIS .slds-datepicker table {
+    table-layout: fixed;
+    transform: none !important;
+    width: 300px;
+}
+.THIS .slds-datepicker .slds-day{
+    width: auto !important;
+    min-width: auto !important;
+    height: auto !important;
+    line-height: inherit !important;
+    transform: none !important;
+}

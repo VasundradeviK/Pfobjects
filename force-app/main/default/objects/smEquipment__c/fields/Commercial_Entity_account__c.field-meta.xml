@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Commercial_Entity_account__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <externalId>false</externalId>
+    <inlineHelpText>Lookup to the Entity that owns the plant from the Parent Account record</inlineHelpText>
+    <label>Commercial Entity Account</label>
+    <referenceTo>Account</referenceTo>
+    <relationshipLabel>Asset Tags (Commercial Entity account)</relationshipLabel>
+    <relationshipName>Asset_Tags</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

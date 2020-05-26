@@ -1,0 +1,91 @@
+<apex:page standardStylesheets="true" cache="false"
+    controller="WrikeUpdate_ImportController" showheader="false" sidebar="false">
+    
+<h1>Importing</h1>
+
+<div id="filechooser">
+<form action='?legacy=yes'><input type="file" id="file" name="file"/></form>
+</div>
+<script type="text/json" id="filecontents"></script>
+
+<div id="log"></div>
+
+
+<c:WrikeUpdate_SequenceScript />
+
+<script type="text/javascript">
+
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+        
+        document.getElementById('file').addEventListener('change', function(evt){
+            
+            var reader = new FileReader();
+            reader.onload = function(evt) {
+                var json = evt.target.result;
+                runSequence(json);
+            };
+            reader.readAsText(evt.target.files[0]);
+            
+            evt.target.style.display='none';
+            
+        }, false);
+    }
+    else {
+        document.forms[0].submit();
+    }
+    
+    
+    function runSequence(json) {
+        
+        var data;
+        
+        try {
+            data = JSON.parse(json);
+        } catch(e) { } 
+        
+        sequence({
+            
+            remoteInit : WrikeUpdate_ImportController.init.bind(this),
+            remoteStep : WrikeUpdate_ImportController.step.bind(this),
+            
+            start : function() {
+                return data != null;
+            },
+            
+            beforestep : function(name) {
+                return data[name]?
+                    JSON.stringify(data[name]) : '{}';
+            },
+                        
+            warningsCollector : function(resultdata) {
+
+                if(resultdata) {
+                    if(window.updateWarnings) {
+                        window.updateWarnings.push(resultdata);
+                    } else {
+                        window.updateWarnings = resultdata;
+                    }
+                }
+
+            },
+            
+            finish : function(status) {
+                
+                if(window.updateWarnings && window.updateWarnings.length > 0) {
+                    log.insertAdjacentHTML('beforeend',
+                        '<br/><br/><span class="error">Update errors</span>');
+                        
+                    for(var i = 0; i < window.updateWarnings.length; i++) {
+                    
+                        log.insertAdjacentHTML('beforeend',
+                        '<br/><span>Salesforce record: <a target="_blank" href="/' + window.updateWarnings[i].recordId +'">' + 
+                        window.updateWarnings[i].recordName +'</a>, errors: ' + window.updateWarnings[i].errors + '</span>');
+                    }
+                }
+             }
+        });
+        
+    }
+    
+</script>
+</apex:page>

@@ -1,0 +1,129 @@
+<aura:component implements= "force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" 
+controller="inlineRfiDetail">
+
+<!--aura init handler , call js "loadData" function on component load, and display contact data on table-->   
+<aura:handler name="init" value="{!this}" action="{!c.loadData}"/>
+<aura:handler name="change" value="{!v.rfiItemList}" action="{!c.handleKeyUp}"/>
+
+<!--Declare Attributes--> 
+<aura:attribute name = "rfiItemList" type = "object"/>
+<aura:attribute name = "rfiItemListOld" type = "object"/>
+<aura:attribute name="issearching" type="Boolean" default="false"/>
+<aura:attribute name="showPfOwner" type="Boolean" default="false"/>
+<aura:attribute name="showAssignedContact" type="Boolean" default="false"/>
+
+<!-- two value -->
+<aura:attribute name="PfIdList" type="List" />
+<aura:attribute name="AssignedCustomerIdList" type="List" />
+
+<!-- dialog box display -->
+<ltng:require styles="{!$Resource.Dialogbox}"/> 
+
+
+<lightning:navigation aura:id="navService"/>
+
+<!--child component attribute -->
+<section role="dialog" tabindex="3" class="slds-modal slds-fade-in-open slds-modal_large" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+<div class="slds-modal__container">
+    <header class="modal-header slds-modal__header slds-size_1-of-1 slds-m-bottom--none">
+              <h4 class="title slds-text-heading--medium" ><p> Mass Change PF Owners</p></h4>
+          <br/>
+          <form class="slds-form--stacked slds-m-bottom--none">
+                  <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table_fixed-layout">
+                      <thead>
+                          <tr class="slds-text-title">
+                            <th style="width:3.25rem;" class="slds-text-align--right">
+                                <lightning:input type="checkbox" aura:id="selectAll" onchange="{!c.selectAll}"/>
+                                <!--<div class="slds-form-element">
+                                    <div class="slds-form-element__control">
+                                        <label class="slds-checkbox">
+                                            header checkbox for select all
+                                            <ui:inputCheckbox aura:id="selectAll" change="{!c.selectAll}"/>
+                                            
+                                            <span class="slds-form-element__label text"></span>
+                                        </label>
+                                    </div>
+                                </div>-->
+                            </th>
+                              <th scope="col">
+                                  <div class="slds-text-heading_small slds-cell-wrap" title="RFI Item Name">RFI Item Name</div>
+                              </th>
+                              <th scope="col">
+                                  <div class="slds-text-heading_small slds-cell-wrap" title="RFI Item Descrption">RFI Item Description</div>
+                              </th>
+                              <th scope="col">
+                                  <div class="slds-text-heading_small  slds-cell-wrap" title="PF Owner">PF Owner</div>
+                              </th>
+                              <th scope="col">
+                                <div class="slds-text-heading_small  slds-cell-wrap" title="Customer Onboarding Contact">Customer Contact for Onboarding</div>
+                            </th>
+                          </tr>
+                      </thead>
+                  </table>
+              </form>    
+          </header>
+          <div class="slds-modal__content slds-m-top--none slds-m-around--none slds-p-vertical--none" id="modal-content-id-1">
+                  <form class="slds-form--stacked">
+                      <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table_fixed-layout">
+                      <tbody>
+                          <aura:iteration items="{!v.rfiItemList}" var="rfiItem">
+                              <tr>
+                                <th scope = "row" style="width:5rem;" class="slds-text-align--right">
+                                    <lightning:input type="checkbox" aura:id="boxChange" name="{!rfiItem.lstRfiDetails.Id}" onchange = "{!c.selectElement}"/>
+                                   
+                                </th>
+                                  <th scope="row">
+                                         <div class="slds-cell-wrap" title="{!rfiItem.lstRfiDetails.Name}">{!rfiItem.lstRfiDetails.Name}</div>
+                                  </th>
+                                  <th scope="row">
+                                      <div class="slds-cell-wrap" title="{!rfiItem.lstRfiDetails.RFI_Detail_Description__c}">{!rfiItem.lstRfiDetails.RFI_Detail_Description__c}</div>
+                                   <lightning:inputField text="{!rfiItem.lstRfiDetails.RFI_Detail_Description__c}" value="{!rfiItem.RFI_Detail_Description__c}" />
+                                  </th>
+                                  <th scope="row">
+                                 <!--    <lightning:input name="input2" label="Text field with predefined value" value="{!rfiItem.lstRfiDetails.IE_Owner__c}" variant="hidden" onchange="{!c.onChangeOwner}"/>
+                                        <lightning:buttonIcon iconName="utility:undo" variant="brand" alternativeText="Undo..!!" title="Unod" onclick = "{!c.undoPfOwner}" size="x-small" aura:id = "pfOwner"/>
+                                      
+                                -->
+                                   
+                                <aura:renderIf isTrue="{!v.showPfOwner == true}" >
+                                        <div class="slds-cell-wrap ieOwner" title="{!rfiItem.lstRfiDetails.IE_Owner__c}">
+                                            {!rfiItem.lstRfiDetails.IE_Owner__r.Name}</div>  
+                                </aura:renderIf>  
+                                
+                                <c:lookupField  aura:id = "lookUpPFOwner"
+                                                        objectAPIName="User" 
+                                                        returnFields="['Name']" 
+                                                        queryFields="['Name']"
+                                                        selectedId="{!rfiItem.lstRfiDetails.IE_Owner__c}"
+                                                        show = "false" />
+                                  </th>
+                                  <th scope="row">
+                                <!--     <lightning:input name="input2" label="Text field with predefined value" value="{!rfiItem.lstRfiDetails.Assigned_Customer_Contact__c}" variant="hidden" onchange="{!c.onChangeOwner}"/>
+                               
+                                    <lightning:buttonIcon iconName="utility:undo" variant="brand" alternativeText="Undo..!!" title="Unod" onclick = "{!c.undoPfOwner}" size="x-small"/>
+                                    -->
+                                    <aura:renderIf isTrue="{!v.showAssignedContact == true}">
+                                        <div class="slds-cell-wrap assignedCustomerContact" title="{!rfiItem.lstRfiDetails.Assigned_Customer_Contact__c}">{!rfiItem.lstRfiDetails.Assigned_Customer_Contact__r.Name}</div>
+                                    </aura:renderIf>
+
+                                    <c:lookupField  aura:id = "lookUpAssignedContact"
+                                                    objectAPIName="Contact" 
+                                                    returnFields="['Name']" 
+                                                    queryFields="['Name']"
+                                                    selectedId="{!rfiItem.lstRfiDetails.Assigned_Customer_Contact__c}"
+                                                    show = "false"
+                                                   />
+                                  </th>
+                              </tr>
+                          </aura:iteration>
+                      </tbody>
+                  </table>
+              </form><br/>
+          </div>
+          <footer class="slds-modal__footer">
+              <lightning:button label="Cancel" onclick="{!c.doCancel}"/>
+              <lightning:button label="Save" onclick="{!c.onSave}"  class="slds-button slds-button--brand"/>
+          </footer>
+  </div>
+</section>
+</aura:component>

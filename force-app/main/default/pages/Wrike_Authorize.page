@@ -1,0 +1,5 @@
+<!-- Called as /apex/Authorize?redirect_url=<URL>,
+     where URL of page user to be returned after authorization -->
+
+<apex:page controller="Wrike_AuthorizeController" action="{!authorize}">
+</apex:page>

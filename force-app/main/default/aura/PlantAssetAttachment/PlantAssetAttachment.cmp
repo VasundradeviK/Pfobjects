@@ -1,0 +1,83 @@
+<aura:component controller="plantassetattachmentwrapper" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:availableForFlowScreens" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doinit}"/>
+    <aura:attribute name="wrapperList" type="object[]"/>
+    <aura:attribute name="sNo" type="Integer" default= "1"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+    <aura:attribute name="isOpen" type="Boolean" default="false"/>    
+    <aura:handler name="AttachmentUploaderEvent" event="c:AttachmentUploaderEvent" action="{!c.handleComponentEvent}"/>    
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>    
+
+    <div class="slds-table--header-fixed_container">
+        <div class="slds-scrollable_y" style="height: 36rem;">
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th class="slds-text-title_caps" scope="col">
+                            <div class="slds-truncate" title="ID">Select</div>
+                        </th>
+                        <th class="slds-text-title_caps" scope="col">
+                            <div class="slds-truncate" title="ID">Attachment Name</div>
+                        </th>
+                        <th class="slds-text-title_caps" scope="col">
+                            <div class="slds-truncate" title="ID">Plant Asset Name</div>
+                        </th>
+                        <th class="slds-text-title_caps" scope="col">
+                            <div class="slds-truncate" title="Has Attachment">Has Attachment</div>
+                        </th>
+                        <th class="slds-text-title_caps" scope="col">
+                            <div class="slds-truncate" title="Attachments">Attachments</div>
+                        </th>
+                        <th class="slds-text-title_caps" scope="col">
+                            <div class="slds-truncate" title="Add">Add Attachments</div>
+                        </th>
+                       
+                    </tr>
+                </thead>
+                
+                <tbody>
+                   
+                    <aura:iteration items="{!v.wrapperList}" var="w" indexVar="i">
+                        
+                        <tr class="slds-hint-parent">
+                            <td data-label="Select">
+                                {!v.sNo + i}
+                                
+                            </td>
+                            <td data-label="Attachment Name">
+                                <div class="" title="{!w.wCon.Id}"><a title="{!w.wCon.Id}" onclick="{!c.detailPage}">{!w.wCon.Name}</a></div>
+                            </td>
+                            <td data-label="Plant Asset Name">
+                                <div class="slds-truncate" title="{!w.wCon.Plant_Asset_Name__c}">{!w.wCon.Plant_Asset_Name__r.Name}</div>
+                            </td>
+                            <td data-label="Has Attachment">
+                                <div class="slds-truncate" title="{!w.wCon.Has_Attachment__c}">{!w.wCon.Has_Attachment__c}</div>
+                            </td>
+							<td data-label="Loop">
+                                <lightning:layout  multipleRows="true">
+                                    <aura:iteration items="{!w.wCV}" var="wc">
+                                        
+                                        
+                                        <lightning:layoutItem size="1">
+                                            <lightning:buttonIcon size="large" iconName="utility:file" class="icn" title="{!wc.Title}" value ="{!wc.ContentDocumentId}" variant="bare" onclick="{! c.handleClick }"/>
+                                        </lightning:layoutItem>
+                                        
+                                            </aura:iteration>
+                                </lightning:layout>
+                            </td> 
+                                                                                                               
+                            <td data-label="Add Attachments">
+                                <div class="slds-truncate" title="Add Attachments"><c:attachmentuploader recordId="{!w.wCon.Id}"/></div>
+                            </td>                
+                        </tr>                       
+                    </aura:iteration>
+                    
+                </tbody>
+                
+            </table>
+        </div>    
+    </div>
+                
+</aura:component>

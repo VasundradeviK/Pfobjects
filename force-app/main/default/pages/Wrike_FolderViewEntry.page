@@ -1,0 +1,4 @@
+<apex:page standardStylesheets="true" action="{!redirectToFolderView}" cache="false"
+      controller="Wrike_FolderViewEntryController">
+      <!-- standardController="*" extensions="FolderController_Global" -->
+</apex:page>

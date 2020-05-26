@@ -1,0 +1,14 @@
+<template>
+    <lightning-card title="Plant Asset">
+        <c-dropdown-prompt label ="Plant Information" ondropdownvalueselect = {handledropdownselectedpalnt}>
+            </c-dropdown-prompt>
+            <template if:true= {SelectedPlantRecord}>
+                {SelectedPlantRecord.Plant_Name__c}
+                {SelectedPlantRecord.Plant_Id__c}
+                {SelectedPlantRecord.Latitude__c}
+                {SelectedPlantRecord.Longitude__c}
+                {SelectedPlantRecord.Commercial_Operating_Date__c}
+                {SelectedPlantRecord.Asset_SubClass__c}
+            </template>
+    </lightning-card>
+</template>

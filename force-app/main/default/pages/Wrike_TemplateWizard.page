@@ -1,0 +1,545 @@
+<apex:page standardStylesheets="true" cache="false"
+      controller="Wrike_TemplateWizardController" action="{!verifyWrike}" showheader="false" sidebar="false">
+      
+<style type="text/css">
+  
+  .do-not-show { display: none;}
+  
+  body {font-family:arial; background: #fff url(/img/alohaSkin/lookup_bg.png) repeat-x;}
+      
+  div.visibleStep { width: 900px; padding: 15px 10px 15px 20px; line-height: 20px;}
+  #templateWizardStep1 div.stepHeader {margin-bottom: 20px;}
+  
+  .stepHeader {width: 100%; background-color:#1797c0; color:white; margin: 10px 0 10px 0; border-radius: 0.25em; font-size:17px;}
+  .headerText {padding: 5px 0 5px 10px;}
+  .templateTable {margin:auto;}
+  
+  .optionsContainer p,.optionsContainer h2,.optionsContainer div {margin: 10px 0 10px 0;}
+  .radioSelect{line-height: 26px; margin-left:-5px !important;}
+  
+  a.actionLink { color: #015ba7; cursor:pointer; text-decoration: none;}
+  
+  
+  div.bPageBlock { border-top-color: #42975B !important;}
+  body table.list tr.highlight td { background-color: #eff8df !important; }
+  body table.list tr td { border-color: #ececec; }
+  #templateTable { table-layout: fixed; width: 100%; max-width: 890px;}
+  #templateTable td { height: 16px; line-height: 16px; overflow: hidden;}
+  #templateTable div {white-space:nowrap; text-overflow: ellipsis; overflow: hidden;}
+  
+  th.descriptionHeader {width: 70%;}
+  th.nameHeader {width: 30%;}
+  
+  .paginator a.disabled { color: #a8a8a8;}
+  
+  div.optionsContainer input.btn {padding-left:5px; padding-right:5px; min-width: 48px; margin-left: 0px !important;}
+
+  div#loadingDiv {display:inline !important;}
+  
+  div.templateWizardStep input.btn {padding-left:5px; padding-right:5px; min-width: 48px;}
+  input.cancelBtn {margin-top: 10px;}
+</style>
+   
+<div style="width:900px;" >
+      
+<apex:form id="errors">
+    <apex:outputPanel id="errorMessagesPanel">
+    <apex:pageMessages id="errorMessages"/>
+    </apex:outputPanel>
+    <apex:actionFunction name="rerenderErrorMessages" action="{!addErrorsToPage}" rerender="errorMessagesPanel" />      
+    </apex:form>      
+   
+
+<apex:outputPanel layout="block" >        
+         
+<script type="text/javascript">
+
+if (!window.addEventListener) {
+    window.addEventListener = new function(event, handler) {
+        if (window.attachEvent) {
+            window.attachEvent('on' + event, handler);
+        }
+    }
+}
+window.addEventListener('load', initialize);
+
+function initialize() {
+
+    document.title = 'Select Wrike template';
+
+    var contactsData = JSON.parse('{!JSENCODE(contactsJSON)}');
+    window.contacts = contactsData && contactsData.data;
+    
+    window.currentStep = 1;
+    
+    createContactsSelect();
+}
+
+function openStep(step) {
+    document.getElementById('templateWizardStep' + step).className = 'visibleStep';
+}
+
+function closeStep(step) {
+    document.getElementById('templateWizardStep' + step).className = 'do-not-show'
+}
+
+function nextStep() {
+    closeStep(currentStep);
+    openStep(currentStep+1);
+    currentStep++;
+}
+
+function previousStep() {
+    closeStep(currentStep);
+    openStep(currentStep-1);
+    currentStep--;
+}
+
+function selectTemplate(templateId, templateName, templateFolderId) {
+    window.selectedTemplateId = templateId;
+    var tn = document.getElementsByClassName('templateNameContainer');
+    if(tn && tn.length) {   
+        for(var i = 0; i < tn.length; i++) {
+            tn[i].innerText = templateName;
+        }
+    }
+    showBusyStatus(currentStep);
+    passTemplateToController(templateFolderId, templateName);
+}
+
+function extractAssigneeChoice() {
+
+    var assignOptions = document.getElementsByName('assignOption');
+    window.assignOption == '';
+    for(var i = 0; i < assignOptions.length; i++){
+        if(assignOptions[i].checked){
+            window.assignOption = assignOptions[i].value;
+        }
+    }
+    
+    window.assigneeId = '';
+    
+    if(window.assignOption == 'assign') {
+       
+       var contactSelect = document.getElementById('contactSelect');
+       if(contactSelect && ~contactSelect.selectedIndex) {
+            window.assigneeId = contactSelect.options[contactSelect.selectedIndex].value;
+        }      
+    } 
+
+    nextStep();
+    
+}
+
+function toggleContactSelect(ischecked) {
+
+    var contactSelect = document.getElementById('contactSelect');
+    if(contactSelect) {
+        contactSelect.disabled = !ischecked;
+        if(contactSelect.disabled) {
+             contactSelect.selectedIndex = -1;
+         }
+    }
+    
+    if(ischecked && contactSelect && !~contactSelect.selectedIndex) {
+        disableNextBtn(2);
+    } else {
+        enableNextBtn(2);
+    }
+}
+
+function enableNextBtn(step) {
+    var nextBtn = document.getElementById('nextBtn' + step);
+    if(nextBtn && nextBtn.disabled) {
+	    nextBtn.disabled = false;
+	    nextBtn.removeClass('btnDisabled');
+    }
+}
+
+function disableNextBtn(step) {
+    var nextBtn = document.getElementById('nextBtn' + step);
+    if(nextBtn && !nextBtn.disabled) {
+        nextBtn.disabled = true;
+        nextBtn.addClass('btnDisabled');
+    }
+}
+
+function clearAssignChoice() {
+
+    var nextBtn = document.getElementById('nextBtn2');
+    nextBtn.disabled = true;
+    nextBtn.addClass('btnDisabled');
+    
+    var assignOptions = document.getElementsByName('assignOption');
+    window.assignOption == '';
+    for(var i = 0; i < assignOptions.length; i++){
+        assignOptions[i].checked = false;
+    }
+    
+}
+
+function clearDateChoice() {
+
+}
+
+function extractDateChoice() {
+    var dateOptions = document.getElementsByName('dateOption');
+    window.dateOption == '';
+    for(var i = 0; i < dateOptions.length; i++){
+        if(dateOptions[i].checked){
+            window.dateOption = dateOptions[i].value;
+        }
+    }
+}
+
+function createTasks() {
+    showBusyStatus(currentStep);
+    createTasksJS(window.selectedTemplateId, window.assigneeId, window.assignOption, window.dateOption);
+}
+
+function createContactsSelect() {
+
+    function formatContactName(c) {
+         return c.lastName ? c.firstName + ' ' + c.lastName : c.firstName;
+     }
+    
+    var contactSelectContainer = document.getElementById('contactSelectContainer');
+     
+    var selectList = document.createElement('select');
+    selectList.id = 'contactSelect';
+    selectList.disabled = true;
+    contactSelectContainer.appendChild(selectList);
+
+    for (var i=0; i<contacts.length; i++) {
+    
+     var contact = contacts[i];
+     if(contact.type == "Person" && !contact.deleted) {
+        var option = document.createElement('option');
+        option.value = contact.id;
+        option.text = formatContactName(contact);
+        selectList.appendChild(option);
+        }
+    }
+    
+    selectList.selectedIndex = -1;
+    selectList.addEventListener('change', function() {
+                                if (~this.selectedIndex) {
+                                    toggleContactSelect(true);
+                                    }
+                                });
+}
+
+
+function showBusyStatus(step) {
+   var parentForm = document.getElementById('busyStatusContainer'+step);
+   var loadingDiv = document.createElement('div');
+   loadingDiv.setAttribute('id', 'loadingDiv');
+   var loadingImg = document.createElement('img');
+   loadingImg.src = '{!$Resource.Wrike_LoadingIcon}';
+   loadingDiv.appendChild(loadingImg);               
+   loadingDiv.appendChild(document.createTextNode(' Working...'));
+   parentForm.appendChild(loadingDiv);  
+}
+
+function hideBusyStatus()
+{
+    var element = document.getElementById('loadingDiv');
+    if(element) {
+	    try {
+	        element.parentNode.removeChild(element);
+	    } catch (e) {}
+    }
+}
+
+Node.prototype.hasClass = function (className) {
+    if (this.classList) {
+        return this.classList.contains(className);
+    } else {
+        return (-1 < this.className.indexOf(className));
+    }
+};
+
+Node.prototype.addClass = function (className) {
+    if (this.classList) {
+        this.classList.add(className);
+    } else if (!this.hasClass(className)) {
+        var classes = this.className.split(' ');
+        classes.push(className);
+        this.className = classes.join(' ');
+    }
+    return this;
+};
+
+Node.prototype.removeClass = function (className) {
+    if (this.classList) {
+        this.classList.remove(className);
+    } else {
+        var classes = this.className.split(' ');
+        classes.splice(classes.indexOf(className), 1);
+        this.className = classes.join(' ');
+    }
+    return this;
+};
+
+</script>
+</apex:outputPanel>
+      
+<apex:outputPanel >
+
+<apex:form >
+
+<div id="templateWizardStep1" class="templateWizardStep visibleStep">
+
+<div class="stepHeader"><div class="headerText">Step 1 of 3: Choose Template</div></div>
+
+<apex:outputPanel id="templatePanel" >
+
+<div id="busyStatusContainer1"></div>
+
+<apex:pageBlock rendered="{!numberOfPages>0}">
+
+<table class="list" border="0" cellspacing="0" cellpadding="0" id="templateTable">
+     
+     <tr class="headerRow" id="taskTableHeader">
+         <th scope="col" class="nameHeader">Name</th>
+         <th scope="col" class="descriptionHeader">Description</th>
+     </tr>
+
+<apex:repeat value="{!templatePage}" var="t" rows="5">
+        
+        <tr class="dataRow" id="taskTableRow" onmouseout="if(window.hiOff){hiOff(this);}" onmouseover="if(window.hiOn){hiOn(this);}">
+         <td class="actionCell">
+         <span>
+            <apex:outputPanel rendered="{!NOT(ISBLANK(t.Id))}">
+              <a class="actionLink" href="" onclick="selectTemplate('{!t.Id}','{!t.Name}','{!t.Wrike_Folder_Id__c}');" title="">{!t.Name}</a>
+            </apex:outputPanel>
+            <apex:outputText value=" " rendered="{!ISBLANK(t.Id)}"/>
+         </span>
+         </td>
+         <td class="dataCell">
+          <div>
+            <apex:outputText value="{!t.Description__c}"/>
+           </div>
+         </td>
+         
+        </tr>
+            
+     </apex:repeat>
+    </table>
+
+<div class="paginator">
+    <span class="prevNextLinks">
+        <a class="actionLink" href="" onclick="firstPageJS();" title=""><img src="/s.gif" title="First" alt="First" class="first{!IF(currentPage==1, 'off', '')}"/></a>
+        <a class="actionLink {!IF(currentPage==1, 'disabled', '')}" href="" onclick="previousPageJS();" title=""><img src="/s.gif" title="Previous" alt="Previous" class="prev{!IF(currentPage==1, 'off', '')}"/> Previous</a>
+        <a class="actionLink {!IF(currentPage==numberOfPages, 'disabled', '')}" href="" onclick="nextPageJS();" title="">Next <img src="/s.gif" title="Next" alt="Next" class="next{!IF(currentPage==numberOfPages, 'off', '')}"/></a>
+        <a class="actionLink" href="" onclick="lastPageJS();" title=""><img src="/s.gif" title="Last" alt="Last" class="last{!IF(currentPage==numberOfPages, 'off', '')}"/></a>
+    </span>
+    </div>
+    
+    <apex:actionFunction action="{!nextPage}" name="nextPageJS" rerender="templatePanel"/>
+    <apex:actionFunction action="{!previousPage}" name="previousPageJS" rerender="templatePanel"/>
+    <apex:actionFunction action="{!firstPage}" name="firstPageJS" rerender="templatePanel"/>
+    <apex:actionFunction action="{!lastPage}" name="lastPageJS" rerender="templatePanel"/>
+    
+    <apex:actionFunction action="{!saveFolderId}" name="passTemplateToController" rerender="templatePanel" oncomplete="rerenderErrorMessages();">
+        <apex:param name="templateFolderId" value=""/>
+        <apex:param name="templateName" value=""/>
+    </apex:actionFunction>
+    
+<apex:outputPanel rendered="{!NOT(ISBLANK(templateFolderId))}">  
+
+    
+<script type="text/javascript">
+
+checkFolder();
+
+function checkFolder() {
+    
+    window.hasResponsibles = false;
+    
+    analyzeFolderTasks();
+    
+    hideBusyStatus();
+    
+    var hae = document.getElementsByClassName('hasAssignees');
+    var hnae = document.getElementsByClassName('hasNoAssignees');
+    
+    if(hae && hae.length) {   
+        for(var i = 0; i < hae.length; i++) {
+            window.hasResponsibles? hae[i].removeClass('do-not-show') : hae[i].addClass('do-not-show');
+        }
+    }
+    
+    if(hnae && hnae.length) {   
+        for(var i = 0; i < hnae.length; i++) {
+            window.hasResponsibles? hnae[i].addClass('do-not-show') : hnae[i].removeClass('do-not-show');
+        }
+    }
+    
+    if(!window.folderError) {
+        nextStep();
+    } else {
+        rerenderErrorMessages();
+    }
+
+}
+    
+
+function analyzeFolderTasks() {
+
+var jsonstring = '{!JSENCODE(folderTasksJSON)}';
+
+if(!jsonstring) {
+
+    window.folderError = true;
+    return;
+}
+
+var jsonText = (jsonstring).replace(/^\s*<!\[CDATA\[/,'').replace(/\]\]>\s*$/,"");
+jsonText = jsonText
+    .replace(/(&)#39;/g, '\'')
+    .replace(/(&)quot;/g, '"')
+    .replace(/(&)lt;/g, '<')
+    .replace(/(&)gt;/g, '>')
+    .replace(/(&)amp;/g, '&');
+
+var folderTasks = JSON.parse(jsonText);
+
+var tasks = folderTasks && folderTasks.data;
+
+if(!tasks || tasks.length > 100) {
+
+    window.folderError = true;
+    return;
+}
+
+window.folderError = false;
+
+for (var i = 0; i < tasks.length; i++) {
+
+    if(tasks[i].responsibleIds && tasks[i].responsibleIds.length) {
+    
+        window.hasResponsibles = true;
+        break;    
+    }
+}
+
+}
+
+
+</script>
+</apex:outputPanel>
+</apex:pageBlock>    
+    
+</apex:outputPanel>    
+    
+      
+    <apex:outputPanel rendered="{!numberOfPages==0}">
+    <div>
+	    There are no templates yet. 
+	    <apex:outputPanel rendered="{!canManageTemplates}">
+	    <a class="actionLink" href="{!URLFOR($Page.Wrike_TemplateManager)}" target="_blank" onclick="window.close();">Let's create some.</a>
+	    </apex:outputPanel>  
+    </div>
+    </apex:outputPanel>   
+    
+    <input value="Cancel" class="btn cancelBtn" onclick="window.close();" type="button"/>
+</div>
+
+</apex:form>
+
+<div id="templateWizardStep2" class="templateWizardStep do-not-show">
+
+<div class="stepHeader"><div class="headerText">Step 2 of 3: Set Assignees</div></div>
+<div class="optionsContainer">
+
+<div class="hasAssignees">
+<p>Some of the tasks in the <span class="templateNameContainer"></span> template have assigned owners.</p>
+<h2>What would you like to do?</h2>
+</div>
+
+<div class="hasNoAssignees">
+<h2>Who do you want to assign the tasks to?</h2>
+</div>
+
+<div class="radioSelect">
+    <label class="hasAssignees">
+       <input type="radio" name="assignOption" value="copy" onclick="toggleContactSelect(false);"/>
+       Keep assignments used in template<br></br>
+    </label>
+    <label>
+       <input type="radio" name="assignOption" value="assign" onclick="toggleContactSelect(true);"/>
+       Assign all tasks to the following user
+    </label>
+       <span id="contactSelectContainer"></span><br></br>
+    <label>
+       <input type="radio" name="assignOption" value="blank" onclick="toggleContactSelect(false);"/>
+       Leave assignees blank
+    </label>
+<br></br>
+</div>
+<input value="Back" class="btn" onclick="clearAssignChoice();previousStep();" type="button"/>
+<input value="Next" class="btn btnDisabled" onclick="extractAssigneeChoice();" type="button" disabled="true" id="nextBtn2"/>
+</div>
+
+</div>
+
+<div id="templateWizardStep3" class="templateWizardStep do-not-show">
+
+<div class="stepHeader"><div class="headerText">Step 3 of 3: Schedule due dates</div></div>
+<div class="optionsContainer">
+<p>The <span class="templateNameContainer"></span> schedule will be automatically calculated based on either the begin date or end date of the work.</p>
+<h2>Dates</h2>
+<apex:form >
+<div class="radioSelect">
+    <label>
+    <input type="radio" name="dateOption" value="Start" checked="true"/>
+    Set the date when work should start
+    </label><br></br>
+    <label>
+    <input type="radio" name="dateOption" value="End"/>
+    Set the date when work should be complete
+    </label> <br></br>
+</div>
+
+<apex:inputField value="{!DateInput.ActivityDate}" /><br></br><br></br>
+
+<input value="Back" class="btn" onclick="clearDateChoice();previousStep();" type="button"/>
+<nobr><input value="Create tasks" class="btn" onclick="extractDateChoice();createTasks();" type="button"/>
+
+<span id="busyStatusContainer3"></span></nobr>
+
+<apex:actionFunction action="{!createTasks}" name="createTasksJS" rerender="importPostAction">
+    <apex:param name="templateId" value=""/>
+    <apex:param name="assigneeId" value=""/>
+    <apex:param name="assignOption" value=""/>
+    <apex:param name="dateOption" value=""/>
+</apex:actionFunction>
+
+<apex:outputPanel id="importPostAction">
+<apex:outputPanel rendered="{!NOT(ISBLANK(targetFolderId))}">
+<script type="text/javascript">
+    window.close();
+</script>
+</apex:outputPanel> 
+<apex:outputPanel rendered="{!ISBLANK(targetFolderId)}">
+<script type="text/javascript">
+    rerenderErrorMessages();
+    hideBusyStatus();
+</script>
+</apex:outputPanel>     
+</apex:outputPanel> 
+
+<!-- <apex:actionFunction action="{!getFolderInfo}" name="getFolderInfoJS" rerender="" oncomplete="parseFolderInfo();">
+    <apex:param name="templateFolderId" value=""/>
+</apex:actionFunction> -->
+
+</apex:form>
+
+</div>
+
+</div>
+</apex:outputPanel>     
+  
+</div>
+  </apex:page>

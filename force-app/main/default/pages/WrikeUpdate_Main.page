@@ -1,0 +1,279 @@
+<apex:page standardStylesheets="true" cache="false"
+    controller="WrikeUpdate_MainController" >
+
+<style type="text/css">
+
+.homeTab .pageTitleIcon.wrikeIcon {
+background-image: url({!$Resource.Wrike_Logo64});
+background-position:0 0;
+background-repeat:no-repeat;
+width: 64px; height: 64px;
+margin-top: -10px;
+}
+.bindingButtons  {
+    text-align: right;
+    margin-bottom: -24px;
+ }
+.bindingSection2, #newBindingBlock2 {
+    padding-top: 8px;
+    margin-top: 8px;
+    border-top: solid 1px rgb(219,219,219);
+}
+.bindingSection:first-child {
+    border-top:none;
+}
+.content .pageType, .content .pageDescription { margin-left:0 !important; }
+.bPageBlock .pbHeader .pbButton { text-align:right; }
+#connectBlock .pbHeader .pbButton { text-align:left; }
+.bPageBlock .pbBody table { width:100%; margin-left:-12px; }
+.bPageBlock .pbBody th { text-align:right; }
+.bPageBlock .pbBody td { padding: 5px 12px; }
+
+#bodyCell p.description { margin-bottom:1em; min-height: 8em; }
+
+.linkTitle { font-weight:600; width:28.6%; display:inline-block; margin:2px 0; vertical-align:middle; }
+.linkButtons { margin:2px 0 2px 6px; display:inline-block; vertical-align:middle; }
+
+#connectBlock .pbHeader .pbButton { padding-left:0; padding-right:0; }
+#connectBlock .pbHeader .pbButton input { margin-left:28.5%; }
+
+#accountBlock .pbBottomButtons .pbButtonb { padding-left:0; padding-right:0; }
+#accountBlock .pbBottomButtons .pbButtonb input { margin-left:28.5%; }
+
+
+#contentWrapper .bPageBlock .pbHeader .pbTitle { width:100%; }
+#contentWrapper .bPageBlock .pbBottomButtons .pbTitle { display:none; }
+
+#lastSaved { color: green; }
+
+table#migrationMenu button {padding-left:5px; padding-right:5px; min-width: 48px;}
+
+table#migrationMenu td.insideCol {border-right: 5px solid transparent; border-left: 5px solid transparent;}
+table#migrationMenu td.rightCol {border-left: 5px solid transparent;}
+table#migrationMenu td.leftCol {border-right: 5px solid transparent;}
+
+.circle
+    {
+    width:24px;
+    height:24px;
+    border-radius:12px;
+    font-size:14px;
+    color:#fff;
+    line-height:24px;
+    text-align:center;
+    background: green;
+    float:left;
+    margin-right: 5px;
+    margin-left: 7px;
+    }
+    
+div.stepHeader button {float:right;}
+
+@media screen and (max-width: 1400px) {
+  table#migrationMenu h2 { font-size:14px; }
+  table#migrationMenu p.description { font-size:12px; }
+  table#migrationMenu button { font-size:11px; }
+}
+
+</style>
+
+<script type="text/javascript">
+    var pages = {
+        'export' : '/apex/WrikeUpdate_Export',
+        'clear' : '/apex/WrikeUpdate_Clean',
+        'import' : '/apex/WrikeUpdate_Import',
+    };
+    
+    var lastOpenedWindow;
+    
+    function openSequence(name) {
+        if (lastOpenedWindow == null || lastOpenedWindow.closed) { 
+            lastOpenedWindow = window.open(
+                pages[name], name, "width=640,height=480,directories=0,toolbar=0,location=0,status=0,menubar=0,resizable,scrollbars");
+            lastOpenedWindow.focus();
+        }
+        else {
+            lastOpenedWindow.location = pages[name];
+            lastOpenedWindow.focus();
+        }
+        return true;
+    }
+    
+    function keepFocus() {
+        if(lastOpenedWindow != null && ! lastOpenedWindow.closed)
+            lastOpenedWindow.focus();
+        updateState();
+    }
+    
+    window.addEventListener('focus', keepFocus);
+    
+    function updateState() {
+    
+        WrikeUpdate_MainController.getStatus(       
+                function(resultJSON, event) {
+                    if (resultJSON && resultJSON != '') {
+                        try {
+                            result = JSON.parse(resultJSON);
+                            if (result && !result.error) {
+                                
+                                var exportButton = document.getElementById('exportButton');
+                                exportButton.disabled = !result.exists || !result.active;
+                                exportButton.className = (!result.exists || !result.active)? "disabled":"";
+                                
+                                var clearButton = document.getElementById('clearButton');
+                                clearButton.disabled = !result.exists || !result.active;
+                                clearButton.className = (!result.exists || !result.active)? "disabled":"";
+                                
+                                var importButton = document.getElementById('importButton');
+                                importButton.disabled = !result.exists || result.active;
+                                importButton.className = (!result.exists || result.active)? "disabled":"";
+                            }
+                        }
+                        catch (e) { }
+                    }
+
+                },
+                { buffer: false, escape: false, timeout: 120000 }
+        );
+        
+        var lastSaved = document.cookie.replace(
+            new RegExp("(?:(?:^|.*;)\\s*WrikeUpdate_lastSaved\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1");
+        if (lastSaved != "") {
+            document.getElementById('lastSaved').innerHTML =
+                    "Last saved:<br/>" + decodeURIComponent(lastSaved);
+        }
+        else {
+            document.getElementById('lastSaved').innerHTML = "";
+        }
+            
+    }
+    window.addEventListener('load', updateState);
+    
+    
+</script>
+<div class="bPageTitle">
+    <div class="ptBody">
+        <div class="content">    
+           <!--  <img src="/s.gif" alt="Wrike" class="pageTitleIcon wrikeIcon" title="Wrike"/>
+            <h1 class="pageType clean-ml">Beta version<span class="titleSeparatingColon">:</span></h1>-->
+            <h2 class="pageDescription clean-ml">Export settings and update package</h2>
+            <p>To update your package, follow the four steps below. Before updating the package make sure you export your current settings. When you update the package it will reset your settings and you will need this file to restore them.</p>
+            <div class="blank">&nbsp;</div>
+        </div>
+        <div class="links">
+            <!-- <a href="#" class="configLinks zen-deemphasize" title="Tell me more! (New Window)">Tell me more!</a>
+             | <a href="#" title="Help for this Page (New Window)"><span class="helpLink">Help for this Page</span>
+             <img src="/s.gif" alt="" class="helpIcon"/></a> -->
+        </div>
+    </div>
+</div>
+
+<table id="migrationMenu">
+<tbody>
+<tr>
+<td width="25%" class="leftCol">
+    <apex:pageBlock mode="detail">
+    
+    <apex:facet name="header">
+    <div class="pbHeader"><table border="0" cellpadding="0" cellspacing="0"><tbody><tr>
+        <td class="pbTitle">
+           <div class="circle">1</div>
+           <h2 class="mainTitle">Save current settings</h2>
+        </td>
+        <td class="pbButton ">
+            <button onclick="return openSequence('export')" disabled="disabled" class="disabled" id="exportButton">Export</button>
+        </td>
+    </tr></tbody></table></div>   
+    </apex:facet>
+    
+        <apex:outputPanel layout="block">
+          <p class="description">
+            Click "Export" to download a file with your current settings. 
+            This process may take several minutes; do not close your browser tab.<br/>
+            <br/>
+            <span id='lastSaved'></span>
+          </p>
+        </apex:outputPanel>
+ 
+    </apex:pageBlock>
+</td>
+<td width="25%" class="insideCol">
+    <apex:pageBlock mode="detail">
+    
+    <apex:facet name="header">
+    <div class="pbHeader"><table border="0" cellpadding="0" cellspacing="0"><tbody><tr>
+        <td class="pbTitle">
+           <div class="circle">2</div>
+           <h2 class="mainTitle">Clear current settings</h2>
+        </td>
+        <td  class="pbButton ">
+            <button onclick="return openSequence('clear')" disabled="disabled" class="disabled" id="clearButton">Clear</button>
+        </td>
+    </tr></tbody></table></div>   
+    </apex:facet>
+    
+        <apex:outputPanel layout="block">
+          <p class="description">
+            After the export you will see a brief summary of your current settings here. 
+            Click "Clear" to clear the settings. This action is unavailable until the export is completed.<br/>
+          </p>
+        </apex:outputPanel>
+
+    </apex:pageBlock>
+</td>
+<td width="25%" class="insideCol">
+    <apex:pageBlock mode="detail">
+    
+    <apex:facet name="header">
+    <div class="pbHeader"><table border="0" cellpadding="0" cellspacing="0"><tbody><tr>
+        <td class="pbTitle">
+           <div class="circle">3</div>
+           <h2 class="mainTitle">Reinstall main package</h2>
+        </td>
+        <td class="pbButton ">
+            <a href="/0A3?setupid=ImportedPackage">
+            <button>Uninstall</button>
+            </a>
+        </td>
+    </tr></tbody></table></div>   
+    </apex:facet>
+    
+        <apex:outputPanel layout="block">
+          <p class="description">
+            1. Uninstall current package at <br/>
+            <a href="/0A3?setupid=ImportedPackage">Setup &gt; Build &gt; Installed Packages</a><br/><br/>
+            2. Install new package with the link provided by Wrike support
+          </p>
+        </apex:outputPanel>
+    
+    </apex:pageBlock>
+</td>
+<td width="25%" class="rightCol">
+    <apex:pageBlock mode="detail">
+    
+    <apex:facet name="header">
+    <div class="pbHeader"><table border="0" cellpadding="0" cellspacing="0"><tbody><tr>
+        <td class="pbTitle">
+           <div class="circle">4</div>
+           <h2 class="mainTitle">Load settings from file</h2>
+        </td>
+        <td  class="pbButton ">
+            <button onclick="return openSequence('import')" disabled="disabled" class="disabled" id="importButton">Import</button>
+        </td>
+    </tr></tbody></table></div>   
+    </apex:facet>
+    
+        <apex:outputPanel layout="block">
+          <p class="description">
+            After you've installed the new version, do not change any settings. 
+            Click "Import" and select the file with your saved settings. This is only available during a clean install.
+          </p>
+        </apex:outputPanel>
+   
+    </apex:pageBlock>
+</td>
+</tr>
+</tbody>
+</table>
+
+</apex:page>

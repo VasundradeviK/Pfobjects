@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Training_Resource</fullName>
+    <active>true</active>
+    <description>Media (video, presentations, etc.) and other materials used for training</description>
+    <label>Training Resource</label>
+    <picklistValues>
+        <picklist>Product__c</picklist>
+        <values>
+            <fullName>Advanced Analytics %28AA%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Drive</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Drive Cloud</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Drive Edge</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Field Service Management %28FSM%29</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type__c</picklist>
+        <values>
+            <fullName>Enhancement</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fix</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Known Issue</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

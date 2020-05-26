@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>IS_not_too_be_changed</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(ISPICKVAL( PRIORVALUE( Implementation_Status__c ) , &quot;Blocked&quot;),
+ISCHANGED(Implementation_Status__c ),
+ISPICKVAL( Implementation_Status__c , &quot;In Progress&quot;),
+ Active_RFI_IB__c  &lt;&gt; 0,  $User.Id  &lt;&gt; null)</errorConditionFormula>
+    <errorMessage>Cannot change the Implementation Status field as there is an open RFI which has implementation blocked</errorMessage>
+</ValidationRule>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Base_Asset_Name__c</fullName>
+    <description>To link the attributes to the relevant Base Asset</description>
+    <externalId>false</externalId>
+    <label>Base Asset Name</label>
+    <referenceTo>Base_Asset_Template__c</referenceTo>
+    <relationshipLabel>Core Attributes</relationshipLabel>
+    <relationshipName>Core_Attributes</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

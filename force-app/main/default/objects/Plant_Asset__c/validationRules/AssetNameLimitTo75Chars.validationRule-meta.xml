@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AssetNameLimitTo75Chars</fullName>
+    <active>true</active>
+    <description>Plant Name is too long (max 72 characters). Please type in abbreviated name in Plant Name field. Input entire plant name in Full Plant Name field.</description>
+    <errorConditionFormula>LEN( Name ) &gt; 72</errorConditionFormula>
+    <errorMessage>Plant Name is too long (max 72 characters). Please type in abbreviated name in Plant Name field. Input entire plant name in Full Plant Name field.</errorMessage>
+</ValidationRule>
